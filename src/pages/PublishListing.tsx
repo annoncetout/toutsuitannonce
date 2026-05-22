@@ -269,26 +269,27 @@ const PublishListing = () => {
     setPhotos((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: "uploading", error: undefined } : p)),
     );
-    const ext = file.name.split(".").pop();
-    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("listing-photos").upload(path, file);
-    // If user cancelled while upload was in flight, ignore the result
-    if (cancelledRef.current.has(id)) {
-      cancelledRef.current.delete(id);
-      // Best-effort cleanup if it actually got uploaded
-      if (!error) supabase.storage.from("listing-photos").remove([path]).catch(() => {});
-      return;
-    }
-    if (error) {
+    try {
+      const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
+      const { url, key } = await uploadToR2(file, { folder: "annonces" });
+      if (cancelledRef.current.has(id)) {
+        cancelledRef.current.delete(id);
+        deleteFromR2({ key }).catch(() => {});
+        return;
+      }
       setPhotos((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "error", error: error.message } : p)),
+        prev.map((p) => (p.id === id ? { ...p, status: "done", url } : p)),
       );
-      return;
+    } catch (e) {
+      if (cancelledRef.current.has(id)) {
+        cancelledRef.current.delete(id);
+        return;
+      }
+      const msg = e instanceof Error ? e.message : "Upload failed";
+      setPhotos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: "error", error: msg } : p)),
+      );
     }
-    const { data } = supabase.storage.from("listing-photos").getPublicUrl(path);
-    setPhotos((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "done", url: data.publicUrl } : p)),
-    );
   };
 
   const cancelUpload = (id: string, mode: "keep" | "remove" = "keep") => {
