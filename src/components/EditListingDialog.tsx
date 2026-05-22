@@ -78,14 +78,14 @@ const EditListingDialog = ({ open, onOpenChange, listing, onSaved }: Props) => {
     if (valid.length < list.length) toast.error("Certaines images ignorées (max 5 Mo, images uniquement)");
     if (valid.length === 0) return;
     setUploading(true);
+    const { uploadToR2 } = await import("@/lib/r2Upload");
     const uploaded: string[] = [];
     for (const f of valid) {
-      const ext = f.name.split(".").pop();
-      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("listing-photos").upload(path, f);
-      if (!error) {
-        const { data } = supabase.storage.from("listing-photos").getPublicUrl(path);
-        uploaded.push(data.publicUrl);
+      try {
+        const { url } = await uploadToR2(f, { folder: "annonces" });
+        uploaded.push(url);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Upload échoué");
       }
     }
     setImages((prev) => [...prev, ...uploaded]);

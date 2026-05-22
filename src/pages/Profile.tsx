@@ -122,22 +122,22 @@ const Profile = () => {
   const onAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 3 * 1024 * 1024) return toast.error("Image trop lourde (max 3 Mo)");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Image trop lourde (max 5 Mo)");
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("listing-photos").upload(path, file, { upsert: true });
-    if (upErr) {
+    try {
+      const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
+      const previous = avatarUrl;
+      const { url } = await uploadToR2(file, { folder: "avatars" });
+      const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+      if (error) throw error;
+      setAvatarUrl(url);
+      if (previous) deleteFromR2({ url: previous }).catch(() => {});
+      toast.success("Photo mise à jour");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur upload");
+    } finally {
       setUploading(false);
-      return toast.error(upErr.message);
     }
-    const { data: pub } = supabase.storage.from("listing-photos").getPublicUrl(path);
-    const url = pub.publicUrl;
-    const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
-    setUploading(false);
-    if (error) return toast.error(error.message);
-    setAvatarUrl(url);
-    toast.success("Photo mise à jour");
   };
 
   if (loading || !user || busy) {
