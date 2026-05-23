@@ -1,7 +1,17 @@
-// R2 delete edge function - deletes an object owned by the user
+// R2 delete edge function - deletes one or several objects owned by the caller.
 import { AwsClient } from "https://esm.sh/aws4fetch@1.0.20";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { isOwnedKey, keyFromUrl } from "../r2-shared/ownership.ts";
+
+const MAX_BATCH = 50;
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -20,44 +30,48 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: auth } } },
     );
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!user) return json({ error: "Unauthorized" }, 401);
 
-    const { url, key: rawKey } = await req.json();
-    let key = rawKey as string | undefined;
-    if (!key && typeof url === "string") {
-      const prefix = publicUrl.replace(/\/$/, "") + "/";
-      if (url.startsWith(prefix)) key = url.slice(prefix.length);
+    const payload = await req.json().catch(() => ({}));
+    // Accept either { key|url } or { keys: string[], urls: string[] }
+    const items: Array<string> = [];
+    if (typeof payload?.key === "string") items.push(payload.key);
+    if (Array.isArray(payload?.keys)) items.push(...payload.keys.filter((k: unknown) => typeof k === "string"));
+    if (typeof payload?.url === "string") {
+      const k = keyFromUrl(payload.url, publicUrl);
+      if (k) items.push(k);
     }
-    if (!key) {
-      return new Response(JSON.stringify({ error: "key/url required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (Array.isArray(payload?.urls)) {
+      for (const u of payload.urls) {
+        const k = keyFromUrl(u, publicUrl);
+        if (k) items.push(k);
+      }
     }
-    // Ownership check: key must contain user.id segment
-    if (!key.includes(`/${user.id}/`)) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const keys = Array.from(new Set(items)).slice(0, MAX_BATCH);
+    if (keys.length === 0) return json({ error: "key/url required" }, 400);
+
+    // Enforce ownership for every key
+    const denied = keys.filter((k) => !isOwnedKey(k, user.id));
+    if (denied.length > 0) return json({ error: "Forbidden", denied }, 403);
 
     const client = new AwsClient({ accessKeyId, secretAccessKey, service: "s3", region: "auto" });
-    const endpoint = `https://${accountId}.r2.cloudflarestorage.com/${bucket}/${encodeURI(key)}`;
-    const r = await client.fetch(endpoint, { method: "DELETE" });
-    if (!r.ok && r.status !== 404) {
-      return new Response(JSON.stringify({ error: `R2 delete failed (${r.status})` }), {
-        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const results: Array<{ key: string; ok: boolean; status: number }> = [];
+    await Promise.all(keys.map(async (key) => {
+      const endpoint = `https://${accountId}.r2.cloudflarestorage.com/${bucket}/${encodeURI(key)}`;
+      try {
+        const r = await client.fetch(endpoint, { method: "DELETE" });
+        results.push({ key, ok: r.ok || r.status === 404, status: r.status });
+      } catch (_) {
+        results.push({ key, ok: false, status: 0 });
+      }
+    }));
+
+    const failed = results.filter((r) => !r.ok);
+    if (failed.length > 0 && failed.length === results.length) {
+      return json({ error: "R2 delete failed", results }, 502);
     }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ ok: true, deleted: results.filter((r) => r.ok).length, results });
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ error: (e as Error).message }, 500);
   }
 });

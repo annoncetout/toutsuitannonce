@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog,
@@ -40,6 +41,7 @@ const Profile = () => {
   const [busy, setBusy] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState<ProfileForm>({
     display_name: "",
@@ -124,10 +126,14 @@ const Profile = () => {
     if (!file || !user) return;
     if (file.size > 5 * 1024 * 1024) return toast.error("Image trop lourde (max 5 Mo)");
     setUploading(true);
+    setUploadProgress(0);
     try {
       const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
       const previous = avatarUrl;
-      const { url } = await uploadToR2(file, { folder: "avatars" });
+      const { url } = await uploadToR2(file, {
+        folder: "avatars",
+        onProgress: (p) => setUploadProgress(p),
+      });
       const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
       if (error) throw error;
       setAvatarUrl(url);
@@ -137,6 +143,7 @@ const Profile = () => {
       toast.error(err instanceof Error ? err.message : "Erreur upload");
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -161,7 +168,7 @@ const Profile = () => {
               <AvatarImage src={avatarUrl ?? undefined} />
               <AvatarFallback><UserIcon className="w-8 h-8" /></AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <Label htmlFor="avatar" className="cursor-pointer">
                 <div className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-md border border-input hover:bg-accent">
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
@@ -169,7 +176,13 @@ const Profile = () => {
                 </div>
                 <input id="avatar" type="file" accept="image/*" className="hidden" onChange={onAvatarUpload} disabled={uploading} />
               </Label>
-              <p className="text-xs text-muted-foreground mt-1">JPG ou PNG, max 3 Mo</p>
+              <p className="text-xs text-muted-foreground mt-1">JPG ou PNG, max 5 Mo</p>
+              {uploading && (
+                <div className="mt-2 max-w-xs">
+                  <Progress value={uploadProgress} className="h-2" />
+                  <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Envoi… {uploadProgress}%</p>
+                </div>
+              )}
             </div>
           </div>
 

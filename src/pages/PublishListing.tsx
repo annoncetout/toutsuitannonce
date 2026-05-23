@@ -46,6 +46,7 @@ interface PhotoItem {
   file: File;
   preview: string;
   status: UploadStatus;
+  progress: number;
   url?: string;
   error?: string;
 }
@@ -267,18 +268,25 @@ const PublishListing = () => {
     if (!user) return;
     cancelledRef.current.delete(id);
     setPhotos((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "uploading", error: undefined } : p)),
+      prev.map((p) => (p.id === id ? { ...p, status: "uploading", progress: 0, error: undefined } : p)),
     );
     try {
       const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
-      const { url, key } = await uploadToR2(file, { folder: "annonces" });
+      const { url, key } = await uploadToR2(file, {
+        folder: "annonces",
+        onProgress: (pct) => {
+          setPhotos((prev) =>
+            prev.map((p) => (p.id === id && p.status === "uploading" ? { ...p, progress: pct } : p)),
+          );
+        },
+      });
       if (cancelledRef.current.has(id)) {
         cancelledRef.current.delete(id);
         deleteFromR2({ key }).catch(() => {});
         return;
       }
       setPhotos((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "done", url } : p)),
+        prev.map((p) => (p.id === id ? { ...p, status: "done", progress: 100, url } : p)),
       );
     } catch (e) {
       if (cancelledRef.current.has(id)) {
@@ -300,7 +308,7 @@ const PublishListing = () => {
     }
     setPhotos((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, status: "pending", error: undefined, url: undefined } : p,
+        p.id === id ? { ...p, status: "pending", progress: 0, error: undefined, url: undefined } : p,
       ),
     );
   };
@@ -319,6 +327,7 @@ const PublishListing = () => {
       file: f,
       preview: URL.createObjectURL(f),
       status: "pending",
+      progress: 0,
     }));
     setPhotos((p) => [...p, ...newItems]);
     // Kick off uploads in background
@@ -353,7 +362,7 @@ const PublishListing = () => {
       prev.map((p) => {
         if (p.id !== id) return p;
         if (p.preview.startsWith("blob:")) URL.revokeObjectURL(p.preview);
-        return { ...p, file, preview: newPreview, status: "pending", error: undefined, url: undefined };
+        return { ...p, file, preview: newPreview, status: "pending", progress: 0, error: undefined, url: undefined };
       }),
     );
     void uploadPhoto(id, file);
@@ -648,28 +657,33 @@ const PublishListing = () => {
 
                   {/* Status overlay */}
                   {(p.status === "uploading" || p.status === "pending") && (
-                    <div className="absolute inset-0 bg-background/65 backdrop-blur-[1px] flex flex-col items-center justify-center gap-1 text-xs font-medium px-2 text-center">
+                    <div className="absolute inset-0 bg-background/65 backdrop-blur-[1px] flex flex-col items-center justify-center gap-1 text-xs font-medium px-3 text-center">
                       <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                      <span>{p.status === "pending" ? "En attente…" : "Envoi…"}</span>
+                      <span>
+                        {p.status === "pending" ? "En attente…" : `Envoi… ${p.progress}%`}
+                      </span>
                       {p.status === "uploading" && (
-                        <div className="flex items-center gap-2 mt-1">
-                          <button
-                            type="button"
-                            onClick={() => cancelUpload(p.id, "keep")}
-                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-foreground/80 hover:text-destructive underline underline-offset-2"
-                            aria-label="Annuler l'envoi"
-                          >
-                            <X className="w-3 h-3" /> Annuler
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => cancelUpload(p.id, "remove")}
-                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-foreground/80 hover:text-destructive underline underline-offset-2"
-                            aria-label="Annuler et retirer la photo"
-                          >
-                            <Trash2 className="w-3 h-3" /> Retirer
-                          </button>
-                        </div>
+                        <>
+                          <Progress value={p.progress} className="h-1.5 w-full mt-1" />
+                          <div className="flex items-center gap-2 mt-1">
+                            <button
+                              type="button"
+                              onClick={() => cancelUpload(p.id, "keep")}
+                              className="inline-flex items-center gap-1 text-[10px] font-semibold text-foreground/80 hover:text-destructive underline underline-offset-2"
+                              aria-label="Annuler l'envoi"
+                            >
+                              <X className="w-3 h-3" /> Annuler
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => cancelUpload(p.id, "remove")}
+                              className="inline-flex items-center gap-1 text-[10px] font-semibold text-foreground/80 hover:text-destructive underline underline-offset-2"
+                              aria-label="Annuler et retirer la photo"
+                            >
+                              <Trash2 className="w-3 h-3" /> Retirer
+                            </button>
+                          </div>
+                        </>
                       )}
                       {p.status === "pending" && (
                         <button
