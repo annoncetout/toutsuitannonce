@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "findit-fast-now",
+  "name": "talla",
   "compatibility_date": "2025-01-01",
   "build": {
     "command": "bun run build"
