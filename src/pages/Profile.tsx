@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog,
@@ -167,7 +168,7 @@ const Profile = () => {
               <AvatarImage src={avatarUrl ?? undefined} />
               <AvatarFallback><UserIcon className="w-8 h-8" /></AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <Label htmlFor="avatar" className="cursor-pointer">
                 <div className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-md border border-input hover:bg-accent">
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
@@ -175,7 +176,13 @@ const Profile = () => {
                 </div>
                 <input id="avatar" type="file" accept="image/*" className="hidden" onChange={onAvatarUpload} disabled={uploading} />
               </Label>
-              <p className="text-xs text-muted-foreground mt-1">JPG ou PNG, max 3 Mo</p>
+              <p className="text-xs text-muted-foreground mt-1">JPG ou PNG, max 5 Mo</p>
+              {uploading && (
+                <div className="mt-2 max-w-xs">
+                  <Progress value={uploadProgress} className="h-2" />
+                  <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">Envoi… {uploadProgress}%</p>
+                </div>
+              )}
             </div>
           </div>
 
