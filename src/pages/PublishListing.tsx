@@ -308,7 +308,7 @@ const PublishListing = () => {
     }
     setPhotos((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, status: "pending", error: undefined, url: undefined } : p,
+        p.id === id ? { ...p, status: "pending", progress: 0, error: undefined, url: undefined } : p,
       ),
     );
   };
