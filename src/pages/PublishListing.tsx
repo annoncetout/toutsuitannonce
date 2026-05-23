@@ -46,6 +46,7 @@ interface PhotoItem {
   file: File;
   preview: string;
   status: UploadStatus;
+  progress: number;
   url?: string;
   error?: string;
 }
@@ -267,18 +268,25 @@ const PublishListing = () => {
     if (!user) return;
     cancelledRef.current.delete(id);
     setPhotos((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "uploading", error: undefined } : p)),
+      prev.map((p) => (p.id === id ? { ...p, status: "uploading", progress: 0, error: undefined } : p)),
     );
     try {
       const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
-      const { url, key } = await uploadToR2(file, { folder: "annonces" });
+      const { url, key } = await uploadToR2(file, {
+        folder: "annonces",
+        onProgress: (pct) => {
+          setPhotos((prev) =>
+            prev.map((p) => (p.id === id && p.status === "uploading" ? { ...p, progress: pct } : p)),
+          );
+        },
+      });
       if (cancelledRef.current.has(id)) {
         cancelledRef.current.delete(id);
         deleteFromR2({ key }).catch(() => {});
         return;
       }
       setPhotos((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "done", url } : p)),
+        prev.map((p) => (p.id === id ? { ...p, status: "done", progress: 100, url } : p)),
       );
     } catch (e) {
       if (cancelledRef.current.has(id)) {
@@ -319,6 +327,7 @@ const PublishListing = () => {
       file: f,
       preview: URL.createObjectURL(f),
       status: "pending",
+      progress: 0,
     }));
     setPhotos((p) => [...p, ...newItems]);
     // Kick off uploads in background
@@ -353,7 +362,7 @@ const PublishListing = () => {
       prev.map((p) => {
         if (p.id !== id) return p;
         if (p.preview.startsWith("blob:")) URL.revokeObjectURL(p.preview);
-        return { ...p, file, preview: newPreview, status: "pending", error: undefined, url: undefined };
+        return { ...p, file, preview: newPreview, status: "pending", progress: 0, error: undefined, url: undefined };
       }),
     );
     void uploadPhoto(id, file);
