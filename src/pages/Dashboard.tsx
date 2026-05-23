@@ -138,8 +138,19 @@ const Dashboard = () => {
 
   const deleteListing = async (id: string) => {
     if (!confirm("Supprimer cette annonce ?")) return;
+    // Fetch image URLs first so we can clean R2 after the DB row is gone.
+    const { data: row } = await supabase
+      .from("listings")
+      .select("images")
+      .eq("id", id)
+      .maybeSingle();
     const { error } = await supabase.from("listings").delete().eq("id", id);
     if (error) return toast.error(error.message);
+    const imgs = (row?.images ?? []) as string[];
+    if (imgs.length > 0) {
+      const { deleteFromR2Many } = await import("@/lib/r2Upload");
+      deleteFromR2Many(imgs).catch(() => {});
+    }
     setMyListings((prev) => prev.filter((l) => l.id !== id));
     toast.success("Annonce supprimée");
   };

@@ -40,6 +40,7 @@ const Profile = () => {
   const [busy, setBusy] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState<ProfileForm>({
     display_name: "",
@@ -124,10 +125,14 @@ const Profile = () => {
     if (!file || !user) return;
     if (file.size > 5 * 1024 * 1024) return toast.error("Image trop lourde (max 5 Mo)");
     setUploading(true);
+    setUploadProgress(0);
     try {
       const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
       const previous = avatarUrl;
-      const { url } = await uploadToR2(file, { folder: "avatars" });
+      const { url } = await uploadToR2(file, {
+        folder: "avatars",
+        onProgress: (p) => setUploadProgress(p),
+      });
       const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
       if (error) throw error;
       setAvatarUrl(url);
@@ -137,6 +142,7 @@ const Profile = () => {
       toast.error(err instanceof Error ? err.message : "Erreur upload");
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
