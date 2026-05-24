@@ -1,4 +1,4 @@
-import Categories from "@/components/Categories";
+import AdCarousel from "@/components/AdCarousel";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
