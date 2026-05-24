@@ -508,11 +508,16 @@ const Admin = () => {
             <TabsTrigger value="boosts"><Sparkles className="w-4 h-4 mr-1" />Boosts</TabsTrigger>
             <TabsTrigger value="categories"><FolderTree className="w-4 h-4 mr-1" />Catégories</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="w-4 h-4 mr-1" />Analytics PWA</TabsTrigger>
+            <TabsTrigger value="ads"><Megaphone className="w-4 h-4 mr-1" />Publicités</TabsTrigger>
             <TabsTrigger value="settings"><SettingsIcon className="w-4 h-4 mr-1" />Paramètres</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
             <PwaAnalyticsTab />
+          </TabsContent>
+
+          <TabsContent value="ads">
+            <AdsAdminTab />
           </TabsContent>
 
           <TabsContent value="ai-moderation">
