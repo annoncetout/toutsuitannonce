@@ -6,6 +6,7 @@ export const ALLOWED_FOLDERS = new Set([
   "avatars",
   "premium",
   "documents",
+  "ads",
 ]);
 
 export const ALLOWED_EXTS = new Set(["webp", "jpg", "jpeg", "png"]);

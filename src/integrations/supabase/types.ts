@@ -44,6 +44,72 @@ export type Database = {
         }
         Relationships: []
       }
+      advertisements: {
+        Row: {
+          animation_type: string
+          button_text: string | null
+          clicks: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount: number | null
+          end_date: string
+          id: string
+          image_url: string | null
+          impressions: number
+          is_active: boolean
+          position: number
+          redirect_url: string | null
+          start_date: string
+          subtitle: string | null
+          theme_color: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          animation_type?: string
+          button_text?: string | null
+          clicks?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount?: number | null
+          end_date?: string
+          id?: string
+          image_url?: string | null
+          impressions?: number
+          is_active?: boolean
+          position?: number
+          redirect_url?: string | null
+          start_date?: string
+          subtitle?: string | null
+          theme_color?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          animation_type?: string
+          button_text?: string | null
+          clicks?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount?: number | null
+          end_date?: string
+          id?: string
+          image_url?: string | null
+          impressions?: number
+          is_active?: boolean
+          position?: number
+          redirect_url?: string | null
+          start_date?: string
+          subtitle?: string | null
+          theme_color?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -919,6 +985,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_ad_metric: {
+        Args: { _ad_id: string; _metric: string }
+        Returns: undefined
       }
       move_to_dlq: {
         Args: {
