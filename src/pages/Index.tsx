@@ -33,7 +33,7 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <Categories />
+        <AdCarousel />
         <Listings />
         <AIRecommendations mode="foryou" userId={user?.id} title="Recommandé pour vous" />
         <PromoBanner />
