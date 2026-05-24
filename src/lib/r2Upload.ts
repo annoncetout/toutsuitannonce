@@ -60,7 +60,7 @@ export async function compressToWebP(file: File): Promise<File> {
 }
 
 export interface UploadOptions {
-  folder?: "annonces" | "avatars" | "premium" | "documents";
+  folder?: "annonces" | "avatars" | "premium" | "documents" | "ads";
   compress?: boolean;
   onProgress?: (pct: number) => void;
   signal?: AbortSignal;
