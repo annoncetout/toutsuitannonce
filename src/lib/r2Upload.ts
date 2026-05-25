@@ -64,22 +64,16 @@ export interface UploadOptions {
   compress?: boolean;
   onProgress?: (pct: number) => void;
   signal?: AbortSignal;
+  /** Total attempts (incl. first). Default 3. */
+  retries?: number;
+  /** Per-attempt timeout in ms. Default 60s. */
+  timeoutMs?: number;
 }
 
-/**
- * Upload a single file to R2 via the edge function. Uses XHR so we can
- * report a real upload progress percentage to the UI.
- */
-export async function uploadToR2(
-  file: File,
-  opts: UploadOptions = {},
+async function uploadOnce(
+  f: File,
+  opts: UploadOptions,
 ): Promise<{ url: string; key: string }> {
-  let f = file;
-  if (opts.compress !== false) f = await compressToWebP(file);
-
-  if (f.size > MAX_BYTES) throw new Error("Image trop lourde (max 5 Mo)");
-  if (!ALLOWED.includes(f.type)) throw new Error("Format non supporté (jpg/png/webp uniquement)");
-
   const session = (await supabase.auth.getSession()).data.session;
   if (!session?.access_token) throw new Error("Session expirée — reconnectez-vous");
 
@@ -92,8 +86,22 @@ export async function uploadToR2(
   form.append("folder", opts.folder ?? "annonces");
   form.append("ext", f.type === "image/webp" ? "webp" : f.type === "image/png" ? "png" : "jpg");
 
+  const timeoutMs = opts.timeoutMs ?? 60_000;
+
   return await new Promise<{ url: string; key: string }>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    let settled = false;
+    const finish = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      fn();
+    };
+    const timer = setTimeout(() => {
+      try { xhr.abort(); } catch { /* noop */ }
+      finish(() => reject(new Error("Délai d'envoi dépassé (réessayez)")));
+    }, timeoutMs);
+
     xhr.open("POST", endpoint);
     xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
     xhr.setRequestHeader("apikey", anonKey);
@@ -101,29 +109,70 @@ export async function uploadToR2(
 
     if (opts.signal) {
       if (opts.signal.aborted) {
-        xhr.abort();
-        return reject(new DOMException("Aborted", "AbortError"));
+        try { xhr.abort(); } catch { /* noop */ }
+        return finish(() => reject(new DOMException("Aborted", "AbortError")));
       }
-      opts.signal.addEventListener("abort", () => xhr.abort(), { once: true });
+      opts.signal.addEventListener(
+        "abort",
+        () => {
+          try { xhr.abort(); } catch { /* noop */ }
+          finish(() => reject(new DOMException("Aborted", "AbortError")));
+        },
+        { once: true },
+      );
     }
 
     xhr.upload.onprogress = (e) => {
       if (!e.lengthComputable || !opts.onProgress) return;
       opts.onProgress(Math.min(99, Math.round((e.loaded / e.total) * 100)));
     };
-    xhr.onerror = () => reject(new Error("Erreur réseau pendant l'upload"));
-    xhr.onabort = () => reject(new DOMException("Aborted", "AbortError"));
+    xhr.onerror = () => finish(() => reject(new Error("Erreur réseau pendant l'upload")));
+    xhr.onabort = () => finish(() => reject(new DOMException("Aborted", "AbortError")));
     xhr.onload = () => {
       const body = (xhr.response ?? {}) as { url?: string; key?: string; error?: string };
       if (xhr.status >= 200 && xhr.status < 300 && body.url && body.key) {
         opts.onProgress?.(100);
-        resolve({ url: body.url, key: body.key });
+        finish(() => resolve({ url: body.url!, key: body.key! }));
       } else {
-        reject(new Error(body.error || `Upload échoué (${xhr.status})`));
+        finish(() => reject(new Error(body.error || `Upload échoué (${xhr.status || "réseau"})`)));
       }
     };
     xhr.send(form);
   });
+}
+
+/**
+ * Upload a single file to R2 via the edge function, with automatic retries
+ * on transient network failures and a per-attempt timeout.
+ */
+export async function uploadToR2(
+  file: File,
+  opts: UploadOptions = {},
+): Promise<{ url: string; key: string }> {
+  let f = file;
+  if (opts.compress !== false) f = await compressToWebP(file);
+
+  if (f.size > MAX_BYTES) throw new Error("Image trop lourde (max 5 Mo)");
+  if (!ALLOWED.includes(f.type)) throw new Error("Format non supporté (jpg/png/webp uniquement)");
+
+  const attempts = Math.max(1, opts.retries ?? 3);
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await uploadOnce(f, opts);
+    } catch (e) {
+      lastErr = e;
+      if (e instanceof DOMException && e.name === "AbortError") throw e;
+      const msg = e instanceof Error ? e.message : "";
+      // Don't retry permanent client errors
+      if (/Session expirée|Format non supporté|trop lourde|Aucun fichier|non autoris/i.test(msg)) throw e;
+      if (i < attempts - 1) {
+        opts.onProgress?.(0);
+        await new Promise((r) => setTimeout(r, 800 * (i + 1)));
+      }
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("Upload échoué");
 }
 
 /** Delete a single object (by key or url). Best-effort: never throws. */
