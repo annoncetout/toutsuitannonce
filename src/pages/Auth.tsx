@@ -61,7 +61,19 @@ const Auth = () => {
       }
     }
 
+    if (!captchaToken) {
+      toast.error("Veuillez compléter la vérification anti-bot.");
+      return;
+    }
+
     setBusy(true);
+    const captchaOk = await verifyTurnstileToken(captchaToken, tab === "signup" ? "signup" : "login");
+    if (!captchaOk) {
+      setBusy(false);
+      resetCaptcha();
+      toast.error("Vérification anti-bot échouée. Réessayez.");
+      return;
+    }
     if (tab === "signup") {
       const normalizedEmail = email.trim().toLowerCase();
       const { error } = await supabase.auth.signUp({
