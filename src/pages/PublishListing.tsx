@@ -827,9 +827,19 @@ const PublishListing = () => {
             </ul>
           </div>
 
+          <div className="flex justify-center">
+            <TurnstileWidget
+              ref={turnstileRef}
+              action="publish_listing"
+              onVerify={(t) => setCaptchaToken(t)}
+              onExpire={() => setCaptchaToken(null)}
+              onError={() => setCaptchaToken(null)}
+            />
+          </div>
+
           <div className="flex gap-3">
             <Button type="button" variant="outlineGold" onClick={() => navigate(-1)} className="flex-1">Annuler</Button>
-            <Button type="submit" variant="gold" className="flex-1" disabled={busy}>
+            <Button type="submit" variant="gold" className="flex-1" disabled={busy || !captchaToken}>
               {busy && <Loader2 className="w-4 h-4 animate-spin" />}
               {form.is_premium
                 ? `Publier en Premium · ${PREMIUM_PRICE_FCFA.toLocaleString("fr-FR")} FCFA`
