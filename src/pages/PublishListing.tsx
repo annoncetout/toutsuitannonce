@@ -26,6 +26,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { MAX_GALLERY_IMAGES } from "@/components/ImageGallery";
+import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const PREMIUM_PRICE_FCFA = 2000;
 const PREMIUM_DURATION_DAYS = 30;
