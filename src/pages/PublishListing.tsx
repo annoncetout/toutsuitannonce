@@ -400,7 +400,19 @@ const PublishListing = () => {
 
   const publishListing = async (premiumRequested: boolean) => {
     if (!user) return;
+    if (!captchaToken) {
+      toast.error("Veuillez compléter la vérification anti-bot.");
+      return;
+    }
     setBusy(true);
+    const captchaOk = await verifyTurnstileToken(captchaToken, "publish_listing");
+    if (!captchaOk) {
+      setBusy(false);
+      setCaptchaToken(null);
+      turnstileRef.current?.reset();
+      toast.error("Vérification anti-bot échouée. Réessayez.");
+      return;
+    }
     const uploadedUrls = photos.map((p) => p.url!).filter(Boolean);
 
     // Ensure the user's profile exists (older sessions may predate the profile trigger).
