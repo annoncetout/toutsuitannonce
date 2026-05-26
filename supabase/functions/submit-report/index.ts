@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { verifyTurnstile, getClientIp } from "../_shared/turnstile.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,10 +38,18 @@ Deno.serve(async (req) => {
     const userId = userData.user.id;
 
     const body = await req.json().catch(() => ({}));
-    const { target_type, target_id, reason, details } = body || {};
+    const { target_type, target_id, reason, details, captcha_token } = body || {};
     if (!target_type || !target_id || !reason) {
       return new Response(JSON.stringify({ error: "target_type, target_id and reason are required" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const captcha = await verifyTurnstile(captcha_token, getClientIp(req));
+    if (!captcha.success) {
+      return new Response(JSON.stringify({ error: "Vérification anti-bot échouée." }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

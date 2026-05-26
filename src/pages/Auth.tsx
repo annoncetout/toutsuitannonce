@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw } from "lucide-react";
+import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
+import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
@@ -31,6 +33,13 @@ const Auth = () => {
   const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem("pending-confirmation-email") ?? "");
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    turnstileRef.current?.reset();
+  };
 
   useEffect(() => {
     if (!authLoading && user) navigate(redirectTo, { replace: true });
@@ -52,7 +61,19 @@ const Auth = () => {
       }
     }
 
+    if (!captchaToken) {
+      toast.error("Veuillez compléter la vérification anti-bot.");
+      return;
+    }
+
     setBusy(true);
+    const captchaOk = await verifyTurnstileToken(captchaToken, tab === "signup" ? "signup" : "login");
+    if (!captchaOk) {
+      setBusy(false);
+      resetCaptcha();
+      toast.error("Vérification anti-bot échouée. Réessayez.");
+      return;
+    }
     if (tab === "signup") {
       const normalizedEmail = email.trim().toLowerCase();
       const { error } = await supabase.auth.signUp({
@@ -105,6 +126,7 @@ const Auth = () => {
         }
       }
     }
+    resetCaptcha();
     setBusy(false);
   };
 
@@ -244,8 +266,18 @@ const Auth = () => {
                 </div>
               </div>
 
-              <Button type="submit" variant="gold" className="w-full" disabled={busy}>
-                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+              <div className="flex justify-center pt-1">
+                <TurnstileWidget
+                  ref={turnstileRef}
+                  action={tab === "signup" ? "signup" : "login"}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={() => setCaptchaToken(null)}
+                />
+              </div>
+
+              <Button type="submit" variant="gold" className="w-full" disabled={busy || !captchaToken}>
+                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                 {tab === "login" ? "Se connecter" : "Créer mon compte"}
               </Button>
             </form>
