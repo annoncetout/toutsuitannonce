@@ -33,6 +33,13 @@ const Auth = () => {
   const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem("pending-confirmation-email") ?? "");
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    turnstileRef.current?.reset();
+  };
 
   useEffect(() => {
     if (!authLoading && user) navigate(redirectTo, { replace: true });
