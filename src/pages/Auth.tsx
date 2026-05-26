@@ -266,8 +266,18 @@ const Auth = () => {
                 </div>
               </div>
 
-              <Button type="submit" variant="gold" className="w-full" disabled={busy}>
-                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+              <div className="flex justify-center pt-1">
+                <TurnstileWidget
+                  ref={turnstileRef}
+                  action={tab === "signup" ? "signup" : "login"}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={() => setCaptchaToken(null)}
+                />
+              </div>
+
+              <Button type="submit" variant="gold" className="w-full" disabled={busy || !captchaToken}>
+                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                 {tab === "login" ? "Se connecter" : "Créer mon compte"}
               </Button>
             </form>
