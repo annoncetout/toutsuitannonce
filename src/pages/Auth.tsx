@@ -126,6 +126,7 @@ const Auth = () => {
         }
       }
     }
+    resetCaptcha();
     setBusy(false);
   };
 
