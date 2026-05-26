@@ -69,6 +69,8 @@ const PublishListing = () => {
     is_premium: false,
   });
   const [busy, setBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiLang, setAiLang] = useState<"fr" | "en">("fr");
   const [aiProgress, setAiProgress] = useState(0);
