@@ -45,6 +45,13 @@ const Auth = () => {
     if (!authLoading && user) navigate(redirectTo, { replace: true });
   }, [user, authLoading, navigate, redirectTo]);
 
+  // When switching between Connexion / Inscription the Turnstile widget
+  // remounts; the previous token becomes invalid, so we must drop it.
+  useEffect(() => {
+    setCaptchaToken(null);
+    turnstileRef.current?.reset();
+  }, [tab]);
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
