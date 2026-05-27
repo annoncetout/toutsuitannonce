@@ -295,7 +295,7 @@ const Auth = () => {
               <div className="flex justify-center pt-1">
                 <TurnstileWidget
                   ref={turnstileRef}
-                  action={tab === "signup" ? "signup" : "login"}
+                  action="auth"
                   onVerify={(t) => setCaptchaToken(t)}
                   onExpire={() => setCaptchaToken(null)}
                   onError={() => setCaptchaToken(null)}
