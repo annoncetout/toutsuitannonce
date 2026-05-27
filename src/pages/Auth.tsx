@@ -208,11 +208,16 @@ const Auth = () => {
                     size="sm"
                     className="mt-3 w-full sm:w-auto"
                     onClick={handleResendConfirmation}
-                    disabled={resendBusy || busy}
+                    disabled={resendBusy || busy || !captchaToken}
                   >
                     {resendBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                     Renvoyer l’email de confirmation
                   </Button>
+                  {!captchaToken && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Complétez la vérification anti-bot ci-dessous pour activer le renvoi.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
