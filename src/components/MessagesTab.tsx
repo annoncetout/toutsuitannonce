@@ -234,22 +234,43 @@ const MessagesTab = ({ userId }: { userId: string }) => {
               );
             })}
           </div>
-          <div className="border-t border-border p-3 flex gap-2">
-            <Textarea
-              value={reply}
-              onChange={(e) => setReply(e.target.value)}
-              placeholder="Écrire un message…"
-              className="min-h-[44px] max-h-32 resize-none"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  send();
-                }
-              }}
-            />
-            <Button variant="gold" onClick={send} disabled={sending || !reply.trim()}>
-              <Send className="w-4 h-4" />
-            </Button>
+          <div className="border-t border-border p-3 space-y-2">
+            <div className="flex gap-2">
+              <Textarea
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                placeholder="Écrire un message…"
+                className="min-h-[44px] max-h-32 resize-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    send();
+                  }
+                }}
+              />
+              <Button
+                variant="gold"
+                onClick={send}
+                disabled={sending || !reply.trim() || !captchaToken}
+                title={!captchaToken ? "Complétez la vérification anti-bot" : undefined}
+              >
+                {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              </Button>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" />
+                Protection anti-spam
+              </span>
+              <TurnstileWidget
+                ref={turnstileRef}
+                action="message"
+                size="compact"
+                onVerify={(t) => setCaptchaToken(t)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+              />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
