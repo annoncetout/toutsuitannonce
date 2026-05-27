@@ -139,12 +139,26 @@ const Auth = () => {
       return;
     }
 
+    if (!captchaToken) {
+      toast.error("Veuillez compléter la vérification anti-bot avant de renvoyer l’email.");
+      return;
+    }
+
     setResendBusy(true);
+    const captchaOk = await verifyTurnstileToken(captchaToken, "resend");
+    if (!captchaOk) {
+      setResendBusy(false);
+      resetCaptcha();
+      toast.error("Vérification anti-bot échouée. Réessayez.");
+      return;
+    }
+
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: targetEmail,
       options: { emailRedirectTo: getAuthCallbackUrl(redirectTo) },
     });
+    resetCaptcha();
     setResendBusy(false);
 
     if (error) return toast.error(error.message);
@@ -194,11 +208,16 @@ const Auth = () => {
                     size="sm"
                     className="mt-3 w-full sm:w-auto"
                     onClick={handleResendConfirmation}
-                    disabled={resendBusy || busy}
+                    disabled={resendBusy || busy || !captchaToken}
                   >
                     {resendBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                     Renvoyer l’email de confirmation
                   </Button>
+                  {!captchaToken && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Complétez la vérification anti-bot ci-dessous pour activer le renvoi.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
