@@ -139,12 +139,26 @@ const Auth = () => {
       return;
     }
 
+    if (!captchaToken) {
+      toast.error("Veuillez compléter la vérification anti-bot avant de renvoyer l’email.");
+      return;
+    }
+
     setResendBusy(true);
+    const captchaOk = await verifyTurnstileToken(captchaToken, "resend");
+    if (!captchaOk) {
+      setResendBusy(false);
+      resetCaptcha();
+      toast.error("Vérification anti-bot échouée. Réessayez.");
+      return;
+    }
+
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: targetEmail,
       options: { emailRedirectTo: getAuthCallbackUrl(redirectTo) },
     });
+    resetCaptcha();
     setResendBusy(false);
 
     if (error) return toast.error(error.message);
