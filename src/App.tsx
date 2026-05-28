@@ -11,8 +11,6 @@ import Index from "./pages/Index.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
 
-const Auth = lazy(() => import("./pages/Auth.tsx"));
-const AuthCallback = lazy(() => import("./pages/AuthCallback.tsx"));
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -39,6 +37,8 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
   });
 }
 
+const Auth = lazyWithRetry(() => import("./pages/Auth.tsx"));
+const AuthCallback = lazyWithRetry(() => import("./pages/AuthCallback.tsx"));
 const Dashboard = lazyWithRetry(() => import("./pages/Dashboard.tsx"));
 const Profile = lazyWithRetry(() => import("./pages/Profile.tsx"));
 const PublishListing = lazyWithRetry(() => import("./pages/PublishListing.tsx"));
