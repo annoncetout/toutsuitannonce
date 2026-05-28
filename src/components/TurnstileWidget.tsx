@@ -142,11 +142,13 @@ const TurnstileWidget = forwardRef<TurnstileHandle, Props>(
         if (window.turnstile && widgetIdRef.current) {
           try {
             window.turnstile.remove(widgetIdRef.current);
-          } catch {}
+          } catch {
+            // Widget may already be removed by Cloudflare during a route change.
+          }
           widgetIdRef.current = null;
         }
       };
-    }, [action, theme, size]);
+    }, [action, theme, size, clearResetTimer, resetWidget]);
 
     const StatusIcon = status === "loading" ? Loader2 : status === "verified" ? CheckCircle2 : status === "error" ? AlertCircle : ShieldCheck;
 
