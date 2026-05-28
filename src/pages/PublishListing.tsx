@@ -27,7 +27,7 @@ import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { MAX_GALLERY_IMAGES } from "@/components/ImageGallery";
 import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
-import { verifyTurnstileToken } from "@/lib/turnstile";
+import { getTurnstileErrorMessage, verifyTurnstileToken } from "@/lib/turnstile";
 
 const PREMIUM_PRICE_FCFA = 2000;
 const PREMIUM_DURATION_DAYS = 30;
@@ -405,12 +405,12 @@ const PublishListing = () => {
       return;
     }
     setBusy(true);
-    const captchaOk = await verifyTurnstileToken(captchaToken, "publish_listing");
-    if (!captchaOk) {
+    const captcha = await verifyTurnstileToken(captchaToken, "publish_listing");
+    if (!captcha.success) {
       setBusy(false);
       setCaptchaToken(null);
       turnstileRef.current?.reset();
-      toast.error("Vérification anti-bot échouée. Réessayez.");
+      toast.error(getTurnstileErrorMessage(captcha.reason));
       return;
     }
     const uploadedUrls = photos.map((p) => p.url!).filter(Boolean);
