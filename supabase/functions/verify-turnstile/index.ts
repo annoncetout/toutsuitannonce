@@ -18,9 +18,14 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const token = typeof body?.token === "string" ? body.token : null;
-    const result = await verifyTurnstile(token, getClientIp(req));
+    const action = typeof body?.action === "string" ? body.action : null;
+    const result = await verifyTurnstile(token, getClientIp(req), action);
     return new Response(
-      JSON.stringify({ success: result.success, errors: result.errorCodes ?? [] }),
+      JSON.stringify({
+        success: result.success,
+        errors: result.errorCodes ?? [],
+        action: result.action,
+      }),
       {
         status: result.success ? 200 : 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
