@@ -61,21 +61,14 @@ const TurnstileWidget = forwardRef<TurnstileHandle, Props>(
     const widgetIdRef = useRef<string | null>(null);
     const cbRef = useRef({ onVerify, onExpire, onError });
     cbRef.current = { onVerify, onExpire, onError };
-
-    useImperativeHandle(ref, () => ({
-      reset: () => resetWidget(),
-      getResponse: () =>
-        window.turnstile && widgetIdRef.current ? window.turnstile.getResponse(widgetIdRef.current) : undefined,
-    }));
-
     const [status, setStatus] = useState<"loading" | "ready" | "verified" | "error">("loading");
     const [message, setMessage] = useState("Chargement de la vérification…");
     const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const clearResetTimer = () => {
+    const clearResetTimer = useCallback(() => {
       if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
       resetTimerRef.current = null;
-    };
+    }, []);
 
     const resetWidget = useCallback(() => {
       clearResetTimer();
@@ -84,7 +77,13 @@ const TurnstileWidget = forwardRef<TurnstileHandle, Props>(
         setStatus("ready");
         setMessage("Vérification anti-bot prête.");
       }
-    }, []);
+    }, [clearResetTimer]);
+
+    useImperativeHandle(ref, () => ({
+      reset: () => resetWidget(),
+      getResponse: () =>
+        window.turnstile && widgetIdRef.current ? window.turnstile.getResponse(widgetIdRef.current) : undefined,
+    }), [resetWidget]);
 
     useEffect(() => {
       let cancelled = false;
