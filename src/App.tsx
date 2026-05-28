@@ -12,7 +12,7 @@ import RequireAuth from "./components/RequireAuth.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
-function lazyWithRetry<T extends React.ComponentType<any>>(
+function lazyWithRetry<T extends React.ComponentType>(
   factory: () => Promise<{ default: T }>,
 ) {
   return lazy(async () => {
