@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
-import { verifyTurnstileToken } from "@/lib/turnstile";
+import { getTurnstileErrorMessage, verifyTurnstileToken } from "@/lib/turnstile";
 
 interface Msg {
   id: string;
@@ -137,12 +137,12 @@ const MessagesTab = ({ userId }: { userId: string }) => {
       return;
     }
     setSending(true);
-    const captchaOk = await verifyTurnstileToken(captchaToken, "message");
-    if (!captchaOk) {
+    const captcha = await verifyTurnstileToken(captchaToken, "message");
+    if (!captcha.success) {
       setSending(false);
       setCaptchaToken(null);
       turnstileRef.current?.reset();
-      toast.error("Vérification anti-bot échouée. Réessayez.");
+      toast.error(getTurnstileErrorMessage(captcha.reason));
       return;
     }
     const { error } = await supabase.from("messages").insert({

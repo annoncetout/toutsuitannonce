@@ -1,5 +1,7 @@
-import { useEffect, useImperativeHandle, useRef, forwardRef } from "react";
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, forwardRef } from "react";
+import { AlertCircle, CheckCircle2, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
+import { Button } from "@/components/ui/button";
 
 declare global {
   interface Window {
@@ -59,44 +61,111 @@ const TurnstileWidget = forwardRef<TurnstileHandle, Props>(
     const widgetIdRef = useRef<string | null>(null);
     const cbRef = useRef({ onVerify, onExpire, onError });
     cbRef.current = { onVerify, onExpire, onError };
+    const [status, setStatus] = useState<"loading" | "ready" | "verified" | "error">("loading");
+    const [message, setMessage] = useState("Chargement de la vérification…");
+    const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const clearResetTimer = useCallback(() => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }, []);
+
+    const resetWidget = useCallback(() => {
+      clearResetTimer();
+      if (window.turnstile && widgetIdRef.current) {
+        window.turnstile.reset(widgetIdRef.current);
+        setStatus("ready");
+        setMessage("Vérification anti-bot prête.");
+      }
+    }, [clearResetTimer]);
 
     useImperativeHandle(ref, () => ({
-      reset: () => {
-        if (window.turnstile && widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
-      },
+      reset: () => resetWidget(),
       getResponse: () =>
         window.turnstile && widgetIdRef.current ? window.turnstile.getResponse(widgetIdRef.current) : undefined,
-    }));
+    }), [resetWidget]);
 
     useEffect(() => {
       let cancelled = false;
+      const loadTimeout = window.setTimeout(() => {
+        if (!widgetIdRef.current) {
+          setStatus("error");
+          setMessage("Chargement trop long. Réessayez.");
+          cbRef.current.onError?.();
+        }
+      }, 10000);
       loadTurnstile()
         .then(() => {
           if (cancelled || !containerRef.current || !window.turnstile) return;
+          window.clearTimeout(loadTimeout);
           widgetIdRef.current = window.turnstile.render(containerRef.current, {
             sitekey: TURNSTILE_SITE_KEY,
             action,
             theme,
             size,
-            callback: (token: string) => cbRef.current.onVerify(token),
-            "expired-callback": () => cbRef.current.onExpire?.(),
-            "error-callback": () => cbRef.current.onError?.(),
+            callback: (token: string) => {
+              setStatus("verified");
+              setMessage("Vérification réussie.");
+              clearResetTimer();
+              resetTimerRef.current = setTimeout(() => {
+                cbRef.current.onExpire?.();
+                resetWidget();
+              }, 105000);
+              cbRef.current.onVerify(token);
+            },
+            "expired-callback": () => {
+              setStatus("error");
+              setMessage("Captcha expiré. Nouvelle vérification nécessaire.");
+              cbRef.current.onExpire?.();
+              window.setTimeout(() => resetWidget(), 700);
+            },
+            "error-callback": (code?: string) => {
+              setStatus("error");
+              setMessage(code === "110200" ? "Domaine Turnstile non autorisé." : "Erreur captcha. Réessayez.");
+              cbRef.current.onError?.();
+            },
           });
+          setStatus("ready");
+          setMessage("Vérification anti-bot prête.");
         })
-        .catch(() => cbRef.current.onError?.());
+        .catch(() => {
+          window.clearTimeout(loadTimeout);
+          setStatus("error");
+          setMessage("Impossible de charger Cloudflare Turnstile.");
+          cbRef.current.onError?.();
+        });
 
       return () => {
         cancelled = true;
+        window.clearTimeout(loadTimeout);
+        clearResetTimer();
         if (window.turnstile && widgetIdRef.current) {
           try {
             window.turnstile.remove(widgetIdRef.current);
-          } catch {}
+          } catch {
+            // Widget may already be removed by Cloudflare during a route change.
+          }
           widgetIdRef.current = null;
         }
       };
-    }, [action, theme, size]);
+    }, [action, theme, size, clearResetTimer, resetWidget]);
 
-    return <div ref={containerRef} className={className} />;
+    const StatusIcon = status === "loading" ? Loader2 : status === "verified" ? CheckCircle2 : status === "error" ? AlertCircle : ShieldCheck;
+
+    return (
+      <div className={className}>
+        <div ref={containerRef} />
+        <div className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground" aria-live="polite">
+          <StatusIcon className={`h-3.5 w-3.5 ${status === "loading" ? "animate-spin" : status === "verified" ? "text-primary" : status === "error" ? "text-destructive" : ""}`} />
+          <span>{message}</span>
+          {status === "error" && (
+            <Button type="button" variant="ghost" size="sm" className="h-6 px-2" onClick={resetWidget}>
+              <RefreshCw className="h-3 w-3" />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
   },
 );
 

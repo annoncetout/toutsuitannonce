@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
-import { verifyTurnstileToken } from "@/lib/turnstile";
+import { getTurnstileErrorMessage, verifyTurnstileToken } from "@/lib/turnstile";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
@@ -74,11 +74,11 @@ const Auth = () => {
     }
 
     setBusy(true);
-    const captchaOk = await verifyTurnstileToken(captchaToken, tab === "signup" ? "signup" : "login");
-    if (!captchaOk) {
+    const captcha = await verifyTurnstileToken(captchaToken, tab === "signup" ? "signup" : "login");
+    if (!captcha.success) {
       setBusy(false);
       resetCaptcha();
-      toast.error("Vérification anti-bot échouée. Réessayez.");
+      toast.error(getTurnstileErrorMessage(captcha.reason));
       return;
     }
     if (tab === "signup") {
@@ -152,11 +152,11 @@ const Auth = () => {
     }
 
     setResendBusy(true);
-    const captchaOk = await verifyTurnstileToken(captchaToken, "resend");
-    if (!captchaOk) {
+    const captcha = await verifyTurnstileToken(captchaToken, "resend");
+    if (!captcha.success) {
       setResendBusy(false);
       resetCaptcha();
-      toast.error("Vérification anti-bot échouée. Réessayez.");
+      toast.error(getTurnstileErrorMessage(captcha.reason));
       return;
     }
 
@@ -298,7 +298,10 @@ const Auth = () => {
                   action="auth"
                   onVerify={(t) => setCaptchaToken(t)}
                   onExpire={() => setCaptchaToken(null)}
-                  onError={() => setCaptchaToken(null)}
+                  onError={() => {
+                    setCaptchaToken(null);
+                    toast.error("Erreur captcha : vérifiez la configuration du domaine Turnstile.");
+                  }}
                 />
               </div>
 

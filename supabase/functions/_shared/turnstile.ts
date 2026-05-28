@@ -11,6 +11,7 @@ export interface TurnstileVerifyResult {
 export async function verifyTurnstile(
   token: string | null | undefined,
   remoteIp?: string | null,
+  expectedAction?: string | null,
 ): Promise<TurnstileVerifyResult> {
   const secret = Deno.env.get("TURNSTILE_SECRET_KEY");
   if (!secret) return { success: false, errorCodes: ["missing-secret"] };
@@ -21,17 +22,28 @@ export async function verifyTurnstile(
   body.append("response", token);
   if (remoteIp) body.append("remoteip", remoteIp);
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+
   try {
-    const res = await fetch(VERIFY_URL, { method: "POST", body });
+    const res = await fetch(VERIFY_URL, { method: "POST", body, signal: controller.signal });
     const json = await res.json();
+    const action = typeof json.action === "string" ? json.action : undefined;
+    const errorCodes = Array.isArray(json["error-codes"]) ? json["error-codes"] : [];
+    const actionMatches = !expectedAction || !action || action === expectedAction;
     return {
-      success: Boolean(json.success),
-      errorCodes: json["error-codes"],
-      action: json.action,
-      hostname: json.hostname,
+      success: Boolean(json.success) && actionMatches,
+      errorCodes: actionMatches ? errorCodes : [...errorCodes, "action-mismatch"],
+      action,
+      hostname: typeof json.hostname === "string" ? json.hostname : undefined,
     };
-  } catch {
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      return { success: false, errorCodes: ["network-timeout"] };
+    }
     return { success: false, errorCodes: ["network-error"] };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 

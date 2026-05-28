@@ -46,9 +46,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    const captcha = await verifyTurnstile(captcha_token, getClientIp(req));
+    const captcha = await verifyTurnstile(captcha_token, getClientIp(req), "report");
     if (!captcha.success) {
-      return new Response(JSON.stringify({ error: "Vérification anti-bot échouée." }), {
+      return new Response(JSON.stringify({ error: "Vérification anti-bot échouée.", errors: captcha.errorCodes ?? [] }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
