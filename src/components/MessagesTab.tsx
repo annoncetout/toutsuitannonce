@@ -236,27 +236,13 @@ const MessagesTab = ({ userId }: { userId: string }) => {
               <Button
                 variant="gold"
                 onClick={send}
-                disabled={sending || !reply.trim() || !captchaToken}
-                title={!captchaToken ? "Complétez la vérification anti-bot" : undefined}
+                disabled={sending || !reply.trim()}
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3" />
-                Protection anti-spam
-              </span>
-              <TurnstileWidget
-                ref={turnstileRef}
-                action="message"
-                size="compact"
-                onVerify={(t) => setCaptchaToken(t)}
-                onExpire={() => setCaptchaToken(null)}
-                onError={() => setCaptchaToken(null)}
-              />
-            </div>
           </div>
+
         </DialogContent>
       </Dialog>
     </>
