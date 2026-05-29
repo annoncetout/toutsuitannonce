@@ -130,31 +130,18 @@ const MessagesTab = ({ userId }: { userId: string }) => {
 
   const send = async () => {
     if (!activeConv || !reply.trim()) return;
-    if (!captchaToken) {
-      toast.error("Veuillez compléter la vérification anti-bot.");
-      return;
-    }
     setSending(true);
-    const captcha = await verifyTurnstileToken(captchaToken, "message");
-    if (!captcha.success) {
-      setSending(false);
-      setCaptchaToken(null);
-      turnstileRef.current?.reset();
-      toast.error(getTurnstileErrorMessage(captcha.reason));
-      return;
-    }
     const { error } = await supabase.from("messages").insert({
       listing_id: activeConv.listing_id,
       sender_id: userId,
       recipient_id: activeConv.other_id,
       content: reply.trim(),
     });
-    setCaptchaToken(null);
-    turnstileRef.current?.reset();
     setSending(false);
     if (error) return toast.error(error.message);
     setReply("");
   };
+
 
   if (loading) {
     return (
