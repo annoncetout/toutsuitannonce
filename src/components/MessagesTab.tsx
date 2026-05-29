@@ -36,8 +36,7 @@ const MessagesTab = ({ userId }: { userId: string }) => {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileHandle>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const load = async () => {
