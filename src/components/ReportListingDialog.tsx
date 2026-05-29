@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
 
 interface Props {
   listingId: string;
@@ -23,8 +22,6 @@ const ReportListingDialog = ({ listingId, open, onOpenChange }: Props) => {
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileHandle>(null);
 
   const submit = async () => {
     if (!user) {
@@ -36,7 +33,6 @@ const ReportListingDialog = ({ listingId, open, onOpenChange }: Props) => {
     if (!trimmed) return;
     if (trimmed.length > 200) { toast.error("Motif trop long (200 max)"); return; }
     if (details.length > 1000) { toast.error("Détails trop longs (1000 max)"); return; }
-    if (!captchaToken) { toast.error("Veuillez compléter la vérification anti-bot."); return; }
 
     setSubmitting(true);
     const { data, error } = await supabase.functions.invoke("submit-report", {
@@ -45,22 +41,17 @@ const ReportListingDialog = ({ listingId, open, onOpenChange }: Props) => {
         target_id: listingId,
         reason: trimmed,
         details: details.trim() || null,
-        captcha_token: captchaToken,
       },
     });
     setSubmitting(false);
     if (error || (data as any)?.error) {
       toast.error((data as any)?.error ?? error?.message ?? "Erreur lors du signalement");
-      setCaptchaToken(null);
-      turnstileRef.current?.reset();
       return;
     }
     toast.success("Signalement envoyé. Merci !");
     onOpenChange(false);
     setReason("");
     setDetails("");
-    setCaptchaToken(null);
-    turnstileRef.current?.reset();
   };
 
   return (
@@ -86,19 +77,10 @@ const ReportListingDialog = ({ listingId, open, onOpenChange }: Props) => {
               placeholder="Décrivez le problème"
             />
           </div>
-          <div className="flex justify-center pt-1">
-            <TurnstileWidget
-              ref={turnstileRef}
-              action="report"
-              onVerify={(t) => setCaptchaToken(t)}
-              onExpire={() => setCaptchaToken(null)}
-              onError={() => setCaptchaToken(null)}
-            />
-          </div>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>Annuler</Button>
-          <Button variant="destructive" onClick={submit} disabled={submitting || !reason.trim() || !captchaToken}>
+          <Button variant="destructive" onClick={submit} disabled={submitting || !reason.trim()}>
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Envoyer"}
           </Button>
         </DialogFooter>

@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Send, MessageSquare, ShieldCheck } from "lucide-react";
+import { Loader2, Send, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
-import { getTurnstileErrorMessage, verifyTurnstileToken } from "@/lib/turnstile";
+
 
 interface Msg {
   id: string;
@@ -37,8 +36,7 @@ const MessagesTab = ({ userId }: { userId: string }) => {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileHandle>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const load = async () => {
@@ -132,31 +130,18 @@ const MessagesTab = ({ userId }: { userId: string }) => {
 
   const send = async () => {
     if (!activeConv || !reply.trim()) return;
-    if (!captchaToken) {
-      toast.error("Veuillez compléter la vérification anti-bot.");
-      return;
-    }
     setSending(true);
-    const captcha = await verifyTurnstileToken(captchaToken, "message");
-    if (!captcha.success) {
-      setSending(false);
-      setCaptchaToken(null);
-      turnstileRef.current?.reset();
-      toast.error(getTurnstileErrorMessage(captcha.reason));
-      return;
-    }
     const { error } = await supabase.from("messages").insert({
       listing_id: activeConv.listing_id,
       sender_id: userId,
       recipient_id: activeConv.other_id,
       content: reply.trim(),
     });
-    setCaptchaToken(null);
-    turnstileRef.current?.reset();
     setSending(false);
     if (error) return toast.error(error.message);
     setReply("");
   };
+
 
   if (loading) {
     return (
@@ -251,27 +236,13 @@ const MessagesTab = ({ userId }: { userId: string }) => {
               <Button
                 variant="gold"
                 onClick={send}
-                disabled={sending || !reply.trim() || !captchaToken}
-                title={!captchaToken ? "Complétez la vérification anti-bot" : undefined}
+                disabled={sending || !reply.trim()}
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3" />
-                Protection anti-spam
-              </span>
-              <TurnstileWidget
-                ref={turnstileRef}
-                action="message"
-                size="compact"
-                onVerify={(t) => setCaptchaToken(t)}
-                onExpire={() => setCaptchaToken(null)}
-                onError={() => setCaptchaToken(null)}
-              />
-            </div>
           </div>
+
         </DialogContent>
       </Dialog>
     </>

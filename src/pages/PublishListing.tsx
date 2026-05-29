@@ -26,8 +26,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { MAX_GALLERY_IMAGES } from "@/components/ImageGallery";
-import TurnstileWidget, { type TurnstileHandle } from "@/components/TurnstileWidget";
-import { getTurnstileErrorMessage, verifyTurnstileToken } from "@/lib/turnstile";
 
 const PREMIUM_PRICE_FCFA = 2000;
 const PREMIUM_DURATION_DAYS = 30;
@@ -69,8 +67,6 @@ const PublishListing = () => {
     is_premium: false,
   });
   const [busy, setBusy] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileHandle>(null);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiLang, setAiLang] = useState<"fr" | "en">("fr");
   const [aiProgress, setAiProgress] = useState(0);
@@ -400,19 +396,8 @@ const PublishListing = () => {
 
   const publishListing = async (premiumRequested: boolean) => {
     if (!user) return;
-    if (!captchaToken) {
-      toast.error("Veuillez compléter la vérification anti-bot.");
-      return;
-    }
     setBusy(true);
-    const captcha = await verifyTurnstileToken(captchaToken, "publish_listing");
-    if (!captcha.success) {
-      setBusy(false);
-      setCaptchaToken(null);
-      turnstileRef.current?.reset();
-      toast.error(getTurnstileErrorMessage(captcha.reason));
-      return;
-    }
+
     const uploadedUrls = photos.map((p) => p.url!).filter(Boolean);
 
     // Ensure the user's profile exists (older sessions may predate the profile trigger).
@@ -827,19 +812,10 @@ const PublishListing = () => {
             </ul>
           </div>
 
-          <div className="flex justify-center">
-            <TurnstileWidget
-              ref={turnstileRef}
-              action="publish_listing"
-              onVerify={(t) => setCaptchaToken(t)}
-              onExpire={() => setCaptchaToken(null)}
-              onError={() => setCaptchaToken(null)}
-            />
-          </div>
-
           <div className="flex gap-3">
             <Button type="button" variant="outlineGold" onClick={() => navigate(-1)} className="flex-1">Annuler</Button>
-            <Button type="submit" variant="gold" className="flex-1" disabled={busy || !captchaToken}>
+            <Button type="submit" variant="gold" className="flex-1" disabled={busy}>
+
               {busy && <Loader2 className="w-4 h-4 animate-spin" />}
               {form.is_premium
                 ? `Publier en Premium · ${PREMIUM_PRICE_FCFA.toLocaleString("fr-FR")} FCFA`
