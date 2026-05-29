@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     const userId = userData.user.id;
 
     const body = await req.json().catch(() => ({}));
-    const { target_type, target_id, reason, details, captcha_token } = body || {};
+    const { target_type, target_id, reason, details } = body || {};
     if (!target_type || !target_id || !reason) {
       return new Response(JSON.stringify({ error: "target_type, target_id and reason are required" }), {
         status: 400,
@@ -46,13 +46,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const captcha = await verifyTurnstile(captcha_token, getClientIp(req), "report");
-    if (!captcha.success) {
-      return new Response(JSON.stringify({ error: "Vérification anti-bot échouée.", errors: captcha.errorCodes ?? [] }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
