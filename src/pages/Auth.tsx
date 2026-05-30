@@ -135,11 +135,20 @@ const Auth = () => {
   const handleGoogle = async () => {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}${redirectTo}`,
+      redirect_uri: getAuthCallbackUrl(redirectTo),
+      extraParams: { prompt: "select_account" },
     });
     if (result.error) {
       toast.error("Erreur Google : " + (result.error as Error).message);
       setBusy(false);
+      return;
+    }
+
+    if (!result.redirected) {
+      localStorage.removeItem("pending-confirmation-email");
+      setPendingEmail("");
+      toast.success("Connexion Google réussie");
+      navigate(redirectTo, { replace: true });
     }
   };
 
