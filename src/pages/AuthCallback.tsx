@@ -11,12 +11,21 @@ type CallbackState = "verifying" | "confirmed" | "expired" | "invalid";
 
 const getHashParams = () => new URLSearchParams(window.location.hash.replace(/^#/, ""));
 
+const getCallbackErrorMessage = (rawMessage: string) => {
+  const text = decodeURIComponent(rawMessage).toLowerCase();
+  if (text.includes("expired")) return "Ce lien de connexion a expiré. Relancez la connexion.";
+  if (text.includes("provider") || text.includes("google") || text.includes("oauth")) {
+    return "La connexion Google n’a pas pu être finalisée. Réessayez depuis la page de connexion.";
+  }
+  return "Ce lien de connexion est invalide ou a déjà été utilisé.";
+};
+
 const AuthCallback = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const next = useMemo(() => sanitizeAuthRedirect(searchParams.get("next")), [searchParams]);
   const [state, setState] = useState<CallbackState>("verifying");
-  const [message, setMessage] = useState("Validation de votre adresse e-mail en cours…");
+  const [message, setMessage] = useState("Finalisation de votre connexion en cours…");
 
   useEffect(() => {
     let cancelled = false;
@@ -25,8 +34,9 @@ const AuthCallback = () => {
     const finishSuccess = () => {
       if (cancelled) return;
       setState("confirmed");
-      setMessage("Votre email est confirmé. Redirection en cours…");
-      toast.success("Email confirmé avec succès");
+      setMessage("Connexion confirmée. Redirection en cours…");
+      localStorage.removeItem("pending-confirmation-email");
+      toast.success("Connexion réussie");
       redirectTimer = setTimeout(() => navigate(next, { replace: true }), 1200);
     };
 
@@ -46,9 +56,7 @@ const AuthCallback = () => {
         const text = decodeURIComponent(errorDescription ?? "").toLowerCase();
         fail(
           text.includes("expired") ? "expired" : "invalid",
-          text.includes("expired")
-            ? "Ce lien de confirmation a expiré. Demandez un nouvel email."
-            : "Ce lien de confirmation est invalide ou a déjà été utilisé.",
+          getCallbackErrorMessage(errorDescription ?? errorCode ?? ""),
         );
         return;
       }
@@ -60,8 +68,8 @@ const AuthCallback = () => {
           fail(
             error.message.toLowerCase().includes("expired") ? "expired" : "invalid",
             error.message.toLowerCase().includes("expired")
-              ? "Ce lien de confirmation a expiré. Demandez un nouvel email."
-              : "Impossible de valider ce lien. Demandez un nouvel email de confirmation.",
+              ? "Ce lien de connexion a expiré. Relancez la connexion."
+              : "Impossible de finaliser la connexion. Réessayez depuis la page de connexion.",
           );
           return;
         }
@@ -74,7 +82,7 @@ const AuthCallback = () => {
       if (accessToken && refreshToken) {
         const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
         if (error) {
-          fail("invalid", "La session de confirmation est invalide. Demandez un nouvel email.");
+          fail("invalid", "La session Google est invalide. Réessayez depuis la page de connexion.");
           return;
         }
         finishSuccess();
@@ -100,7 +108,7 @@ const AuthCallback = () => {
 
       const { data } = await supabase.auth.getSession();
       if (data.session) finishSuccess();
-      else fail("invalid", "Lien de confirmation incomplet. Demandez un nouvel email.");
+      else fail("invalid", "Lien de connexion incomplet. Réessayez depuis la page de connexion.");
     };
 
     verify();
@@ -121,7 +129,7 @@ const AuthCallback = () => {
           <Icon className={`h-7 w-7 text-primary ${state === "verifying" ? "animate-spin" : ""}`} />
         </div>
         <h1 className="font-display text-2xl font-bold mb-3">
-          {state === "confirmed" ? "Email confirmé" : state === "verifying" ? "Vérification" : "Confirmation impossible"}
+          {state === "confirmed" ? "Connexion confirmée" : state === "verifying" ? "Connexion en cours" : "Connexion impossible"}
         </h1>
         <p className="text-muted-foreground leading-relaxed mb-6">{message}</p>
         {state !== "verifying" && state !== "confirmed" && (

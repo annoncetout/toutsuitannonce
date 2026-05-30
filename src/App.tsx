@@ -78,6 +78,8 @@ const App = () => (
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profil" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/mon-compte" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/publier" element={<PublishListing />} />
               <Route path="/annonces" element={<ListingsPage />} />
               <Route path="/annonce/:id" element={<ListingDetail />} />
