@@ -4,7 +4,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import Categories from "@/components/Categories";
 
 type Ad = {
   id: string;
@@ -105,7 +104,7 @@ const AdCarousel = () => {
   }
 
   if (ads.length === 0) {
-    return <Categories />;
+    return null;
   }
 
   return (
