@@ -1,5 +1,5 @@
 import AdCarousel from "@/components/AdCarousel";
-import Categories from "@/components/Categories";
+import HomepageCategories from "@/components/Categories";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -35,7 +35,7 @@ const Index = () => {
       <main>
         <Hero />
         <AdCarousel />
-        <Categories />
+        <HomepageCategories />
         <Listings />
         <AIRecommendations mode="foryou" userId={user?.id} title="Recommandé pour vous" />
         <PromoBanner />
