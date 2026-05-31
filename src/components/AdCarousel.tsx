@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type TargetAndTransition, type Transition } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
 type Ad = {
@@ -33,7 +33,7 @@ function shouldTrackImpression(id: string) {
   }
 }
 
-const ANIM_VARIANTS: Record<string, { initial: any; animate: any; transition: any }> = {
+const ANIM_VARIANTS: Record<string, { initial: TargetAndTransition; animate: TargetAndTransition; transition: Transition }> = {
   fade: { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.6 } },
   slide: { initial: { x: 60, opacity: 0 }, animate: { x: 0, opacity: 1 }, transition: { duration: 0.6, ease: "easeOut" } },
   zoom: { initial: { scale: 0.9, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { duration: 0.6 } },
