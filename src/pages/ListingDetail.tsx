@@ -15,6 +15,7 @@ import Footer from "@/components/Footer";
 import ImageGallery from "@/components/ImageGallery";
 import { toast } from "sonner";
 import { useSEO, SITE_URL } from "@/lib/seo";
+import { slugify } from "@/lib/slug";
 import { formatPublished, formatUpdated, getExpiry } from "@/lib/listingDate";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, AlertTriangle, Zap } from "lucide-react";
@@ -185,7 +186,7 @@ const ListingDetail = () => {
     description: listing
       ? `${listing.description?.slice(0, 155) ?? listing.title} — Petite annonce ${listing.category?.name ?? ""} ${listing.location ?? "au Sénégal"}.`
       : "Détail d'une petite annonce sur TOUT DE SUITE.",
-    canonical: id ? `${SITE_URL}/annonce/${id}` : undefined,
+    canonical: id && listing ? `${SITE_URL}/annonce/${slugify(listing.title)}/${id}` : id ? `${SITE_URL}/annonce/${id}` : undefined,
     image: listing?.images?.[0],
     jsonLd: listing
       ? {

@@ -53,11 +53,21 @@ async function main() {
     if (c?.slug) entries.push({ loc: `/annonces?category=${encodeURIComponent(c.slug)}`, changefreq: "daily", priority: "0.8" });
   }
 
-  const listings = await fetchJson("listings?select=id,updated_at,is_premium&is_active=eq.true&moderation_status=eq.approved&order=published_at.desc&limit=5000");
+  const slugify = (s: string) =>
+    (s || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/['’"`]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "annonce";
+
+  const listings = await fetchJson("listings?select=id,title,updated_at,is_premium&is_active=eq.true&moderation_status=eq.approved&order=published_at.desc&limit=5000");
   for (const l of listings) {
     if (!l?.id) continue;
     entries.push({
-      loc: `/annonce/${l.id}`,
+      loc: `/annonce/${slugify(l.title || "annonce")}/${l.id}`,
       lastmod: l.updated_at ? new Date(l.updated_at).toISOString() : undefined,
       changefreq: "weekly",
       priority: l.is_premium ? "0.8" : "0.6",

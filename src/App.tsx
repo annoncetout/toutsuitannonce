@@ -83,6 +83,7 @@ const App = () => (
               <Route path="/publier" element={<PublishListing />} />
               <Route path="/annonces" element={<ListingsPage />} />
               <Route path="/annonce/:id" element={<ListingDetail />} />
+              <Route path="/annonce/:slug/:id" element={<ListingDetail />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/reset-password" element={<ResetPassword />} />
