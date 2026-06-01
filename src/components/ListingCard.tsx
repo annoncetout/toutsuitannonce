@@ -7,6 +7,7 @@ import { useAuthPrompt } from "@/components/AuthPromptDialog";
 import ReportListingDialog from "@/components/ReportListingDialog";
 import { formatPublished, getExpiry, isNew } from "@/lib/listingDate";
 import ListingBadges from "@/components/ListingBadges";
+import { listingPath } from "@/lib/slug";
 
 export interface ListingCardData {
   id: string;
@@ -68,7 +69,7 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
             is_urgent: !!listing.is_urgent,
           }),
         );
-        navigate(`/annonce/${listing.id}`);
+        navigate(listingPath(listing.title, listing.id));
       }}
       className="group relative rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-gold cursor-pointer"
     >
