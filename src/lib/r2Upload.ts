@@ -98,7 +98,25 @@ async function uploadOnce(
 
   if (opts.signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
-  if (result.error) throw new Error(result.error.message || "Upload échoué");
+  if (result.error) {
+    // Surface the real Supabase Storage error to console for diagnostics
+    console.error("[storage] upload failed", {
+      bucket: BUCKET,
+      key,
+      error: result.error,
+    });
+    const m = (result.error as any)?.message || "";
+    if (/row-level security|not authorized|permission/i.test(m)) {
+      throw new Error("Accès refusé au stockage (RLS). Reconnectez-vous.");
+    }
+    if (/Bucket not found/i.test(m)) {
+      throw new Error("Bucket de stockage introuvable");
+    }
+    if (/fetch|network|Failed to fetch/i.test(m)) {
+      throw new Error(`Erreur réseau Supabase: ${m}`);
+    }
+    throw new Error(m || "Upload échoué");
+  }
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(key);
   opts.onProgress?.(100);
