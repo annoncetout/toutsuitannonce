@@ -1,6 +1,4 @@
-// Supabase Storage uploader (replaces former Cloudflare R2 implementation).
-// Public bucket: `listing-photos`. Exports keep the same names so the rest
-// of the app keeps working without changes.
+// Supabase Storage uploader for all user-facing images.
 import { supabase } from "@/integrations/supabase/client";
 
 export const MAX_LISTING_IMAGES = 8;
@@ -71,7 +69,8 @@ async function uploadOnce(
   f: File,
   opts: UploadOptions,
 ): Promise<{ url: string; key: string }> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
   if (!user) throw new Error("Session expirée — reconnectez-vous");
 
   const ext = f.type === "image/webp" ? "webp" : f.type === "image/png" ? "png" : "jpg";
@@ -80,32 +79,64 @@ async function uploadOnce(
   // (storage.foldername(name))[1] = auth.uid() pass.
   const key = `${user.id}/${folder}/${randomId()}.${ext}`;
 
-  opts.onProgress?.(10);
-
   const timeoutMs = opts.timeoutMs ?? 60_000;
-  const uploadPromise = supabase.storage.from(BUCKET).upload(key, f, {
-    contentType: f.type,
-    cacheControl: "31536000",
-    upsert: false,
-  });
+  const supabaseUrl = (import.meta.env as any).VITE_SUPABASE_URL as string;
+  const anonKey = (import.meta.env as any).VITE_SUPABASE_PUBLISHABLE_KEY as string;
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/");
+  const endpoint = `${supabaseUrl}/storage/v1/object/${BUCKET}/${encodedKey}`;
 
-  const result = await Promise.race([
-    uploadPromise,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Délai d'envoi dépassé (réessayez)")), timeoutMs),
-    ),
-  ]);
+  opts.onProgress?.(5);
 
-  if (opts.signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const abort = () => {
+      xhr.abort();
+      reject(new DOMException("Aborted", "AbortError"));
+    };
 
-  if (result.error) {
-    // Surface the real Supabase Storage error to console for diagnostics
-    console.error("[storage] upload failed", {
-      bucket: BUCKET,
-      key,
-      error: result.error,
-    });
-    const m = (result.error as any)?.message || "";
+    xhr.open("POST", endpoint, true);
+    xhr.timeout = timeoutMs;
+    xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+    xhr.setRequestHeader("apikey", anonKey);
+    xhr.setRequestHeader("Content-Type", f.type || "application/octet-stream");
+    xhr.setRequestHeader("cache-control", "31536000");
+    xhr.setRequestHeader("x-upsert", "false");
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable) return;
+      const pct = Math.min(99, Math.max(5, Math.round((event.loaded / event.total) * 95)));
+      opts.onProgress?.(pct);
+    };
+
+    xhr.onload = () => {
+      opts.signal?.removeEventListener("abort", abort);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+        return;
+      }
+      let body: any = null;
+      try { body = JSON.parse(xhr.responseText); } catch { body = xhr.responseText; }
+      const message = typeof body === "string" ? body : body?.message || body?.error || xhr.statusText;
+      console.error("[storage] upload failed", { bucket: BUCKET, key, status: xhr.status, body });
+      reject(new Error(message || `Upload refusé (${xhr.status})`));
+    };
+
+    xhr.onerror = () => {
+      opts.signal?.removeEventListener("abort", abort);
+      console.error("[storage] upload network error", { bucket: BUCKET, key, endpoint });
+      reject(new Error("Connexion au stockage impossible. Vérifiez votre connexion puis réessayez."));
+    };
+
+    xhr.ontimeout = () => {
+      opts.signal?.removeEventListener("abort", abort);
+      reject(new Error("Délai d'envoi dépassé (réessayez)"));
+    };
+
+    opts.signal?.addEventListener("abort", abort, { once: true });
+    if (opts.signal?.aborted) abort();
+    else xhr.send(f);
+  }).catch((err) => {
+    const m = err instanceof Error ? err.message : "";
     if (/row-level security|not authorized|permission/i.test(m)) {
       throw new Error("Accès refusé au stockage (RLS). Reconnectez-vous.");
     }
@@ -115,8 +146,8 @@ async function uploadOnce(
     if (/fetch|network|Failed to fetch/i.test(m)) {
       throw new Error(`Erreur réseau Supabase: ${m}`);
     }
-    throw new Error(m || "Upload échoué");
-  }
+    throw err instanceof Error ? err : new Error("Upload échoué");
+  });
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(key);
   opts.onProgress?.(100);
@@ -124,7 +155,7 @@ async function uploadOnce(
 }
 
 /** Upload a single file to Supabase Storage with retries + timeout. */
-export async function uploadToR2(
+export async function uploadToStorage(
   file: File,
   opts: UploadOptions = {},
 ): Promise<{ url: string; key: string }> {
@@ -161,7 +192,7 @@ function keyFromUrl(url: string): string | null {
 }
 
 /** Delete a single object (by key or url). Best-effort: never throws. */
-export async function deleteFromR2(
+export async function deleteFromStorage(
   ref: { url?: string; key?: string },
 ): Promise<void> {
   const key = ref.key ?? (ref.url ? keyFromUrl(ref.url) : null);
@@ -174,7 +205,7 @@ export async function deleteFromR2(
 }
 
 /** Batch-delete several objects. Best-effort. */
-export async function deleteFromR2Many(
+export async function deleteFromStorageMany(
   urls: string[] = [],
   keys: string[] = [],
 ): Promise<void> {

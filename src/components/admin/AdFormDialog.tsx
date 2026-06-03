@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { uploadToR2 } from "@/lib/r2Upload";
+import { uploadToStorage } from "@/lib/storageUpload";
 import { Loader2, Upload, X } from "lucide-react";
 
 export type AdRow = {
@@ -94,7 +94,7 @@ const AdFormDialog = ({ open, onOpenChange, initial, onSaved }: Props) => {
     setUploading(true);
     setProgress(0);
     try {
-      const { url } = await uploadToR2(file, { folder: "ads", onProgress: setProgress });
+      const { url } = await uploadToStorage(file, { folder: "ads", onProgress: setProgress });
       setAd((a) => ({ ...a, image_url: url }));
       toast.success("Image téléversée");
     } catch (err: any) {

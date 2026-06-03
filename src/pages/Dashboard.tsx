@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
+import { deleteFromStorageMany } from "@/lib/storageUpload";
 
 interface Report {
   id: string;
@@ -138,7 +139,7 @@ const Dashboard = () => {
 
   const deleteListing = async (id: string) => {
     if (!confirm("Supprimer cette annonce ?")) return;
-    // Fetch image URLs first so we can clean R2 after the DB row is gone.
+    // Fetch image URLs first so we can clean Storage after the DB row is gone.
     const { data: row } = await supabase
       .from("listings")
       .select("images")
@@ -148,8 +149,7 @@ const Dashboard = () => {
     if (error) return toast.error(error.message);
     const imgs = (row?.images ?? []) as string[];
     if (imgs.length > 0) {
-      const { deleteFromR2Many } = await import("@/lib/r2Upload");
-      deleteFromR2Many(imgs).catch(() => {});
+      deleteFromStorageMany(imgs).catch(() => {});
     }
     setMyListings((prev) => prev.filter((l) => l.id !== id));
     toast.success("Annonce supprimée");

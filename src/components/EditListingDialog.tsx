@@ -11,7 +11,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { MAX_LISTING_IMAGES } from "@/lib/r2Upload";
+import { deleteFromStorageMany, MAX_LISTING_IMAGES, uploadToStorage } from "@/lib/storageUpload";
 
 interface ListingLite {
   id: string;
@@ -98,12 +98,11 @@ const EditListingDialog = ({ open, onOpenChange, listing, onSaved }: Props) => {
     if (valid.length < list.length) toast.error("Certaines images ignorées (max 5 Mo, images uniquement)");
     if (valid.length === 0) return;
 
-    const { uploadToR2 } = await import("@/lib/r2Upload");
     await Promise.all(valid.map(async (f) => {
       const uid = crypto.randomUUID();
       setUploads((prev) => [...prev, { id: uid, name: f.name, progress: 0 }]);
       try {
-        const { url } = await uploadToR2(f, {
+        const { url } = await uploadToStorage(f, {
           folder: "annonces",
           onProgress: (p) =>
             setUploads((prev) => prev.map((u) => (u.id === uid ? { ...u, progress: p } : u))),
@@ -163,8 +162,7 @@ const EditListingDialog = ({ open, onOpenChange, listing, onSaved }: Props) => {
     }
     // Best-effort cleanup of orphan images that were removed from the listing.
     if (removedImages.length > 0) {
-      const { deleteFromR2Many } = await import("@/lib/r2Upload");
-      deleteFromR2Many(removedImages).catch(() => {});
+      deleteFromStorageMany(removedImages).catch(() => {});
     }
     toast.success("Annonce mise à jour");
     onSaved?.((data ?? { ...listing, ...payload }) as ListingLite);

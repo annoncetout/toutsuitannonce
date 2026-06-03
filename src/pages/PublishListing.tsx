@@ -26,6 +26,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { MAX_GALLERY_IMAGES } from "@/components/ImageGallery";
+import { deleteFromStorage, uploadToStorage } from "@/lib/storageUpload";
 
 const PREMIUM_PRICE_FCFA = 2000;
 const PREMIUM_DURATION_DAYS = 30;
@@ -271,8 +272,7 @@ const PublishListing = () => {
       prev.map((p) => (p.id === id ? { ...p, status: "uploading", progress: 0, error: undefined } : p)),
     );
     try {
-      const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
-      const { url, key } = await uploadToR2(file, {
+      const { url, key } = await uploadToStorage(file, {
         folder: "annonces",
         onProgress: (pct) => {
           setPhotos((prev) =>
@@ -282,7 +282,7 @@ const PublishListing = () => {
       });
       if (cancelledRef.current.has(id)) {
         cancelledRef.current.delete(id);
-        deleteFromR2({ key }).catch(() => {});
+        deleteFromStorage({ key }).catch(() => {});
         return;
       }
       setPhotos((prev) =>

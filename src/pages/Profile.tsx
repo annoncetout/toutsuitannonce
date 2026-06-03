@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { deleteFromStorage, uploadToStorage } from "@/lib/storageUpload";
 
 const schema = z.object({
   display_name: z.string().trim().min(2, "Nom trop court").max(80, "Nom trop long"),
@@ -128,16 +129,15 @@ const Profile = () => {
     setUploading(true);
     setUploadProgress(0);
     try {
-      const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
       const previous = avatarUrl;
-      const { url } = await uploadToR2(file, {
+      const { url } = await uploadToStorage(file, {
         folder: "avatars",
         onProgress: (p) => setUploadProgress(p),
       });
       const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
       if (error) throw error;
       setAvatarUrl(url);
-      if (previous) deleteFromR2({ url: previous }).catch(() => {});
+      if (previous) deleteFromStorage({ url: previous }).catch(() => {});
       toast.success("Photo mise à jour");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur upload");
