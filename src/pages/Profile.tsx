@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { deleteFromR2, uploadToR2 } from "@/lib/r2Upload";
 
 const schema = z.object({
   display_name: z.string().trim().min(2, "Nom trop court").max(80, "Nom trop long"),
@@ -128,7 +129,6 @@ const Profile = () => {
     setUploading(true);
     setUploadProgress(0);
     try {
-      const { uploadToR2, deleteFromR2 } = await import("@/lib/r2Upload");
       const previous = avatarUrl;
       const { url } = await uploadToR2(file, {
         folder: "avatars",
