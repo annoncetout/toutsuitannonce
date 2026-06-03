@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import { deleteFromR2Many } from "@/lib/r2Upload";
+import { deleteFromStorageMany } from "@/lib/storageUpload";
 
 interface Report {
   id: string;
@@ -149,7 +149,7 @@ const Dashboard = () => {
     if (error) return toast.error(error.message);
     const imgs = (row?.images ?? []) as string[];
     if (imgs.length > 0) {
-      deleteFromR2Many(imgs).catch(() => {});
+      deleteFromStorageMany(imgs).catch(() => {});
     }
     setMyListings((prev) => prev.filter((l) => l.id !== id));
     toast.success("Annonce supprimée");
