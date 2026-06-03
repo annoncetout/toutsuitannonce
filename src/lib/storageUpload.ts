@@ -1,6 +1,4 @@
-// Supabase Storage uploader (replaces former Cloudflare R2 implementation).
-// Public bucket: `listing-photos`. Exports keep the same names so the rest
-// of the app keeps working without changes.
+// Supabase Storage uploader for all user-facing images.
 import { supabase } from "@/integrations/supabase/client";
 
 export const MAX_LISTING_IMAGES = 8;
@@ -157,7 +155,7 @@ async function uploadOnce(
 }
 
 /** Upload a single file to Supabase Storage with retries + timeout. */
-export async function uploadToR2(
+export async function uploadToStorage(
   file: File,
   opts: UploadOptions = {},
 ): Promise<{ url: string; key: string }> {
@@ -194,7 +192,7 @@ function keyFromUrl(url: string): string | null {
 }
 
 /** Delete a single object (by key or url). Best-effort: never throws. */
-export async function deleteFromR2(
+export async function deleteFromStorage(
   ref: { url?: string; key?: string },
 ): Promise<void> {
   const key = ref.key ?? (ref.url ? keyFromUrl(ref.url) : null);
@@ -207,7 +205,7 @@ export async function deleteFromR2(
 }
 
 /** Batch-delete several objects. Best-effort. */
-export async function deleteFromR2Many(
+export async function deleteFromStorageMany(
   urls: string[] = [],
   keys: string[] = [],
 ): Promise<void> {
