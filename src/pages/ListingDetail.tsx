@@ -80,11 +80,23 @@ const ListingDetail = () => {
         navigate("/");
         return;
       }
-      const { data: seller } = await supabase
-        .from("profiles")
-        .select("display_name, phone, whatsapp, city, is_verified, account_type")
-        .eq("id", (data as any).user_id)
-        .maybeSingle();
+      const sellerId = (data as any).user_id;
+      let seller: any = null;
+      if (user) {
+        const { data: full } = await supabase
+          .from("profiles")
+          .select("display_name, phone, whatsapp, city, is_verified, account_type")
+          .eq("id", sellerId)
+          .maybeSingle();
+        seller = full;
+      } else {
+        const { data: pub } = await supabase
+          .from("profiles_public" as any)
+          .select("display_name, city, is_verified, account_type")
+          .eq("id", sellerId)
+          .maybeSingle();
+        seller = pub;
+      }
       if (cancelled) return;
       setListing({ ...(data as any), seller } as any);
       setLoading(false);
