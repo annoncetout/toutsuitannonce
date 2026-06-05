@@ -139,6 +139,7 @@ const Auth = () => {
       extraParams: { prompt: "select_account" },
     });
     if (result.error) {
+      console.error(result.error);
       toast.error("Erreur Google : " + (result.error as Error).message);
       setBusy(false);
       return;
