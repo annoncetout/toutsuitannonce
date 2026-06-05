@@ -1,4 +1,4 @@
-const DEFAULT_AUTH_REDIRECT = "/dashboard";
+const DEFAULT_AUTH_REDIRECT = "/mon-compte";
 
 export const sanitizeAuthRedirect = (value: string | null | undefined) => {
   if (!value) return DEFAULT_AUTH_REDIRECT;
