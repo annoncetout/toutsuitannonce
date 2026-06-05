@@ -65,6 +65,7 @@ const AuthCallback = () => {
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) {
+          console.error(error);
           fail(
             error.message.toLowerCase().includes("expired") ? "expired" : "invalid",
             error.message.toLowerCase().includes("expired")
@@ -82,6 +83,7 @@ const AuthCallback = () => {
       if (accessToken && refreshToken) {
         const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
         if (error) {
+          console.error(error);
           fail("invalid", "La session Google est invalide. Réessayez depuis la page de connexion.");
           return;
         }
@@ -94,6 +96,7 @@ const AuthCallback = () => {
       if (tokenHash && type) {
         const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
         if (error) {
+          console.error(error);
           fail(
             error.message.toLowerCase().includes("expired") ? "expired" : "invalid",
             error.message.toLowerCase().includes("expired")
@@ -106,7 +109,8 @@ const AuthCallback = () => {
         return;
       }
 
-      const { data } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
+      if (error) console.error(error);
       if (data.session) finishSuccess();
       else fail("invalid", "Lien de connexion incomplet. Réessayez depuis la page de connexion.");
     };
