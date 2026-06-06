@@ -136,7 +136,10 @@ const Auth = () => {
     setBusy(true);
     const result = await signInWithGoogle({
       redirect_uri: getAuthCallbackUrl(redirectTo),
-      extraParams: { prompt: "select_account" },
+      extraParams: {
+        prompt: "select_account",
+        project_id: "5f3eeb71-26dc-48b3-8886-9a2d50006110",
+      },
     });
     if (result.error) {
       console.error(result.error);
