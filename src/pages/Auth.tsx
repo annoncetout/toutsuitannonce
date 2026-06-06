@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { getAuthCallbackUrl, sanitizeAuthRedirect } from "@/lib/authRedirect";
+import { signInWithGoogle } from "@/lib/lovableGoogleAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -134,7 +134,7 @@ const Auth = () => {
 
   const handleGoogle = async () => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await signInWithGoogle({
       redirect_uri: getAuthCallbackUrl(redirectTo),
       extraParams: { prompt: "select_account" },
     });
