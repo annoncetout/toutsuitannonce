@@ -52,12 +52,16 @@ export const useSEO = ({ title, description, canonical, image, jsonLd }: SEOOpti
     upsertMeta('meta[name="description"]', { name: "description", content: description });
     upsertMeta('meta[property="og:title"]', { property: "og:title", content: title });
     upsertMeta('meta[property="og:description"]', { property: "og:description", content: description });
+    upsertMeta('meta[property="og:type"]', { property: "og:type", content: "website" });
+    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: "TOUT SUITE ANNONCES" });
+    upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
     upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: title });
     upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
-    if (image) {
-      upsertMeta('meta[property="og:image"]', { property: "og:image", content: image });
-      upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: image });
-    }
+    const finalImage = image && image.trim().length > 0 ? image : DEFAULT_IMAGE;
+    upsertMeta('meta[property="og:image"]', { property: "og:image", content: finalImage });
+    upsertMeta('meta[property="og:image:alt"]', { property: "og:image:alt", content: title });
+    upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: finalImage });
+    upsertMeta('meta[name="twitter:image:alt"]', { name: "twitter:image:alt", content: title });
     const url = canonical ?? `${SITE_URL}${window.location.pathname}`;
     upsertLink("canonical", url);
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: url });
