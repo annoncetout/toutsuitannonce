@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
     ]);
     const publicKey = (pub?.value as any)?.key;
     const privateKey = (priv?.value as any)?.private_key;
-    const subject = (priv?.value as any)?.subject ?? "mailto:contact@toutsuitannonce.com";
+    const subject = (priv?.value as any)?.subject ?? "mailto:contact@toutsuiteannonces.com";
     if (!publicKey || !privateKey) {
       return new Response(JSON.stringify({ error: "vapid not configured" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },

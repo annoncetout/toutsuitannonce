@@ -59,7 +59,7 @@ export const PushSubscriptionToggle = () => {
         <p className="text-xs text-muted-foreground">Votre navigateur ne supporte pas les notifications push.</p>
       ) : blocked ? (
         <p className="text-xs text-muted-foreground">
-          Indisponible dans l'aperçu Lovable. Testez sur <span className="font-medium">toutsuitannonce.com</span>.
+          Indisponible dans l'aperçu Lovable. Testez sur <span className="font-medium">toutsuiteannonces.com</span>.
         </p>
       ) : permission === "denied" ? (
         <p className="text-xs text-destructive">
