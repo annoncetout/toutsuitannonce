@@ -70,6 +70,7 @@ const Dashboard = () => {
   const [favorites, setFavorites] = useState<Listing[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [boostHistory, setBoostHistory] = useState<BoostTx[]>([]);
+  const [mySub, setMySub] = useState<MySubscription | null>(null);
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
   const [busy, setBusy] = useState(true);
   const [editing, setEditing] = useState<Listing | null>(null);
