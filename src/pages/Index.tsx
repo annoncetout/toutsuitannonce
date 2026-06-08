@@ -33,6 +33,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <StickySearchBar />
       <main>
         <Hero />
         <AdCarousel />
