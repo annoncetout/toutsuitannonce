@@ -23,7 +23,7 @@ function lazyWithRetry<T extends React.ComponentType>(
     } catch (err) {
       const msg = String((err as Error)?.message || err);
       const isChunkError =
-        /dynamically imported module|Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError/i.test(
+        /dynamically imported module|Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|error loading dynamically imported module|Loading chunk \d+ failed/i.test(
           msg,
         );
       if (isChunkError && typeof window !== "undefined") {
