@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SITE_URL = "https://www.toutsuitannonce.com";
+const SITE_URL = "https://www.toutsuiteannonces.com";
 const DEFAULT_IMAGE = `${SITE_URL}/icon-512.png`;
 
 const upsertMeta = (selector: string, attrs: Record<string, string>) => {
@@ -43,26 +43,31 @@ export interface SEOOptions {
   description: string;
   canonical?: string;
   image?: string;
+  ogType?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-export const useSEO = ({ title, description, canonical, image, jsonLd }: SEOOptions) => {
+export const useSEO = ({ title, description, canonical, image, ogType, jsonLd }: SEOOptions) => {
   useEffect(() => {
     document.title = title;
     upsertMeta('meta[name="description"]', { name: "description", content: description });
     upsertMeta('meta[property="og:title"]', { property: "og:title", content: title });
     upsertMeta('meta[property="og:description"]', { property: "og:description", content: description });
+    upsertMeta('meta[property="og:type"]', { property: "og:type", content: ogType ?? "website" });
+    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: "TOUT SUITE ANNONCES" });
+    upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
     upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: title });
     upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: description });
-    if (image) {
-      upsertMeta('meta[property="og:image"]', { property: "og:image", content: image });
-      upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: image });
-    }
+    const finalImage = image && image.trim().length > 0 ? image : DEFAULT_IMAGE;
+    upsertMeta('meta[property="og:image"]', { property: "og:image", content: finalImage });
+    upsertMeta('meta[property="og:image:alt"]', { property: "og:image:alt", content: title });
+    upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: finalImage });
+    upsertMeta('meta[name="twitter:image:alt"]', { name: "twitter:image:alt", content: title });
     const url = canonical ?? `${SITE_URL}${window.location.pathname}`;
     upsertLink("canonical", url);
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: url });
     setJsonLd("page", jsonLd ?? null);
-  }, [title, description, canonical, image, JSON.stringify(jsonLd)]);
+  }, [title, description, canonical, image, ogType, JSON.stringify(jsonLd)]);
 };
 
 export { SITE_URL, DEFAULT_IMAGE };

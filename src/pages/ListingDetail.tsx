@@ -200,6 +200,7 @@ const ListingDetail = () => {
       : "Détail d'une petite annonce sur TOUT DE SUITE.",
     canonical: id && listing ? `${SITE_URL}/annonce/${slugify(listing.title)}/${id}` : id ? `${SITE_URL}/annonce/${id}` : undefined,
     image: listing?.images?.[0],
+    ogType: "product",
     jsonLd: listing
       ? {
           "@context": "https://schema.org",
