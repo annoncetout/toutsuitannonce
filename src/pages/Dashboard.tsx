@@ -84,18 +84,20 @@ const Dashboard = () => {
     if (!user) return;
     const load = async () => {
       setBusy(true);
-      const [{ data: l }, { data: f }, { data: p }, { data: r }, { data: tx }] = await Promise.all([
+      const [{ data: l }, { data: f }, { data: p }, { data: r }, { data: tx }, { data: sub }] = await Promise.all([
         supabase.from("listings").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("favorites").select("listing:listings(*)").eq("user_id", user.id),
         supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
         supabase.from("reports").select("*").eq("reporter_id", user.id).order("created_at", { ascending: false }),
-        supabase.from("transactions").select("id, amount, currency, status, created_at, listing_id, metadata").eq("user_id", user.id).eq("type", "listing_boost").order("created_at", { ascending: false }),
+        supabase.from("transactions").select("id, amount, currency, status, created_at, listing_id, type, method, external_reference, metadata").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("subscriptions").select("plan, status, expires_at").eq("user_id", user.id).maybeSingle(),
       ]);
       setMyListings((l ?? []) as Listing[]);
       setFavorites(((f ?? []).map((x: any) => x.listing).filter(Boolean)) as Listing[]);
       setProfile(p);
       setReports((r ?? []) as Report[]);
       setBoostHistory((tx ?? []) as BoostTx[]);
+      setMySub((sub ?? null) as MySubscription | null);
       setBusy(false);
     };
     load();
