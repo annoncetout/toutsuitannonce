@@ -17,18 +17,20 @@ function lazyWithRetry<T extends React.ComponentType>(
   factory: () => Promise<{ default: T }>,
 ) {
   return lazy(async () => {
-    const KEY = "lovable:chunk-reloaded";
+    const KEY = "lovable:chunk-reloaded-at";
     try {
       return await factory();
     } catch (err) {
       const msg = String((err as Error)?.message || err);
       const isChunkError =
-        /dynamically imported module|Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|error loading dynamically imported module|Loading chunk \d+ failed/i.test(
+        /dynamically imported module|Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|Loading chunk \d+ failed/i.test(
           msg,
         );
       if (isChunkError && typeof window !== "undefined") {
-        if (!sessionStorage.getItem(KEY)) {
-          sessionStorage.setItem(KEY, "1");
+        const last = Number(sessionStorage.getItem(KEY) || 0);
+        // Allow a reload at most once every 30s to avoid loops
+        if (Date.now() - last > 30_000) {
+          sessionStorage.setItem(KEY, String(Date.now()));
           window.location.reload();
           return new Promise<{ default: T }>(() => {});
         }
