@@ -74,30 +74,31 @@ const PaymentDialog = ({
       return;
     }
     setSubmitting(true);
-    const meta: Record<string, unknown> = {
+    const meta: Record<string, string | number | null | undefined> = {
       offer_id: offer.id,
       offer_label: offer.label,
       payment_method: method,
       reference,
     };
     if (offer.kind === "listing_boost") {
-      meta.boost_type = offer.boostType;
-      meta.duration_days = offer.durationDays;
+      meta.boost_type = offer.boostType ?? null;
+      meta.duration_days = offer.durationDays ?? null;
       meta.plan_id = offer.id;
     } else {
-      meta.plan = offer.plan;
+      meta.plan = offer.plan ?? null;
     }
-    const { error } = await supabase.from("transactions").insert({
+    const payload = {
       user_id: user.id,
       listing_id: offer.listingId ?? null,
       type: offer.kind,
-      status: "pending",
+      status: "pending" as const,
       amount: offer.amount,
       currency: "FCFA",
       method,
       external_reference: reference,
-      metadata: meta,
-    });
+      metadata: meta as unknown as Record<string, string | number | null>,
+    };
+    const { error } = await supabase.from("transactions").insert(payload);
     setSubmitting(false);
     if (error) {
       toast.error("Impossible d'enregistrer le paiement. Réessayez.");
