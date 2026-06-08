@@ -5,5 +5,20 @@ Disallow: /admin/
 Disallow: /dashboard
 Disallow: /panier
 Disallow: /commande/
+Disallow: /mon-compte
+Disallow: /profil
+Disallow: /profile
+Disallow: /notifications
+Disallow: /reset-password
+Disallow: /auth
+Disallow: /auth/
 
-Sitemap: https://www.toutsuitannonce.com/sitemap.xml
+User-agent: Googlebot
+Allow: /
+Allow: /annonces
+Allow: /annonce/
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://www.toutsuiteannonces.com/sitemap.xml

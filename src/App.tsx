@@ -9,6 +9,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { AuthPromptProvider } from "@/components/AuthPromptDialog";
 import Index from "./pages/Index.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
+import AuthPromptGate from "./components/AuthPromptGate.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
@@ -80,14 +81,14 @@ const App = () => (
               <Route path="/profil" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/mon-compte" element={<RequireAuth><Profile /></RequireAuth>} />
-              <Route path="/publier" element={<PublishListing />} />
+              <Route path="/publier" element={<AuthPromptGate title="Publier une annonce" message="Connectez-vous pour publier votre annonce gratuitement."><PublishListing /></AuthPromptGate>} />
               <Route path="/annonces" element={<ListingsPage />} />
               <Route path="/annonce/:id" element={<ListingDetail />} />
               <Route path="/annonce/:slug/:id" element={<ListingDetail />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/panier" element={<RequireAuth><Cart /></RequireAuth>} />
+              <Route path="/panier" element={<AuthPromptGate title="Finaliser votre commande" message="Connectez-vous pour accéder à votre panier et finaliser le paiement."><Cart /></AuthPromptGate>} />
               <Route path="/commande/confirmation" element={<OrderConfirmation />} />
               <Route path="/installer" element={<Installer />} />
               <Route path="/moderation/:caseId" element={<RequireAuth><ModerationCase /></RequireAuth>} />
