@@ -31,6 +31,25 @@ const Auth = () => {
   const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem("pending-confirmation-email") ?? "");
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
+  const [resetBusy, setResetBusy] = useState(false);
+
+  const handleForgotPassword = async () => {
+    const target = email.trim().toLowerCase();
+    try { emailSchema.parse(target); } catch {
+      toast.error("Entrez votre email pour réinitialiser le mot de passe");
+      return;
+    }
+    setResetBusy(true);
+    const redirectUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/reset-password`
+      : "https://www.toutsuiteannonces.com/reset-password";
+    const { error } = await supabase.auth.resetPasswordForEmail(target, { redirectTo: redirectUrl });
+    setResetBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Email de réinitialisation envoyé", {
+      description: "Vérifiez votre boîte de réception (et les spams).",
+    });
+  };
 
   useEffect(() => {
     if (!authLoading && user) navigate(redirectTo, { replace: true });
