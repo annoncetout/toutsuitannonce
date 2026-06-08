@@ -238,7 +238,8 @@ const Dashboard = () => {
           <TabsList className="flex flex-wrap h-auto">
             <TabsTrigger value="stats"><BarChart3 className="w-4 h-4 mr-1" /> Statistiques</TabsTrigger>
             <TabsTrigger value="listings">Mes annonces ({myListings.length})</TabsTrigger>
-            <TabsTrigger value="boosts"><History className="w-4 h-4 mr-1" /> Boosts ({boostHistory.length})</TabsTrigger>
+            <TabsTrigger value="boosts"><History className="w-4 h-4 mr-1" /> Boosts ({boostHistory.filter(t=>t.type==="listing_boost").length})</TabsTrigger>
+            <TabsTrigger value="payments">Paiements ({boostHistory.length})</TabsTrigger>
             <TabsTrigger value="messages"><MessageSquare className="w-4 h-4 mr-1" /> Messages</TabsTrigger>
             <TabsTrigger value="favorites">Favoris ({favorites.length})</TabsTrigger>
             <TabsTrigger value="reports">Signalements ({reports.length})</TabsTrigger>
