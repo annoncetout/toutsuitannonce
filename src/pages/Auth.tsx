@@ -153,9 +153,7 @@ const Auth = () => {
 
   const handleGoogle = async () => {
     setBusy(true);
-    // Toujours rediriger vers le tableau de bord après connexion Google
-    const googleNext = "/dashboard";
-    const redirectUri = getAuthCallbackUrl(googleNext);
+    const redirectUri = getAuthCallbackUrl(redirectTo);
     console.info("Google OAuth redirect_uri sent:", redirectUri);
 
     const result = await lovable.auth.signInWithOAuth("google", {
@@ -172,12 +170,8 @@ const Auth = () => {
     if (!result.redirected) {
       localStorage.removeItem("pending-confirmation-email");
       setPendingEmail("");
-      const { data: { user: googleUser } } = await supabase.auth.getUser();
-      const name = (googleUser?.user_metadata?.full_name as string)
-        ?? (googleUser?.user_metadata?.name as string)
-        ?? "";
-      toast.success(name ? `Bienvenue ${name} 👋` : "Bienvenue 👋");
-      navigate(googleNext, { replace: true });
+      toast.success("Connexion Google réussie");
+      navigate(redirectTo, { replace: true });
     }
   };
 
