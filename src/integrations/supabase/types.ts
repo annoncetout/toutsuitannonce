@@ -1066,7 +1066,13 @@ export type Database = {
         | "other"
       report_status: "open" | "reviewed" | "dismissed" | "actioned"
       report_target: "listing" | "user"
-      subscription_plan: "free" | "premium" | "business"
+      subscription_plan:
+        | "free"
+        | "premium"
+        | "business"
+        | "starter_pro"
+        | "business_pro"
+        | "elite_pro"
       subscription_status: "active" | "cancelled" | "expired" | "trialing"
       transaction_status: "pending" | "completed" | "failed" | "refunded"
       transaction_type:
@@ -1217,7 +1223,14 @@ export const Constants = {
       payment_method: ["wave", "orange_money", "mtn", "card", "cash", "other"],
       report_status: ["open", "reviewed", "dismissed", "actioned"],
       report_target: ["listing", "user"],
-      subscription_plan: ["free", "premium", "business"],
+      subscription_plan: [
+        "free",
+        "premium",
+        "business",
+        "starter_pro",
+        "business_pro",
+        "elite_pro",
+      ],
       subscription_status: ["active", "cancelled", "expired", "trialing"],
       transaction_status: ["pending", "completed", "failed", "refunded"],
       transaction_type: [
