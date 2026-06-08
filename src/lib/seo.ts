@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SITE_URL = "https://www.toutsuitannonce.com";
+const SITE_URL = "https://www.toutsuiteannonces.com";
 const DEFAULT_IMAGE = `${SITE_URL}/icon-512.png`;
 
 const upsertMeta = (selector: string, attrs: Record<string, string>) => {
