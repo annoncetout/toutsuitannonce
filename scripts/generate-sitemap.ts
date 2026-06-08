@@ -3,7 +3,7 @@
 import { writeFileSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 
-const BASE_URL = "https://www.toutsuitannonce.com";
+const BASE_URL = "https://www.toutsuiteannonces.com";
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
