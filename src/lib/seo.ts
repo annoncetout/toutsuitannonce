@@ -67,7 +67,7 @@ export const useSEO = ({ title, description, canonical, image, ogType, jsonLd }:
     upsertLink("canonical", url);
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: url });
     setJsonLd("page", jsonLd ?? null);
-  }, [title, description, canonical, image, JSON.stringify(jsonLd)]);
+  }, [title, description, canonical, image, ogType, JSON.stringify(jsonLd)]);
 };
 
 export { SITE_URL, DEFAULT_IMAGE };
