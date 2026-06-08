@@ -52,20 +52,23 @@ export const AuthPromptProvider = ({ children }: { children: ReactNode }) => {
               {opts.title ?? "Connexion requise"}
             </DialogTitle>
             <DialogDescription className="text-center">
-              {opts.message ?? "Connectez-vous pour accéder à cette fonctionnalité."}
+              {opts.message ?? "Trouvez rapidement ce dont vous avez besoin. Connectez-vous ou créez un compte pour continuer."}
             </DialogDescription>
           </DialogHeader>
           <div className="rounded-lg bg-muted/40 p-3 text-sm text-muted-foreground">
             <div className="flex items-start gap-2">
               <Sparkles className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span>Créez un compte gratuit pour publier, contacter les vendeurs et sauvegarder vos favoris.</span>
+              <span>La consultation des annonces reste libre. Un compte est requis uniquement pour publier, contacter, acheter ou sauvegarder.</span>
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" className="w-full sm:w-auto" onClick={() => go("/auth")}>
-              <LogIn className="w-4 h-4" /> Connexion
+            <Button variant="ghost" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
+              Annuler
             </Button>
-            <Button variant="gold" className="w-full sm:flex-1" onClick={() => go("/auth")}>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => go("/auth")}>
+              <LogIn className="w-4 h-4" /> Se connecter
+            </Button>
+            <Button variant="gold" className="w-full sm:flex-1" onClick={() => go("/auth?mode=signup")}>
               <UserPlus className="w-4 h-4" /> Créer un compte
             </Button>
           </DialogFooter>
