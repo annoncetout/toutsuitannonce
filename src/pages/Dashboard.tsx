@@ -282,7 +282,7 @@ const Dashboard = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {boostHistory.map((t) => {
+                      {boostHistory.filter(t => t.type === "listing_boost").map((t) => {
                         const meta = (t.metadata ?? {}) as Record<string, string | number>;
                         const listing = myListings.find((l) => l.id === t.listing_id);
                         return (
@@ -294,6 +294,86 @@ const Dashboard = () => {
                             <TableCell>
                               <Badge variant={t.status === "completed" ? "default" : t.status === "failed" ? "destructive" : "secondary"}>
                                 {t.status === "completed" ? "Activé" : t.status === "failed" ? "Refusé" : "En attente"}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="payments" className="mt-6 space-y-4">
+            {/* Subscription status card */}
+            <Card className="p-4 border-primary/30">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Mon abonnement</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {mySub && mySub.plan !== "free" && mySub.status === "active" ? (
+                      <span className="text-primary">{labelPlan(mySub.plan)} actif</span>
+                    ) : (
+                      <span className="text-muted-foreground">Aucun abonnement actif</span>
+                    )}
+                  </div>
+                  {mySub?.expires_at && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Expire le {new Date(mySub.expires_at).toLocaleDateString("fr-FR")}
+                    </div>
+                  )}
+                </div>
+                <Button variant="gold" onClick={() => navigate("/tarifs")}>Voir les offres</Button>
+              </div>
+            </Card>
+
+            {/* Active states summary */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Card className="p-3"><div className="text-xs text-muted-foreground">Annonces Premium</div><div className="text-xl font-bold text-primary">{stats.premium}</div></Card>
+              <Card className="p-3"><div className="text-xs text-muted-foreground">Annonces Urgentes</div><div className="text-xl font-bold">{stats.urgent}</div></Card>
+              <Card className="p-3"><div className="text-xs text-muted-foreground">Paiements en attente</div><div className="text-xl font-bold text-amber-500">{boostHistory.filter(t=>t.status==="pending").length}</div></Card>
+              <Card className="p-3"><div className="text-xs text-muted-foreground">Paiements validés</div><div className="text-xl font-bold">{boostHistory.filter(t=>t.status==="completed").length}</div></Card>
+            </div>
+
+            {boostHistory.length === 0 ? (
+              <EmptyState message="Aucun paiement enregistré" cta="Voir les tarifs" onCta={() => navigate("/tarifs")} />
+            ) : (
+              <Card className="overflow-hidden">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Offre</TableHead>
+                        <TableHead>Référence</TableHead>
+                        <TableHead>Méthode</TableHead>
+                        <TableHead>Montant</TableHead>
+                        <TableHead>État</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {boostHistory.map((t) => {
+                        const meta = (t.metadata ?? {}) as Record<string, string | number>;
+                        const isSub = t.type === "subscription";
+                        const label = String(meta.offer_label ?? (isSub ? "Abonnement Pro" : `Boost ${meta.boost_type ?? "premium"}`));
+                        const stateLabel =
+                          t.status === "completed"
+                            ? (isSub ? "Pro actif ✅" : meta.boost_type === "urgent" ? "Urgent actif ✅" : "Premium actif ✅")
+                            : t.status === "failed"
+                            ? "Refusé ❌"
+                            : "En attente ⏳";
+                        return (
+                          <TableRow key={t.id}>
+                            <TableCell className="text-xs whitespace-nowrap">{new Date(t.created_at).toLocaleString("fr-FR")}</TableCell>
+                            <TableCell>{label}</TableCell>
+                            <TableCell className="text-[10px] font-mono">{t.external_reference ?? "—"}</TableCell>
+                            <TableCell className="text-xs uppercase">{t.method?.replace("_", " ") ?? "—"}</TableCell>
+                            <TableCell className="font-medium whitespace-nowrap">{Number(t.amount).toLocaleString("fr-FR")} {t.currency}</TableCell>
+                            <TableCell>
+                              <Badge variant={t.status === "completed" ? "default" : t.status === "failed" ? "destructive" : "secondary"}>
+                                {stateLabel}
                               </Badge>
                             </TableCell>
                           </TableRow>
