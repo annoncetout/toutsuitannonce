@@ -153,42 +153,4 @@
   .animate-glow-pulse {
     animation: glow-pulse 3s ease-in-out infinite;
   }
-
-  @keyframes shine-sweep {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  .text-shine-gold {
-    background-image: linear-gradient(
-      110deg,
-      hsl(43 74% 56%) 0%,
-      hsl(46 96% 78%) 35%,
-      hsl(0 0% 100%) 50%,
-      hsl(46 96% 78%) 65%,
-      hsl(43 74% 56%) 100%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: shine-sweep 4s linear infinite;
-  }
-
-  @keyframes rise-in {
-    0% { opacity: 0; transform: translateY(24px); filter: blur(8px); }
-    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
-  .animate-rise-in {
-    animation: rise-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @keyframes width-grow {
-    0% { transform: scaleX(0); }
-    100% { transform: scaleX(1); }
-  }
-  .animate-width-grow {
-    transform-origin: left center;
-    animation: width-grow 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-  }
 }

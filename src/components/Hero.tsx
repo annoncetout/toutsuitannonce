@@ -32,33 +32,15 @@ const Hero = () => {
 
       <div className="container relative mx-auto px-4 py-12 sm:py-16 md:py-24 lg:py-28">
         {/* Premium tag */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 backdrop-blur mb-5 animate-rise-in">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 backdrop-blur mb-5">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-[11px] tracking-[0.2em] font-semibold text-primary uppercase">Plateforme Premium</span>
-        </div>
-
-        {/* Animated brand wordmark */}
-        <div className="mb-8 md:mb-10">
-          <h2
-            className="font-display text-shine-gold text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.02] animate-rise-in"
-            style={{ animationDelay: "0.05s" }}
-          >
-            TOUT DE SUITE
-            <br />
-            ANNONCES
-          </h2>
-          <div className="mt-4 flex items-center gap-3 animate-rise-in" style={{ animationDelay: "0.35s" }}>
-            <span className="block h-[2px] w-16 sm:w-24 bg-gradient-gold rounded-full animate-width-grow" />
-            <span className="text-[11px] sm:text-xs tracking-[0.32em] font-semibold text-primary/90 uppercase">
-              Meilleure plateforme de vente
-            </span>
-          </div>
         </div>
 
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-12 items-center">
           {/* Left content */}
           <div className="space-y-6 md:space-y-8">
-            <h1 className="font-display text-[2.25rem] leading-[1.05] sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight animate-rise-in" style={{ animationDelay: "0.5s" }}>
+            <h1 className="font-display text-[2.25rem] leading-[1.05] sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight">
               ACHETEZ, VENDEZ,
               <br />
               TROUVEZ TOUT,
@@ -66,10 +48,9 @@ const Hero = () => {
               <span className="text-gradient-gold">TOUT DE SUITE !</span>
             </h1>
 
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed animate-rise-in" style={{ animationDelay: "0.7s" }}>
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
               La plateforme numéro 1 pour vos annonces — simples, rapides et efficaces.
             </p>
-
 
             <div className="flex flex-wrap gap-5 sm:gap-8">
               <div className="flex items-center gap-3">
