@@ -51,7 +51,16 @@ interface BoostTx {
   status: string;
   created_at: string;
   listing_id: string | null;
+  type: string;
+  method: string | null;
+  external_reference: string | null;
   metadata: Record<string, unknown> | null;
+}
+
+interface MySubscription {
+  plan: string;
+  status: string;
+  expires_at: string | null;
 }
 
 const Dashboard = () => {
