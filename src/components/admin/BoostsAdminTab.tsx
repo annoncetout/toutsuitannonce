@@ -33,7 +33,7 @@ export default function BoostsAdminTab({ transactions, listings, emails, onUpdat
   const [busy, setBusy] = useState<string | null>(null);
 
   const boosts = useMemo(
-    () => transactions.filter((t) => t.type === "listing_boost"),
+    () => transactions.filter((t) => t.type === "listing_boost" || t.type === "subscription"),
     [transactions],
   );
   const pending = boosts.filter((t) => t.status === "pending");
@@ -58,19 +58,27 @@ export default function BoostsAdminTab({ transactions, listings, emails, onUpdat
     ) : (
       rows.map((t) => {
         const meta = (t.metadata ?? {}) as Record<string, string | number>;
-        const boostType = String(meta.boost_type ?? "premium");
+        const isSub = t.type === "subscription";
+        const boostType = String(meta.boost_type ?? (isSub ? "abonnement" : "premium"));
         const duration = Number(meta.duration_days ?? 0);
+        const offerLabel = String(meta.offer_label ?? "");
+        const method = String((t as unknown as { method?: string }).method ?? "");
+        const ref = String((t as unknown as { external_reference?: string }).external_reference ?? "");
         return (
           <TableRow key={t.id}>
             <TableCell className="text-xs whitespace-nowrap">
               {new Date(t.created_at).toLocaleString("fr-FR")}
             </TableCell>
             <TableCell className="text-xs">{emails[t.user_id] ?? t.user_id.slice(0, 8)}</TableCell>
-            <TableCell className="max-w-[220px] truncate">{listingTitle(t.listing_id)}</TableCell>
+            <TableCell className="max-w-[220px] truncate">
+              {isSub ? (offerLabel || "Abonnement Pro") : listingTitle(t.listing_id)}
+              {ref && <div className="text-[10px] text-muted-foreground font-mono">{ref}</div>}
+            </TableCell>
             <TableCell>
               <Badge variant="outline" className="gap-1">
-                {boostType === "urgent" ? <Flame className="w-3 h-3 text-red-500" /> : <Crown className="w-3 h-3 text-primary" />}
-                {boostType} {duration ? `· ${duration}j` : ""}
+                {isSub ? <Crown className="w-3 h-3 text-primary" /> : boostType === "urgent" ? <Flame className="w-3 h-3 text-red-500" /> : <Crown className="w-3 h-3 text-primary" />}
+                {isSub ? (offerLabel || "Pro") : `${boostType}${duration ? ` · ${duration}j` : ""}`}
+                {method && <span className="text-[10px] uppercase ml-1 opacity-70">{method.replace("_"," ")}</span>}
               </Badge>
             </TableCell>
             <TableCell className="font-medium whitespace-nowrap">
