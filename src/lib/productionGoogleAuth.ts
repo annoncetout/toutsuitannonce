@@ -1,25 +1,19 @@
 import { createLovableAuth } from "@lovable.dev/cloud-auth-js";
 import { supabase } from "@/integrations/supabase/client";
 
-const lovableGoogleAuth = createLovableAuth({
-  oauthBrokerUrl: "https://oauth.lovable.app/initiate",
-});
+const PRODUCTION_ORIGIN = "https://toutsuiteannonces.com";
 
-const LOVABLE_PROJECT_ID = "5f3eeb71-26dc-48b3-8886-9a2d50006110";
+const productionGoogleAuth = createLovableAuth({
+  oauthBrokerUrl: `${PRODUCTION_ORIGIN}/~oauth/initiate`,
+});
 
 type GoogleSignInOptions = {
   redirect_uri?: string;
   extraParams?: Record<string, string>;
 };
 
-export const signInWithGoogle = async (opts?: GoogleSignInOptions) => {
-  const result = await lovableGoogleAuth.signInWithOAuth("google", {
-    ...opts,
-    extraParams: {
-      ...opts?.extraParams,
-      project_id: LOVABLE_PROJECT_ID,
-    },
-  });
+export const signInWithProductionGoogle = async (opts?: GoogleSignInOptions) => {
+  const result = await productionGoogleAuth.signInWithOAuth("google", opts);
 
   if (result.redirected || result.error) return result;
 
