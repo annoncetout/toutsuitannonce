@@ -31,12 +31,20 @@ const AuthCallback = () => {
     let cancelled = false;
     let redirectTimer: ReturnType<typeof setTimeout> | undefined;
 
-    const finishSuccess = () => {
+    const finishSuccess = async () => {
       if (cancelled) return;
       setState("confirmed");
       setMessage("Connexion confirmée. Redirection en cours…");
       localStorage.removeItem("pending-confirmation-email");
-      toast.success("Connexion réussie");
+      try {
+        const { data: { user: u } } = await supabase.auth.getUser();
+        const name = (u?.user_metadata?.full_name as string)
+          ?? (u?.user_metadata?.name as string)
+          ?? "";
+        toast.success(name ? `Bienvenue ${name} 👋` : "Connexion réussie");
+      } catch {
+        toast.success("Connexion réussie");
+      }
       redirectTimer = setTimeout(() => navigate(next, { replace: true }), 1200);
     };
 
