@@ -277,6 +277,17 @@ const Auth = () => {
                 {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                 {tab === "login" ? "Se connecter" : "Créer mon compte"}
               </Button>
+
+              {tab === "login" && (
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={resetBusy || busy}
+                  className="block mx-auto text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline disabled:opacity-60"
+                >
+                  {resetBusy ? "Envoi…" : "Mot de passe oublié ?"}
+                </button>
+              )}
             </form>
           </Tabs>
         </div>
