@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import PwaAnalyticsTab from "@/components/admin/PwaAnalyticsTab";
 import ModerationAITab from "@/components/admin/ModerationAITab";
 import BoostsAdminTab from "@/components/admin/BoostsAdminTab";
+import PaymentsAdminTab from "@/components/admin/PaymentsAdminTab";
 import AdsAdminTab from "@/components/admin/AdsAdminTab";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
