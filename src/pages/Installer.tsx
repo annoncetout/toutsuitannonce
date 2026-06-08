@@ -127,7 +127,7 @@ const Installer = () => {
 
             <ol className="space-y-4">
               <Step n={1}>
-                Ouvrez <span className="font-semibold">www.toutsuitannonce.com</span> dans <span className="font-semibold">Safari</span>.
+                Ouvrez <span className="font-semibold">www.toutsuiteannonces.com</span> dans <span className="font-semibold">Safari</span>.
               </Step>
               <Step n={2}>
                 Touchez l'icône <Share className="inline w-4 h-4 text-primary mx-1" /> <span className="font-semibold">Partager</span> en bas de l'écran.
@@ -168,7 +168,7 @@ const Installer = () => {
 
             <ol className="space-y-4">
               <Step n={1}>
-                Ouvrez <span className="font-semibold">www.toutsuitannonce.com</span> dans <Chrome className="inline w-4 h-4 text-primary mx-1" /> <span className="font-semibold">Chrome</span>.
+                Ouvrez <span className="font-semibold">www.toutsuiteannonces.com</span> dans <Chrome className="inline w-4 h-4 text-primary mx-1" /> <span className="font-semibold">Chrome</span>.
               </Step>
               <Step n={2}>
                 Touchez le menu <MoreVertical className="inline w-4 h-4 text-primary mx-1" /> en haut à droite.
