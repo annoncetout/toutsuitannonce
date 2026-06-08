@@ -43,10 +43,11 @@ export interface SEOOptions {
   description: string;
   canonical?: string;
   image?: string;
+  ogType?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-export const useSEO = ({ title, description, canonical, image, jsonLd }: SEOOptions) => {
+export const useSEO = ({ title, description, canonical, image, ogType, jsonLd }: SEOOptions) => {
   useEffect(() => {
     document.title = title;
     upsertMeta('meta[name="description"]', { name: "description", content: description });
