@@ -63,6 +63,18 @@ interface MySubscription {
   expires_at: string | null;
 }
 
+const labelPlan = (plan: string) => {
+  const m: Record<string, string> = {
+    free: "Gratuit",
+    premium: "Premium",
+    business: "Business",
+    starter_pro: "Starter Pro",
+    business_pro: "Business Pro",
+    elite_pro: "Elite Pro",
+  };
+  return m[plan] ?? plan;
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
