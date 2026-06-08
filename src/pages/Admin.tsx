@@ -759,45 +759,22 @@ const Admin = () => {
 
           {/* === PAYMENTS === */}
           <TabsContent value="payments">
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <Card className="p-4"><div className="text-xs text-muted-foreground">Transactions</div><div className="text-2xl font-bold">{transactions.length}</div></Card>
-              <Card className="p-4"><div className="text-xs text-muted-foreground">Revenus complétés</div><div className="text-2xl font-bold text-primary">{stats.revenue.toLocaleString()} FCFA</div></Card>
-              <Card className="p-4"><div className="text-xs text-muted-foreground">Abonnés premium</div><div className="text-2xl font-bold">{stats.premium}</div></Card>
-            </div>
-            <Card className="p-4 mb-4 bg-muted/30 border-dashed">
-              <p className="text-sm text-muted-foreground">
-                💡 La structure de paiement est prête (Wave, Orange Money, MTN, commissions, abonnements).
-                L'intégration avec un fournisseur de paiement mobile money pourra être ajoutée ultérieurement.
-              </p>
-            </Card>
-            <Card className="overflow-hidden">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Méthode</TableHead>
-                      <TableHead>Montant</TableHead>
-                      <TableHead>Statut</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactions.length === 0 ? (
-                      <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucune transaction</TableCell></TableRow>
-                    ) : transactions.map(t => (
-                      <TableRow key={t.id}>
-                        <TableCell className="text-xs">{new Date(t.created_at).toLocaleString("fr-FR")}</TableCell>
-                        <TableCell><Badge variant="outline">{t.type}</Badge></TableCell>
-                        <TableCell>{t.method ?? "—"}</TableCell>
-                        <TableCell className="font-medium">{Number(t.amount).toLocaleString()} {t.currency}</TableCell>
-                        <TableCell><Badge variant={t.status === "completed" ? "default" : t.status === "failed" ? "destructive" : "secondary"}>{t.status}</Badge></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </Card>
+            <PaymentsAdminTab
+              transactions={transactions as unknown as Parameters<typeof PaymentsAdminTab>[0]["transactions"]}
+              profiles={profiles}
+              listings={listings}
+              emails={emails}
+              onUpdate={async (id, status) => {
+                const { error } = await supabase
+                  .from("transactions")
+                  .update({ status })
+                  .eq("id", id);
+                if (error) { toast.error(error.message); return; }
+                toast.success(status === "completed" ? "Paiement validé" : "Paiement refusé");
+                log(status === "completed" ? "payment.approve" : "payment.reject", "transaction", id);
+                await loadData();
+              }}
+            />
           </TabsContent>
 
           {/* === BOOSTS === */}
