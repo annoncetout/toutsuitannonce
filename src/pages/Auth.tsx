@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { getAuthCallbackUrl, sanitizeAuthRedirect } from "@/lib/authRedirect";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
 const nameSchema = z.string().trim().min(2, "Au moins 2 caractères").max(80);
 const whatsappSchema = z.string().trim().regex(/^\+?[0-9\s-]{8,20}$/, "Numéro WhatsApp invalide");
+const GOOGLE_PROVIDER_CALLBACK_URL = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/callback`;
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -153,26 +153,28 @@ const Auth = () => {
 
   const handleGoogle = async () => {
     setBusy(true);
-    const redirectUri = getAuthCallbackUrl(redirectTo);
-    console.info("Google OAuth redirect_uri sent:", redirectUri);
+    const appRedirectUrl = getAuthCallbackUrl(redirectTo);
+    console.info("Google OAuth provider callback URL:", GOOGLE_PROVIDER_CALLBACK_URL);
+    console.info("Google OAuth app redirectTo URL:", appRedirectUrl);
 
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: redirectUri,
-      extraParams: { prompt: "select_account" },
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: appRedirectUrl,
+        queryParams: { prompt: "select_account" },
+        skipBrowserRedirect: true,
+      },
     });
-    if (result.error) {
-      console.error(result.error);
-      toast.error("Erreur Google : " + (result.error as Error).message);
+    if (error) {
+      console.error(error);
+      toast.error("Erreur Google : " + error.message);
       setBusy(false);
       return;
     }
 
-    if (!result.redirected) {
-      localStorage.removeItem("pending-confirmation-email");
-      setPendingEmail("");
-      toast.success("Connexion Google réussie");
-      navigate(redirectTo, { replace: true });
-    }
+    console.info("Google OAuth authorization URL:", data.url);
+    if (data.url) window.location.assign(data.url);
+    else setBusy(false);
   };
 
   return (
