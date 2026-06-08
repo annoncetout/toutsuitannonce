@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.toutsuitannonce.com/</loc>
+    <loc>https://www.toutsuiteannonces.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces</loc>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?sort=premium</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?sort=premium</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/tarifs</loc>
+    <loc>https://www.toutsuiteannonces.com/tarifs</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/auth</loc>
+    <loc>https://www.toutsuiteannonces.com/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=immobilier</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=immobilier</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=vehicules</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=vehicules</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=electronique</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=electronique</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=emploi</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=emploi</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=mode-beaute</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=mode-beaute</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=divers</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=divers</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=Materiels%20Informatique</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=Materiels%20Informatique</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.toutsuitannonce.com/annonces?category=Telephone</loc>
+    <loc>https://www.toutsuiteannonces.com/annonces?category=Telephone</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
