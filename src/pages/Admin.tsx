@@ -765,6 +765,7 @@ const Admin = () => {
               listings={listings}
               emails={emails}
               onUpdate={async (id, status) => {
+                const tx = transactions.find(t => t.id === id);
                 const { error } = await supabase
                   .from("transactions")
                   .update({ status })
@@ -772,6 +773,43 @@ const Admin = () => {
                 if (error) { toast.error(error.message); return; }
                 toast.success(status === "completed" ? "Paiement validé" : "Paiement refusé");
                 log(status === "completed" ? "payment.approve" : "payment.reject", "transaction", id);
+
+                // Send email notification (best effort)
+                try {
+                  if (tx) {
+                    const recipientEmail = emails[tx.user_id];
+                    const meta = (tx.metadata ?? {}) as Record<string, string>;
+                    const recipientName = profiles.find(p => p.id === tx.user_id)?.display_name ?? undefined;
+                    const offerLabel = String(meta.offer_label ?? (tx.type === "subscription" ? "Abonnement Pro" : `Boost ${meta.boost_type ?? "premium"}`));
+                    const activationLabel =
+                      tx.type === "subscription" ? "Pro actif"
+                      : meta.boost_type === "urgent" ? "Urgent actif"
+                      : "Premium actif";
+                    if (recipientEmail) {
+                      await supabase.functions.invoke("send-transactional-email", {
+                        body: {
+                          templateName: "payment-status",
+                          recipientEmail,
+                          idempotencyKey: `payment-status-${id}-${status}`,
+                          templateData: {
+                            recipientName,
+                            outcome: status === "completed" ? "approved" : "rejected",
+                            offerLabel,
+                            amount: Number(tx.amount).toLocaleString("fr-FR"),
+                            currency: tx.currency,
+                            reference: (tx as { external_reference?: string }).external_reference ?? null,
+                            paymentMethod: (tx.method ?? "").toString().replace("_", " ").toUpperCase() || undefined,
+                            activationLabel,
+                            dashboardUrl: "https://www.toutsuiteannonces.com/dashboard",
+                          },
+                        },
+                      });
+                    }
+                  }
+                } catch (e) {
+                  console.warn("Email notification failed", e);
+                }
+
                 await loadData();
               }}
             />
