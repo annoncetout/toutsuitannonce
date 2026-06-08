@@ -209,7 +209,7 @@ const PublishListing = () => {
   const uploadingCount = photos.filter((p) => p.status === "uploading").length;
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth", { replace: true });
+    // Auth gating handled by AuthPromptGate wrapper in App.tsx.
     if (user) {
       supabase.from("profiles").select("status").eq("id", user.id).maybeSingle().then(({ data }) => {
         if (data?.status === "banned") {
