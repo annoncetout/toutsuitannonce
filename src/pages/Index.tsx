@@ -3,6 +3,7 @@ import HomepageCategories from "@/components/Categories";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import StickySearchBar from "@/components/StickySearchBar";
 
 import Listings from "@/components/Listings";
 import PromoBanner from "@/components/PromoBanner";
