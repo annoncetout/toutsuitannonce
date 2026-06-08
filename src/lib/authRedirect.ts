@@ -1,5 +1,5 @@
 const DEFAULT_AUTH_REDIRECT = "/mon-compte";
-const PRODUCTION_AUTH_ORIGIN = "https://toutsuiteannonces.com";
+const PRODUCTION_AUTH_ORIGIN = "https://www.toutsuiteannonces.com";
 
 export const sanitizeAuthRedirect = (value: string | null | undefined) => {
   if (!value) return DEFAULT_AUTH_REDIRECT;
