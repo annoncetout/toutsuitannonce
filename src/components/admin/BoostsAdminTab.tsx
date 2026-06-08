@@ -33,7 +33,7 @@ export default function BoostsAdminTab({ transactions, listings, emails, onUpdat
   const [busy, setBusy] = useState<string | null>(null);
 
   const boosts = useMemo(
-    () => transactions.filter((t) => t.type === "listing_boost"),
+    () => transactions.filter((t) => t.type === "listing_boost" || t.type === "subscription"),
     [transactions],
   );
   const pending = boosts.filter((t) => t.status === "pending");
