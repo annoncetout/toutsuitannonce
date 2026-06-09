@@ -47,11 +47,11 @@ const Footer = () => {
           <span>© {new Date().getFullYear()} TOUT DE SUITE Annonces. Tous droits réservés.</span>
           <Link
             to="/admin/login"
-            aria-label="Accès administrateur"
-            className="inline-flex items-center gap-1.5 text-muted-foreground/60 hover:text-primary transition-colors"
+            aria-label="Administration"
+            title="Administration"
+            className="inline-flex items-center justify-center text-muted-foreground/60 hover:text-primary transition-colors"
           >
-            <Lock className="w-3.5 h-3.5" />
-            Compte admin
+            <Lock className="w-4 h-4" />
           </Link>
         </div>
       </div>
