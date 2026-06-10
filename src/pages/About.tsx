@@ -26,6 +26,14 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { trackEvent } from "@/lib/analytics";
 
 const PAGE_TITLE = "Qui sommes-nous — TOUT SUITE Annonces, la plateforme premium d'annonces";
 const PAGE_DESC =
