@@ -55,7 +55,7 @@ export default function TopSellers() {
       const { data } = await supabase
         .from("seller_stats")
         .select(
-          "user_id, top_score, badge, rank_global, active_listings_count, sales_count, avg_rating, reviews_count, category_scores, profiles:user_id(display_name, avatar_url, city)"
+          "user_id, top_score, badge, rank_global, active_listings_count, sales_count, avg_rating, reviews_count, category_scores, display_name, avatar_url, city"
         )
         .gt("active_listings_count", 0)
         .order("top_score", { ascending: false })
