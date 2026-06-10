@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SellerBadge, { SellerBadgeKind } from "@/components/SellerBadge";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
+import SellerScoreHistory from "@/components/SellerScoreHistory";
 import { useSEO, SITE_URL } from "@/lib/seo";
 
 type Row = {
