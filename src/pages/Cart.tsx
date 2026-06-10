@@ -165,12 +165,13 @@ const Cart = () => {
     }
 
     const sellerIdSet = Array.from(new Set((listings ?? []).map((l: any) => l.user_id)));
-    const { data: sellers } = await supabase
-      .from("profiles")
-      .select("id, display_name, whatsapp, phone")
-      .in("id", sellerIdSet);
+    const listingIdSet = (listings ?? []).map((l: any) => l.id);
+    const { data: contacts } = await supabase
+      .rpc("get_listings_seller_contacts" as any, { _listing_ids: listingIdSet });
     const sellerById: Record<string, any> = {};
-    for (const s of (sellers ?? []) as any[]) sellerById[s.id] = s;
+    for (const c of (contacts ?? []) as any[]) {
+      sellerById[c.seller_id] = { id: c.seller_id, display_name: c.display_name, whatsapp: c.whatsapp, phone: c.phone };
+    }
 
     const map: Record<string, string> = {};
     const meta: Record<string, SellerMeta> = {};
