@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SellerBadge, { SellerBadgeKind } from "./SellerBadge";
 import ScoreBreakdown from "./ScoreBreakdown";
+import SellerScoreHistory from "./SellerScoreHistory";
 
 type Row = {
   user_id: string;
@@ -159,7 +160,10 @@ const TopSellersWidget = () => {
 
               <div className="flex items-center justify-between mb-3 gap-2">
                 <SellerBadge badge={r.badge} rank={r.rank_global} size="xs" />
-                <ScoreBreakdown stats={r} />
+                <div className="flex items-center">
+                  <ScoreBreakdown stats={r} />
+                  <SellerScoreHistory userId={r.user_id} />
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-sm mb-4">

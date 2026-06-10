@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SellerBadge, { SellerBadgeKind } from "@/components/SellerBadge";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
+import SellerScoreHistory from "@/components/SellerScoreHistory";
 import { useSEO, SITE_URL } from "@/lib/seo";
 
 type Row = {
@@ -160,6 +161,7 @@ export default function TopSellers() {
                     <div className="text-[11px] text-muted-foreground">{r.reviews_count} avis</div>
                   </div>
                   <ScoreBreakdown stats={r} />
+                  <SellerScoreHistory userId={r.user_id} />
                   <Button asChild size="sm" variant="outlineGold">
                     <Link to={`/vendeur/${r.user_id}`}>Profil</Link>
                   </Button>
