@@ -256,6 +256,55 @@ export type Database = {
           },
         ]
       }
+      listing_phone_clicks: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          listing_id: string
+          session_hash: string | null
+          user_id: string | null
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          session_hash?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          session_hash?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_phone_clicks_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_phone_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_phone_clicks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           archived_at: string | null
@@ -277,6 +326,7 @@ export type Database = {
           last_renewed_at: string | null
           location: string | null
           moderation_status: Database["public"]["Enums"]["listing_status"]
+          phone_clicks_count: number
           premium_until: string | null
           price: number | null
           price_type: string | null
@@ -284,6 +334,7 @@ export type Database = {
           quarantined_at: string | null
           rejection_reason: string | null
           renewed_count: number
+          sold_at: string | null
           title: string
           trust_score: number | null
           updated_at: string
@@ -311,6 +362,7 @@ export type Database = {
           last_renewed_at?: string | null
           location?: string | null
           moderation_status?: Database["public"]["Enums"]["listing_status"]
+          phone_clicks_count?: number
           premium_until?: string | null
           price?: number | null
           price_type?: string | null
@@ -318,6 +370,7 @@ export type Database = {
           quarantined_at?: string | null
           rejection_reason?: string | null
           renewed_count?: number
+          sold_at?: string | null
           title: string
           trust_score?: number | null
           updated_at?: string
@@ -345,6 +398,7 @@ export type Database = {
           last_renewed_at?: string | null
           location?: string | null
           moderation_status?: Database["public"]["Enums"]["listing_status"]
+          phone_clicks_count?: number
           premium_until?: string | null
           price?: number | null
           price_type?: string | null
@@ -352,6 +406,7 @@ export type Database = {
           quarantined_at?: string | null
           rejection_reason?: string | null
           renewed_count?: number
+          sold_at?: string | null
           title?: string
           trust_score?: number | null
           updated_at?: string
@@ -665,6 +720,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          is_top_seller_suspended: boolean
           is_verified: boolean
           phone: string | null
           status: Database["public"]["Enums"]["account_status"]
@@ -679,6 +735,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          is_top_seller_suspended?: boolean
           is_verified?: boolean
           phone?: string | null
           status?: Database["public"]["Enums"]["account_status"]
@@ -693,6 +750,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_top_seller_suspended?: boolean
           is_verified?: boolean
           phone?: string | null
           status?: Database["public"]["Enums"]["account_status"]
@@ -824,6 +882,173 @@ export type Database = {
           target_type?: Database["public"]["Enums"]["report_target"]
         }
         Relationships: []
+      }
+      seller_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          is_hidden: boolean
+          is_verified: boolean
+          rating: number
+          reviewer_id: string
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          is_verified?: boolean
+          rating: number
+          reviewer_id: string
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          is_verified?: boolean
+          rating?: number
+          reviewer_id?: string
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_reviews_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_reviews_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_stats: {
+        Row: {
+          account_age_days: number
+          active_listings_count: number
+          avg_rating: number
+          badge: Database["public"]["Enums"]["seller_badge"]
+          category_scores: Json
+          created_at: string
+          fraud_flags: Json
+          is_suspended: boolean
+          is_top_of_month: boolean
+          last_computed_at: string
+          listings_count: number
+          positive_reviews_count: number
+          publish_frequency: number
+          quality_score: number
+          rank_category: Json
+          rank_global: number | null
+          response_rate: number
+          reviews_count: number
+          sales_count: number
+          suspension_reason: string | null
+          top_score: number
+          total_messages: number
+          total_phone_clicks: number
+          total_views: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_age_days?: number
+          active_listings_count?: number
+          avg_rating?: number
+          badge?: Database["public"]["Enums"]["seller_badge"]
+          category_scores?: Json
+          created_at?: string
+          fraud_flags?: Json
+          is_suspended?: boolean
+          is_top_of_month?: boolean
+          last_computed_at?: string
+          listings_count?: number
+          positive_reviews_count?: number
+          publish_frequency?: number
+          quality_score?: number
+          rank_category?: Json
+          rank_global?: number | null
+          response_rate?: number
+          reviews_count?: number
+          sales_count?: number
+          suspension_reason?: string | null
+          top_score?: number
+          total_messages?: number
+          total_phone_clicks?: number
+          total_views?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_age_days?: number
+          active_listings_count?: number
+          avg_rating?: number
+          badge?: Database["public"]["Enums"]["seller_badge"]
+          category_scores?: Json
+          created_at?: string
+          fraud_flags?: Json
+          is_suspended?: boolean
+          is_top_of_month?: boolean
+          last_computed_at?: string
+          listings_count?: number
+          positive_reviews_count?: number
+          publish_frequency?: number
+          quality_score?: number
+          rank_category?: Json
+          rank_global?: number | null
+          response_rate?: number
+          reviews_count?: number
+          sales_count?: number
+          suspension_reason?: string | null
+          top_score?: number
+          total_messages?: number
+          total_phone_clicks?: number
+          total_views?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
@@ -1006,6 +1231,7 @@ export type Database = {
       }
     }
     Functions: {
+      assign_top_seller_badges: { Args: never; Returns: undefined }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1026,6 +1252,10 @@ export type Database = {
         Args: { _ad_id: string; _metric: string }
         Returns: undefined
       }
+      increment_listing_phone_click: {
+        Args: { _channel?: string; _listing_id: string; _session_hash?: string }
+        Returns: undefined
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -1043,6 +1273,8 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recompute_all_seller_scores: { Args: never; Returns: number }
+      recompute_seller_score: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
       account_status: "active" | "suspended" | "banned"
@@ -1066,6 +1298,7 @@ export type Database = {
         | "other"
       report_status: "open" | "reviewed" | "dismissed" | "actioned"
       report_target: "listing" | "user"
+      seller_badge: "none" | "gold" | "silver" | "bronze"
       subscription_plan:
         | "free"
         | "premium"
@@ -1223,6 +1456,7 @@ export const Constants = {
       payment_method: ["wave", "orange_money", "mtn", "card", "cash", "other"],
       report_status: ["open", "reviewed", "dismissed", "actioned"],
       report_target: ["listing", "user"],
+      seller_badge: ["none", "gold", "silver", "bronze"],
       subscription_plan: [
         "free",
         "premium",
