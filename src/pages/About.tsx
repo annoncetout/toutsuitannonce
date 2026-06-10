@@ -93,12 +93,35 @@ const testimonials = [
       "Depuis que nous publions sur TOUT SUITE Annonces, nos demandes ont triplé. L'outil de boost est redoutable.",
     author: "Karim B.",
     role: "Agence immobilière, Casablanca",
+    verified: true,
   },
   {
     quote:
       "Interface claire, support réactif, et de vrais acheteurs. Une plateforme sérieuse pour les professionnels.",
     author: "Sophie L.",
-    role: "Concessionnaire auto",
+    role: "Concessionnaire auto, Lyon",
+    verified: true,
+  },
+  {
+    quote:
+      "J'ai vendu mon appartement en moins d'une semaine grâce à la mise en avant premium. Service au top.",
+    author: "Mehdi A.",
+    role: "Particulier, Rabat",
+    verified: true,
+  },
+  {
+    quote:
+      "L'espace pro nous permet de gérer tout notre catalogue facilement. Les analytics sont précieux au quotidien.",
+    author: "Claire D.",
+    role: "Boutique mode, Paris",
+    verified: true,
+  },
+  {
+    quote:
+      "Modération rapide et acheteurs sérieux. C'est devenu notre principal canal d'acquisition.",
+    author: "Yassine M.",
+    role: "Artisan menuisier, Marrakech",
+    verified: false,
   },
 ];
 
