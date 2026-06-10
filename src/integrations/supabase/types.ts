@@ -760,6 +760,47 @@ export type Database = {
         }
         Relationships: []
       }
+      push_events: {
+        Row: {
+          created_at: string
+          endpoint_hash: string | null
+          event_type: string
+          id: string
+          notification_id: string | null
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          endpoint_hash?: string | null
+          event_type: string
+          id?: string
+          notification_id?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          endpoint_hash?: string | null
+          event_type?: string
+          id?: string
+          notification_id?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_events_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -1330,6 +1371,16 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      notify_admins: {
+        Args: {
+          _body: string
+          _link: string
+          _metadata: Json
+          _title: string
+          _type: string
+        }
+        Returns: undefined
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }

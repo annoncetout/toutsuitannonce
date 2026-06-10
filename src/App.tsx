@@ -11,6 +11,7 @@ import Index from "./pages/Index.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
 import AuthPromptGate from "./components/AuthPromptGate.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
+import PushPermissionBanner from "./components/PushPermissionBanner.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
 function lazyWithRetry<T extends React.ComponentType>(
@@ -103,6 +104,7 @@ const App = () => (
             </Routes>
           </Suspense>
           <IOSInstallHint />
+          <PushPermissionBanner />
           </AuthPromptProvider>
         </AuthProvider>
       </BrowserRouter>
