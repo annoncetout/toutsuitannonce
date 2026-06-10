@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SellerBadge, { SellerBadgeKind } from "@/components/SellerBadge";
+import FraudReviewQueue from "./FraudReviewQueue";
 
 type Row = {
   user_id: string;
