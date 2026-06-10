@@ -29,7 +29,7 @@ const SellerScoreHistory = ({
     if (rows || loading) return;
     setLoading(true);
     const { data } = await supabase
-      .from("seller_score_history")
+      .from("seller_score_history_public" as any)
       .select("id, top_score, previous_score, delta, sales_count, total_views, reviews_count, avg_rating, response_rate, computed_at")
       .eq("user_id", userId)
       .order("computed_at", { ascending: false })
