@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SellerBadge, { SellerBadgeKind } from "./SellerBadge";
 import ScoreBreakdown from "./ScoreBreakdown";
+import SellerScoreHistory from "./SellerScoreHistory";
 
 type Row = {
   user_id: string;
