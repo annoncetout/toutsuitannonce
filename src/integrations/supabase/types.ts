@@ -948,6 +948,63 @@ export type Database = {
           },
         ]
       }
+      seller_score_history: {
+        Row: {
+          account_age_days: number | null
+          avg_rating: number | null
+          computed_at: string
+          delta: number | null
+          id: string
+          previous_score: number | null
+          quality_score: number | null
+          reason: string | null
+          response_rate: number | null
+          reviews_count: number | null
+          sales_count: number | null
+          top_score: number
+          total_phone_clicks: number | null
+          total_views: number | null
+          user_id: string
+          weights: Json | null
+        }
+        Insert: {
+          account_age_days?: number | null
+          avg_rating?: number | null
+          computed_at?: string
+          delta?: number | null
+          id?: string
+          previous_score?: number | null
+          quality_score?: number | null
+          reason?: string | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score: number
+          total_phone_clicks?: number | null
+          total_views?: number | null
+          user_id: string
+          weights?: Json | null
+        }
+        Update: {
+          account_age_days?: number | null
+          avg_rating?: number | null
+          computed_at?: string
+          delta?: number | null
+          id?: string
+          previous_score?: number | null
+          quality_score?: number | null
+          reason?: string | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score?: number
+          total_phone_clicks?: number | null
+          total_views?: number | null
+          user_id?: string
+          weights?: Json | null
+        }
+        Relationships: []
+      }
       seller_stats: {
         Row: {
           account_age_days: number
