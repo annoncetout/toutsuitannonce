@@ -40,6 +40,7 @@ const Index = () => {
         <AdCarousel />
         <HomepageCategories />
         <Listings />
+        <TopSellersWidget />
         <AIRecommendations mode="foryou" userId={user?.id} title="Recommandé pour vous" />
         <PromoBanner />
         <TrustBar />
