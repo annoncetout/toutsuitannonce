@@ -55,6 +55,7 @@ const Installer = lazyWithRetry(() => import("./pages/Installer.tsx"));
 const ModerationCase = lazyWithRetry(() => import("./pages/ModerationCase.tsx"));
 const Pricing = lazyWithRetry(() => import("./pages/Pricing.tsx"));
 const NotificationsCenter = lazyWithRetry(() => import("./pages/NotificationsCenter.tsx"));
+const About = lazyWithRetry(() => import("./pages/About.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,8 @@ const App = () => (
               <Route path="/moderation/:caseId" element={<RequireAuth><ModerationCase /></RequireAuth>} />
               <Route path="/tarifs" element={<Pricing />} />
               <Route path="/notifications" element={<RequireAuth><NotificationsCenter /></RequireAuth>} />
+              <Route path="/qui-sommes-nous" element={<About />} />
+              <Route path="/about" element={<About />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
