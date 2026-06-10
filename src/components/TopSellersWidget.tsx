@@ -160,7 +160,10 @@ const TopSellersWidget = () => {
 
               <div className="flex items-center justify-between mb-3 gap-2">
                 <SellerBadge badge={r.badge} rank={r.rank_global} size="xs" />
-                <ScoreBreakdown stats={r} />
+                <div className="flex items-center">
+                  <ScoreBreakdown stats={r} />
+                  <SellerScoreHistory userId={r.user_id} />
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-sm mb-4">
