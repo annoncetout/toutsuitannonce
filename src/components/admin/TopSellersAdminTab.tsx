@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SellerBadge, { SellerBadgeKind } from "@/components/SellerBadge";
+import FraudReviewQueue from "./FraudReviewQueue";
 
 type Row = {
   user_id: string;
@@ -69,6 +70,8 @@ export default function TopSellersAdminTab() {
   };
 
   return (
+    <>
+    <FraudReviewQueue />
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <div>
@@ -144,5 +147,6 @@ export default function TopSellersAdminTab() {
         </div>
       )}
     </Card>
+    </>
   );
 }

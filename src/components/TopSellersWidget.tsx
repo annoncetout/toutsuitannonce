@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Star, Loader2, MapPin } from "lucide-react";
+import { Star, Loader2, MapPin, Radio } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SellerBadge, { SellerBadgeKind } from "./SellerBadge";
+import ScoreBreakdown from "./ScoreBreakdown";
 
 type Row = {
   user_id: string;
@@ -19,7 +20,15 @@ type Row = {
   display_name: string | null;
   avatar_url: string | null;
   city: string | null;
+  sales_count: number;
+  total_views: number;
+  response_rate: number;
+  account_age_days: number;
+  quality_score: number;
 };
+
+const SELECT_COLS =
+  "user_id, top_score, badge, rank_global, active_listings_count, avg_rating, reviews_count, category_scores, display_name, avatar_url, city, sales_count, total_views, response_rate, account_age_days, quality_score";
 
 const CATS = [
   { value: "all", label: "Tous" },
@@ -36,21 +45,38 @@ const TopSellersWidget = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [cat, setCat] = useState<string>("all");
   const [loading, setLoading] = useState(true);
+  const [live, setLive] = useState(false);
+  const [pulse, setPulse] = useState(0);
+
+  const load = async () => {
+    const { data } = await supabase
+      .from("seller_stats")
+      .select(SELECT_COLS)
+      .gt("active_listings_count", 0)
+      .order("top_score", { ascending: false })
+      .limit(20);
+    setRows((data ?? []) as unknown as Row[]);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from("seller_stats")
-        .select(
-          "user_id, top_score, badge, rank_global, active_listings_count, avg_rating, reviews_count, category_scores, display_name, avatar_url, city"
-        )
-        .gt("active_listings_count", 0)
-        .order("top_score", { ascending: false })
-        .limit(20);
-      setRows((data ?? []) as unknown as Row[]);
-      setLoading(false);
-    })();
+    load();
+    const channel = supabase
+      .channel("seller_stats_widget")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "seller_stats" },
+        () => {
+          setPulse((p) => p + 1);
+          load();
+        },
+      )
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") setLive(true);
+      });
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const sorted = (() => {
@@ -66,12 +92,23 @@ const TopSellersWidget = () => {
     <section className="container mx-auto px-4 py-12 md:py-16">
       <div className="flex items-end justify-between mb-6 md:mb-8 gap-4 flex-wrap">
         <div>
-          <div className="text-[10px] tracking-[0.3em] text-primary font-semibold uppercase mb-2">Classement IA</div>
+          <div className="text-[10px] tracking-[0.3em] text-primary font-semibold uppercase mb-2 flex items-center gap-2">
+            Classement IA
+            {live && (
+              <span
+                key={pulse}
+                className="inline-flex items-center gap-1 normal-case tracking-normal text-[10px] text-emerald-500 font-medium"
+                title="Mises à jour en direct"
+              >
+                <Radio className="w-3 h-3 animate-pulse" /> en direct
+              </span>
+            )}
+          </div>
           <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold">
             🏆 Meilleurs vendeurs du moment
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Score calculé automatiquement chaque jour à partir des ventes, avis, réactivité et qualité des annonces.
+            Score calculé automatiquement à partir des ventes, avis, réactivité et qualité des annonces.
           </p>
         </div>
         <Link to="/top-vendeurs" className="text-sm text-primary hover:underline font-medium">
@@ -120,8 +157,9 @@ const TopSellersWidget = () => {
                 </div>
               </div>
 
-              <div className="mb-3">
+              <div className="flex items-center justify-between mb-3 gap-2">
                 <SellerBadge badge={r.badge} rank={r.rank_global} size="xs" />
+                <ScoreBreakdown stats={r} />
               </div>
 
               <div className="flex items-center justify-between text-sm mb-4">
