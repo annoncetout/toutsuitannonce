@@ -148,5 +148,6 @@ export default function TopSellersAdminTab() {
         </div>
       )}
     </Card>
+    </>
   );
 }
