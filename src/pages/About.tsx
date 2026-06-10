@@ -133,9 +133,23 @@ const testimonials = [
   },
 ];
 
+const trackProPublishClick = (location: string) => {
+  trackEvent("publish_pro_click", {
+    location,
+    page: "about",
+    cta: "publier_annonce_pro",
+  });
+};
+
+const trackProPricingClick = (location: string) => {
+  trackEvent("pro_pricing_click", { location, page: "about" });
+};
+
 const About = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
+    trackEvent("page_view", { page: "about", path: "/qui-sommes-nous" });
+
 
     const setMeta = (selector: string, attr: "name" | "property", key: string, content: string) => {
       let el = document.head.querySelector<HTMLMetaElement>(selector);
@@ -213,7 +227,7 @@ const About = () => {
                   size="lg"
                   className="bg-gradient-gold text-primary-foreground shadow-gold hover:shadow-gold-lg transition-shadow h-12 px-7"
                 >
-                  <Link to="/publier">
+                  <Link to="/publier" onClick={() => trackProPublishClick("hero")}>
                     <Zap className="w-4 h-4 mr-1.5" /> Publier une annonce
                   </Link>
                 </Button>
@@ -435,12 +449,12 @@ const About = () => {
                   size="lg"
                   className="bg-gradient-gold text-primary-foreground shadow-gold hover:shadow-gold-lg h-12 px-7 w-full md:w-auto"
                 >
-                  <Link to="/publier">
+                  <Link to="/publier" onClick={() => trackProPublishClick("pro_cta_card")} data-analytics="publish-pro-cta">
                     <Rocket className="w-4 h-4 mr-1.5" /> Publier une annonce pro
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-12 px-7 border-primary/40 w-full md:w-auto">
-                  <Link to="/tarifs">Voir les offres & tarifs</Link>
+                  <Link to="/tarifs" onClick={() => trackProPricingClick("pro_cta_card")}>Voir les offres & tarifs</Link>
                 </Button>
               </div>
             </div>
@@ -458,26 +472,41 @@ const About = () => {
                 La parole à nos partenaires.
               </h2>
             </div>
-            <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {testimonials.map((t) => (
-                <figure
-                  key={t.author}
-                  className="relative p-8 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors"
-                >
-                  <Quote className="absolute top-5 right-5 w-8 h-8 text-primary/20" />
-                  <div className="flex gap-0.5 text-primary mb-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <blockquote className="text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
-                  <figcaption className="mt-5 pt-5 border-t border-border">
-                    <div className="font-semibold text-foreground">{t.author}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{t.role}</div>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+            <Carousel opts={{ align: "start", loop: true }} className="mt-12 max-w-5xl mx-auto">
+              <CarouselContent className="-ml-4">
+                {testimonials.map((t) => (
+                  <CarouselItem key={t.author} className="pl-4 md:basis-1/2">
+                    <figure className="relative h-full p-8 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors">
+                      <Quote className="absolute top-5 right-5 w-8 h-8 text-primary/20" />
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="flex gap-0.5 text-primary">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-current" />
+                          ))}
+                        </div>
+                        {t.verified && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold uppercase tracking-wider">
+                            <BadgeCheck className="w-3 h-3" /> Annonce vérifiée
+                          </span>
+                        )}
+                      </div>
+                      <blockquote className="text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
+                      <figcaption className="mt-5 pt-5 border-t border-border flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">
+                          {t.author.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-foreground text-sm">{t.author}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{t.role}</div>
+                        </div>
+                      </figcaption>
+                    </figure>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex -left-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
+              <CarouselNext className="hidden md:flex -right-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
+            </Carousel>
           </div>
         </section>
 
@@ -499,10 +528,10 @@ const About = () => {
                   size="lg"
                   className="bg-gradient-gold text-primary-foreground shadow-gold hover:shadow-gold-lg h-12 px-8"
                 >
-                  <Link to="/auth">Créer mon compte</Link>
+                  <Link to="/auth" onClick={() => trackEvent("signup_click", { location: "about_final_cta" })}>Créer mon compte</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-12 px-8 border-primary/40">
-                  <Link to="/tarifs">Découvrir les offres pro</Link>
+                  <Link to="/tarifs" onClick={() => trackProPricingClick("about_final_cta")}>Découvrir les offres pro</Link>
                 </Button>
               </div>
             </div>
