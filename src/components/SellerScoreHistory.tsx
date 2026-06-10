@@ -34,7 +34,7 @@ const SellerScoreHistory = ({
       .eq("user_id", userId)
       .order("computed_at", { ascending: false })
       .limit(20);
-    setRows((data ?? []) as HistoryRow[]);
+    setRows(((data ?? []) as unknown) as HistoryRow[]);
     setLoading(false);
   };
 
