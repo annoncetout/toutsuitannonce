@@ -58,7 +58,7 @@ const MessagesTab = ({ userId }: { userId: string }) => {
 
     const [{ data: ls }, { data: ps }] = await Promise.all([
       listingIds.length ? supabase.from("listings").select("id,title").in("id", listingIds) : Promise.resolve({ data: [] as any }),
-      userIds.length ? supabase.from("profiles").select("id,display_name").in("id", userIds) : Promise.resolve({ data: [] as any }),
+      userIds.length ? supabase.from("profiles_public" as any).select("id,display_name").in("id", userIds) : Promise.resolve({ data: [] as any }),
     ]);
     setListings(Object.fromEntries((ls ?? []).map((l: any) => [l.id, l.title])));
     setProfiles(Object.fromEntries((ps ?? []).map((p: any) => [p.id, p.display_name ?? "Utilisateur"])));

@@ -84,9 +84,7 @@ const ListingDetail = () => {
       let seller: any = null;
       if (user) {
         const { data: full } = await supabase
-          .from("profiles")
-          .select("display_name, phone, whatsapp, city, is_verified, account_type")
-          .eq("id", sellerId)
+          .rpc("get_listing_seller_contact" as any, { _listing_id: (data as any).id })
           .maybeSingle();
         seller = full;
       } else {

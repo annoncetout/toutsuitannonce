@@ -1336,6 +1336,48 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_score_history_public: {
+        Row: {
+          avg_rating: number | null
+          computed_at: string | null
+          delta: number | null
+          id: string | null
+          previous_score: number | null
+          response_rate: number | null
+          reviews_count: number | null
+          sales_count: number | null
+          top_score: number | null
+          total_views: number | null
+          user_id: string | null
+        }
+        Insert: {
+          avg_rating?: number | null
+          computed_at?: string | null
+          delta?: number | null
+          id?: string | null
+          previous_score?: number | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score?: number | null
+          total_views?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          avg_rating?: number | null
+          computed_at?: string | null
+          delta?: number | null
+          id?: string | null
+          previous_score?: number | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score?: number | null
+          total_views?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_top_seller_badges: { Args: never; Returns: undefined }
@@ -1348,6 +1390,28 @@ export type Database = {
         Returns: number
       }
       expire_premium_listings: { Args: never; Returns: undefined }
+      get_listing_seller_contact: {
+        Args: { _listing_id: string }
+        Returns: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          city: string
+          display_name: string
+          id: string
+          is_verified: boolean
+          phone: string
+          whatsapp: string
+        }[]
+      }
+      get_listings_seller_contacts: {
+        Args: { _listing_ids: string[] }
+        Returns: {
+          display_name: string
+          listing_id: string
+          phone: string
+          seller_id: string
+          whatsapp: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
