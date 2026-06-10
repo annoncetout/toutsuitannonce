@@ -23,19 +23,27 @@ const PushPermissionBanner = () => {
     if (!pushSupported() || pushBlocked()) return;
 
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const dismissedAt = Number(localStorage.getItem(DISMISS_KEY) || 0);
     if (dismissedAt && Date.now() - dismissedAt < SNOOZE_DAYS * 86400_000) return;
+
+    // Increment per-session pageview counter
+    const pv = Number(sessionStorage.getItem(PAGEVIEW_KEY) || 0) + 1;
+    sessionStorage.setItem(PAGEVIEW_KEY, String(pv));
 
     (async () => {
       const perm = await getPushPermissionState();
       if (perm !== "default") return;
       const sub = await isSubscribed();
       if (sub) return;
-      const t = setTimeout(() => { if (!cancelled) setShow(true); }, DELAY_MS);
-      return () => clearTimeout(t);
+      if (pv >= PAGEVIEW_THRESHOLD) {
+        if (!cancelled) setShow(true);
+      } else {
+        timer = setTimeout(() => { if (!cancelled) setShow(true); }, DELAY_MS);
+      }
     })();
 
-    return () => { cancelled = true; };
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [user]);
 
   const handleEnable = async () => {
