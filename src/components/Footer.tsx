@@ -10,7 +10,12 @@ const Footer = () => {
     },
     {
       title: "À propos",
-      links: ["Qui sommes-nous", "Blog", "Carrières", "Presse"],
+      links: [
+        { label: "Qui sommes-nous", to: "/qui-sommes-nous" },
+        { label: "Blog", to: "#" },
+        { label: "Carrières", to: "#" },
+        { label: "Presse", to: "#" },
+      ],
     },
     {
       title: "Aide",

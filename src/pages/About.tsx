@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
 import { Award, Globe, HeartHandshake, Shield, Sparkles, Target, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -36,17 +36,20 @@ const stats = [
 ];
 
 const About = () => {
+  useEffect(() => {
+    document.title = "Qui sommes-nous — TOUT SUITE Annonces";
+    const desc = "Découvrez TOUT SUITE Annonces : une plateforme professionnelle d'annonces en ligne, sécurisée, locale et pensée pour particuliers et professionnels.";
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", desc);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Helmet>
-        <title>Qui sommes-nous — TOUT SUITE Annonces</title>
-        <meta
-          name="description"
-          content="Découvrez TOUT SUITE Annonces : une plateforme professionnelle d'annonces en ligne, sécurisée, locale et pensée pour particuliers et professionnels."
-        />
-        <link rel="canonical" href="https://www.toutsuiteannonces.com/qui-sommes-nous" />
-      </Helmet>
-
       <Header />
 
       <main className="flex-1">
