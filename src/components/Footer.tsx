@@ -3,10 +3,16 @@ import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 const Footer = () => {
-  const cols = [
+  const cols: { title: string; links: { label: string; to: string }[] }[] = [
     {
       title: "Catégories",
-      links: ["Immobilier", "Véhicules", "Électronique", "Emploi", "Mode & Beauté"],
+      links: [
+        { label: "Immobilier", to: "/annonces?categorie=immobilier" },
+        { label: "Véhicules", to: "/annonces?categorie=vehicules" },
+        { label: "Électronique", to: "/annonces?categorie=electronique" },
+        { label: "Emploi", to: "/annonces?categorie=emploi" },
+        { label: "Mode & Beauté", to: "/annonces?categorie=mode" },
+      ],
     },
     {
       title: "À propos",
@@ -19,7 +25,12 @@ const Footer = () => {
     },
     {
       title: "Aide",
-      links: ["Centre d'aide", "Conditions", "Confidentialité", "Contact"],
+      links: [
+        { label: "Centre d'aide", to: "#" },
+        { label: "Conditions", to: "#" },
+        { label: "Confidentialité", to: "#" },
+        { label: "Contact", to: "#" },
+      ],
     },
   ];
 
@@ -38,10 +49,10 @@ const Footer = () => {
               <h4 className="font-semibold text-foreground mb-4">{c.title}</h4>
               <ul className="space-y-2">
                 {c.links.map((l) => (
-                  <li key={l}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                      {l}
-                    </a>
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                      {l.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
