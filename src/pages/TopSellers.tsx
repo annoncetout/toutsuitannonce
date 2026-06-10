@@ -108,16 +108,16 @@ export default function TopSellers() {
               >
                 <div className="w-10 text-center font-bold text-lg text-primary">{i + 1}</div>
                 <Avatar className="h-12 w-12 ring-2 ring-primary/30">
-                  <AvatarImage src={r.profiles?.avatar_url ?? undefined} />
-                  <AvatarFallback>{(r.profiles?.display_name ?? "?").slice(0, 1).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={r.avatar_url ?? undefined} />
+                  <AvatarFallback>{(r.display_name ?? "?").slice(0, 1).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold truncate">{r.profiles?.display_name ?? "Vendeur"}</span>
+                    <span className="font-semibold truncate">{r.display_name ?? "Vendeur"}</span>
                     <SellerBadge badge={r.badge} rank={r.rank_global} size="xs" />
                   </div>
                   <div className="text-xs text-muted-foreground flex items-center gap-3 mt-1">
-                    {r.profiles?.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{r.profiles.city}</span>}
+                    {r.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{r.city}</span>}
                     <span>{r.active_listings_count} annonces</span>
                     <span>{r.sales_count} ventes</span>
                   </div>

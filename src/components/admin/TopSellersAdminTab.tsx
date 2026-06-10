@@ -107,8 +107,8 @@ export default function TopSellersAdminTab() {
                   <TableRow key={r.user_id}>
                     <TableCell className="font-semibold">{r.rank_global ?? "—"}</TableCell>
                     <TableCell>
-                      <div className="font-medium">{r.profiles?.display_name ?? "—"}</div>
-                      <div className="text-xs text-muted-foreground">{r.profiles?.city ?? ""}</div>
+                      <div className="font-medium">{r.display_name ?? "—"}</div>
+                      <div className="text-xs text-muted-foreground">{r.city ?? ""}</div>
                     </TableCell>
                     <TableCell><SellerBadge badge={r.badge} size="xs" /></TableCell>
                     <TableCell className="text-right font-bold text-primary">{Number(r.top_score).toFixed(1)}</TableCell>

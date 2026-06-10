@@ -107,14 +107,14 @@ const TopSellersWidget = () => {
               </div>
               <div className="flex items-center gap-3 mb-3">
                 <Avatar className="h-14 w-14 ring-2 ring-primary/30">
-                  <AvatarImage src={r.profiles?.avatar_url ?? undefined} />
-                  <AvatarFallback>{(r.profiles?.display_name ?? "?").slice(0, 1).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={r.avatar_url ?? undefined} />
+                  <AvatarFallback>{(r.display_name ?? "?").slice(0, 1).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <div className="font-semibold truncate">{r.profiles?.display_name ?? "Vendeur"}</div>
-                  {r.profiles?.city && (
+                  <div className="font-semibold truncate">{r.display_name ?? "Vendeur"}</div>
+                  {r.city && (
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin className="w-3 h-3" /> {r.profiles.city}
+                      <MapPin className="w-3 h-3" /> {r.city}
                     </div>
                   )}
                 </div>
