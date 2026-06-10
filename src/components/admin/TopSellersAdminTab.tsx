@@ -118,7 +118,12 @@ export default function TopSellersAdminTab() {
                       <div className="text-xs text-muted-foreground">{r.city ?? ""}</div>
                     </TableCell>
                     <TableCell><SellerBadge badge={r.badge} size="xs" /></TableCell>
-                    <TableCell className="text-right font-bold text-primary">{Number(r.top_score).toFixed(1)}</TableCell>
+                    <TableCell className="text-right font-bold text-primary">
+                      <div className="flex items-center justify-end gap-1">
+                        {Number(r.top_score).toFixed(1)}
+                        <SellerScoreHistory userId={r.user_id} />
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">{r.sales_count}</TableCell>
                     <TableCell className="text-right">{r.total_views}</TableCell>
                     <TableCell className="text-right">{Number(r.avg_rating).toFixed(1)} ({r.reviews_count})</TableCell>
