@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import SellerBadge, { SellerBadgeKind } from "@/components/SellerBadge";
 import FraudReviewQueue from "./FraudReviewQueue";
+import TopScoreWeightsConfig from "./TopScoreWeightsConfig";
+import SellerScoreHistory from "@/components/SellerScoreHistory";
 
 type Row = {
   user_id: string;
