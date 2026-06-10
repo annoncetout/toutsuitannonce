@@ -355,6 +355,7 @@ const ListingDetail = () => {
                     className="w-full"
                     onClick={() => {
                       if (!requireAuth({ title: "Contacter le vendeur", message: "Connectez-vous pour voir le numéro et contacter le vendeur." })) return;
+                      supabase.rpc("increment_listing_phone_click", { _listing_id: listing.id, _session_hash: `${user?.id ?? "anon"}-wa`, _channel: "whatsapp" });
                       window.open(`https://wa.me/${waNumber}?text=${waMsg}`, "_blank", "noopener,noreferrer");
                     }}
                   >
@@ -365,6 +366,7 @@ const ListingDetail = () => {
                     className="w-full"
                     onClick={() => {
                       if (!requireAuth({ title: "Appeler le vendeur", message: "Connectez-vous pour voir le numéro et appeler." })) return;
+                      supabase.rpc("increment_listing_phone_click", { _listing_id: listing.id, _session_hash: `${user?.id ?? "anon"}-tel`, _channel: "phone" });
                       window.location.href = `tel:${waNumber}`;
                     }}
                   >
