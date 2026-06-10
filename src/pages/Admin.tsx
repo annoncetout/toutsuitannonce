@@ -4,7 +4,7 @@ import {
   Loader2, Shield, Trash2, Star, Eye, EyeOff, Plus, Pencil,
   LayoutDashboard, Users, Megaphone, AlertTriangle, FolderTree,
   CreditCard, Settings as SettingsIcon, ShieldCheck, ShieldOff, BadgeCheck,
-  History, CheckCircle2, XCircle, ArrowLeft, LogOut, KeyRound, Mail, BarChart3, Sparkles,
+  History, CheckCircle2, XCircle, ArrowLeft, LogOut, KeyRound, Mail, BarChart3, Sparkles, Trophy,
 } from "lucide-react";
 import Header from "@/components/Header";
 import PwaAnalyticsTab from "@/components/admin/PwaAnalyticsTab";
@@ -12,6 +12,7 @@ import ModerationAITab from "@/components/admin/ModerationAITab";
 import BoostsAdminTab from "@/components/admin/BoostsAdminTab";
 import PaymentsAdminTab from "@/components/admin/PaymentsAdminTab";
 import AdsAdminTab from "@/components/admin/AdsAdminTab";
+import TopSellersAdminTab from "@/components/admin/TopSellersAdminTab";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -511,6 +512,7 @@ const Admin = () => {
             <TabsTrigger value="categories"><FolderTree className="w-4 h-4 mr-1" />Catégories</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="w-4 h-4 mr-1" />Analytics PWA</TabsTrigger>
             <TabsTrigger value="ads"><Megaphone className="w-4 h-4 mr-1" />Publicités</TabsTrigger>
+            <TabsTrigger value="top-sellers"><Trophy className="w-4 h-4 mr-1" />Top Vendeurs</TabsTrigger>
             <TabsTrigger value="settings"><SettingsIcon className="w-4 h-4 mr-1" />Paramètres</TabsTrigger>
           </TabsList>
 
@@ -520,6 +522,10 @@ const Admin = () => {
 
           <TabsContent value="ads">
             <AdsAdminTab />
+          </TabsContent>
+
+          <TabsContent value="top-sellers">
+            <TopSellersAdminTab />
           </TabsContent>
 
           <TabsContent value="ai-moderation">

@@ -7,6 +7,7 @@ import StickySearchBar from "@/components/StickySearchBar";
 
 import Listings from "@/components/Listings";
 import PromoBanner from "@/components/PromoBanner";
+import TopSellersWidget from "@/components/TopSellersWidget";
 import TrustBar from "@/components/TrustBar";
 import WhatsAppBar from "@/components/WhatsAppBar";
 import AIRecommendations from "@/components/AIRecommendations";
@@ -39,6 +40,7 @@ const Index = () => {
         <AdCarousel />
         <HomepageCategories />
         <Listings />
+        <TopSellersWidget />
         <AIRecommendations mode="foryou" userId={user?.id} title="Recommandé pour vous" />
         <PromoBanner />
         <TrustBar />
