@@ -70,7 +70,6 @@ export default function TopSellersAdminTab() {
   };
 
   return (
-  return (
     <>
     <FraudReviewQueue />
     <Card className="p-6">
