@@ -952,10 +952,13 @@ export type Database = {
         Row: {
           account_age_days: number
           active_listings_count: number
+          avatar_url: string | null
           avg_rating: number
           badge: Database["public"]["Enums"]["seller_badge"]
           category_scores: Json
+          city: string | null
           created_at: string
+          display_name: string | null
           fraud_flags: Json
           is_suspended: boolean
           is_top_of_month: boolean
@@ -980,10 +983,13 @@ export type Database = {
         Insert: {
           account_age_days?: number
           active_listings_count?: number
+          avatar_url?: string | null
           avg_rating?: number
           badge?: Database["public"]["Enums"]["seller_badge"]
           category_scores?: Json
+          city?: string | null
           created_at?: string
+          display_name?: string | null
           fraud_flags?: Json
           is_suspended?: boolean
           is_top_of_month?: boolean
@@ -1008,10 +1014,13 @@ export type Database = {
         Update: {
           account_age_days?: number
           active_listings_count?: number
+          avatar_url?: string | null
           avg_rating?: number
           badge?: Database["public"]["Enums"]["seller_badge"]
           category_scores?: Json
+          city?: string | null
           created_at?: string
+          display_name?: string | null
           fraud_flags?: Json
           is_suspended?: boolean
           is_top_of_month?: boolean
