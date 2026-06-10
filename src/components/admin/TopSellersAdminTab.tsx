@@ -21,7 +21,8 @@ type Row = {
   response_rate: number;
   is_suspended: boolean;
   fraud_flags: string[] | unknown;
-  profiles: { display_name: string | null; city: string | null } | null;
+  display_name: string | null;
+  city: string | null;
 };
 
 export default function TopSellersAdminTab() {
@@ -34,7 +35,7 @@ export default function TopSellersAdminTab() {
     const { data, error } = await supabase
       .from("seller_stats")
       .select(
-        "user_id, top_score, badge, rank_global, active_listings_count, sales_count, total_views, avg_rating, reviews_count, response_rate, is_suspended, fraud_flags, profiles:user_id(display_name, city)"
+        "user_id, top_score, badge, rank_global, active_listings_count, sales_count, total_views, avg_rating, reviews_count, response_rate, is_suspended, fraud_flags, display_name, city"
       )
       .order("top_score", { ascending: false })
       .limit(200);

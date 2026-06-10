@@ -20,7 +20,9 @@ type Row = {
   avg_rating: number;
   reviews_count: number;
   category_scores: Record<string, number>;
-  profiles: { display_name: string | null; avatar_url: string | null; city: string | null } | null;
+  display_name: string | null;
+  avatar_url: string | null;
+  city: string | null;
 };
 
 const CATS = [
