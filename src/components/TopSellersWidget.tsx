@@ -16,7 +16,9 @@ type Row = {
   avg_rating: number;
   reviews_count: number;
   category_scores: Record<string, number>;
-  profiles: { display_name: string | null; avatar_url: string | null; city: string | null } | null;
+  display_name: string | null;
+  avatar_url: string | null;
+  city: string | null;
 };
 
 const CATS = [
@@ -41,7 +43,7 @@ const TopSellersWidget = () => {
       const { data } = await supabase
         .from("seller_stats")
         .select(
-          "user_id, top_score, badge, rank_global, active_listings_count, avg_rating, reviews_count, category_scores, profiles:user_id(display_name, avatar_url, city)"
+          "user_id, top_score, badge, rank_global, active_listings_count, avg_rating, reviews_count, category_scores, display_name, avatar_url, city"
         )
         .gt("active_listings_count", 0)
         .order("top_score", { ascending: false })
