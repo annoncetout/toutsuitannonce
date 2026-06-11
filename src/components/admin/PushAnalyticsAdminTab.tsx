@@ -24,6 +24,21 @@ const PushAnalyticsAdminTab = () => {
 
   const [loading, setLoading] = useState(true);
 
+  async function sendTest(scope: "self" | "all") {
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-send-test-push", { body: { scope } });
+      if (error) throw error;
+      toast.success(`Test envoyé (${(data as any)?.inserted ?? 0} notification(s) créée(s)).`);
+      setTimeout(() => void load(), 1500);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Échec de l'envoi du test");
+    } finally {
+      setSending(false);
+    }
+  }
+
+
   useEffect(() => { void load(); }, []);
 
   async function load() {
