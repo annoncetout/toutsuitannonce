@@ -90,9 +90,16 @@ export async function subscribePush(): Promise<{ ok: boolean; reason?: string }>
   const auth = (json.keys as any)?.auth;
   if (!endpoint || !p256dh || !auth) return { ok: false, reason: "Abonnement invalide" };
 
+  const ua = navigator.userAgent;
+  const platform = /iphone|ipad|ipod/i.test(ua) ? "ios"
+    : /android/i.test(ua) ? "android"
+    : "desktop";
+
   const { error } = await supabase.from("push_subscriptions").upsert({
-    user_id: user.id, endpoint, p256dh, auth, user_agent: navigator.userAgent.slice(0, 500),
-  }, { onConflict: "endpoint" });
+    user_id: user.id, endpoint, p256dh, auth,
+    user_agent: ua.slice(0, 500),
+    platform,
+  } as any, { onConflict: "endpoint" });
 
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
