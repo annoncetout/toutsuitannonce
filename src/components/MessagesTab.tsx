@@ -131,15 +131,27 @@ const MessagesTab = ({ userId }: { userId: string }) => {
   const send = async () => {
     if (!activeConv || !reply.trim()) return;
     setSending(true);
-    const { error } = await supabase.from("messages").insert({
+    const content = reply.trim();
+    const { data: inserted, error } = await supabase.from("messages").insert({
       listing_id: activeConv.listing_id,
       sender_id: userId,
       recipient_id: activeConv.other_id,
-      content: reply.trim(),
-    });
+      content,
+    }).select("id").maybeSingle();
     setSending(false);
     if (error) return toast.error(error.message);
     setReply("");
+    // Fire-and-forget email notification
+    if (inserted?.id) {
+      supabase.functions.invoke("notify-new-message", {
+        body: {
+          message_id: inserted.id,
+          listing_id: activeConv.listing_id,
+          recipient_id: activeConv.other_id,
+          content,
+        },
+      }).catch(() => {});
+    }
   };
 
 
