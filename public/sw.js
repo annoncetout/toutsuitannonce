@@ -60,22 +60,45 @@ self.addEventListener("push", (event) => {
   );
 });
 
+function buildTargetUrl(rawUrl, nid) {
+  // Always resolve relative to the SW origin and append ?n= for open-event attribution.
+  let target;
+  try {
+    target = new URL(rawUrl || "/", self.location.origin);
+  } catch (_) {
+    target = new URL("/", self.location.origin);
+  }
+  // Keep navigation same-origin to avoid silent failures.
+  if (target.origin !== self.location.origin) {
+    target = new URL("/", self.location.origin);
+  }
+  if (nid) target.searchParams.set("n", nid);
+  return target.href;
+}
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || "/";
-  const nid = event.notification.data && event.notification.data.notification_id;
+  const data = event.notification.data || {};
+  const nid = data.notification_id || null;
+  const url = buildTargetUrl(data.url, nid);
+
   event.waitUntil(
     Promise.all([
       trackEvent("click", nid, url),
       (async () => {
-        const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-        for (const client of clients) {
-          if ("focus" in client) {
-            client.navigate(url);
-            return client.focus();
+        try {
+          const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+          for (const client of clients) {
+            if ("focus" in client) {
+              try { await client.navigate(url); } catch (_) { /* cross-origin or detached */ }
+              return client.focus();
+            }
           }
+          if (self.clients.openWindow) return self.clients.openWindow(url);
+        } catch (err) {
+          // Surface routing errors in SW logs (visible in chrome://inspect or Application > SW).
+          console.error("[sw] notificationclick navigation failed", err, { url, nid });
         }
-        if (self.clients.openWindow) return self.clients.openWindow(url);
       })(),
     ])
   );
