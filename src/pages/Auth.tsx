@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { getAuthCallbackUrl, sanitizeAuthRedirect } from "@/lib/authRedirect";
