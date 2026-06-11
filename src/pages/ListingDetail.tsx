@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthPrompt } from "@/components/AuthPromptDialog";
 import { useCart } from "@/hooks/useCart";
+import { useFavorites } from "@/hooks/useFavorites";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -54,10 +55,11 @@ const ListingDetail = () => {
   const { user } = useAuth();
   const { requireAuth } = useAuthPrompt();
   const { addItem } = useCart();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
-  const [isFav, setIsFav] = useState(false);
+  const isFav = listing ? isFavorite(listing.id) : false;
   const [reportOpen, setReportOpen] = useState(false);
   const [boostOpen, setBoostOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
@@ -99,15 +101,6 @@ const ListingDetail = () => {
       setListing({ ...(data as any), seller } as any);
       setLoading(false);
 
-      if (user) {
-        const { data: fav } = await supabase
-          .from("favorites")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("listing_id", id)
-          .maybeSingle();
-        if (!cancelled) setIsFav(!!fav);
-      }
     };
     load();
 
@@ -145,16 +138,9 @@ const ListingDetail = () => {
 
   const toggleFav = async () => {
     if (!requireAuth({ title: "Ajouter aux favoris", message: "Connectez-vous pour sauvegarder cette annonce." })) return;
-    if (!user) return;
-    if (!listing) return;
-    if (isFav) {
-      await supabase.from("favorites").delete().eq("user_id", user.id).eq("listing_id", listing.id);
-      setIsFav(false);
-    } else {
-      await supabase.from("favorites").insert({ user_id: user.id, listing_id: listing.id });
-      setIsFav(true);
-      toast.success("Ajouté aux favoris ❤️");
-    }
+    if (!user || !listing) return;
+    const nowFav = await toggleFavorite(listing.id);
+    if (nowFav) toast.success("Ajouté aux favoris ❤️");
   };
 
   const submitReport = async () => {

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Flag, Heart } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthPrompt } from "@/components/AuthPromptDialog";
+import { useFavorites } from "@/hooks/useFavorites";
 import ReportListingDialog from "@/components/ReportListingDialog";
 import { formatPublished, getExpiry, isNew } from "@/lib/listingDate";
 import ListingBadges from "@/components/ListingBadges";
@@ -28,31 +28,15 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { requireAuth } = useAuthPrompt();
-  const [isFav, setIsFav] = useState(false);
+  const { isFavorite, toggle } = useFavorites();
+  const isFav = isFavorite(listing.id);
   const [reportOpen, setReportOpen] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("favorites")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("listing_id", listing.id)
-      .maybeSingle()
-      .then(({ data }) => setIsFav(!!data));
-  }, [user, listing.id]);
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!requireAuth({ title: "Ajouter aux favoris", message: "Connectez-vous pour sauvegarder vos annonces préférées." })) return;
     if (!user) return;
-    if (isFav) {
-      await supabase.from("favorites").delete().eq("user_id", user.id).eq("listing_id", listing.id);
-      setIsFav(false);
-    } else {
-      await supabase.from("favorites").insert({ user_id: user.id, listing_id: listing.id });
-      setIsFav(true);
-    }
+    await toggle(listing.id);
   };
 
   const price = listing.price

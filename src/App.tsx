@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AuthPromptProvider } from "@/components/AuthPromptDialog";
+import { FavoritesProvider } from "@/hooks/useFavorites";
 import Index from "./pages/Index.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
 import AuthPromptGate from "./components/AuthPromptGate.tsx";
@@ -76,6 +77,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AuthPromptProvider>
+          <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
             <PushOpenTracker />
             <Routes>
@@ -107,6 +109,7 @@ const App = () => (
           </Suspense>
           <IOSInstallHint />
           <PushPermissionBanner />
+          </FavoritesProvider>
           </AuthPromptProvider>
         </AuthProvider>
       </BrowserRouter>
