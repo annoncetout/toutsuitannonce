@@ -55,10 +55,11 @@ const ListingDetail = () => {
   const { user } = useAuth();
   const { requireAuth } = useAuthPrompt();
   const { addItem } = useCart();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
-  const [isFav, setIsFav] = useState(false);
+  const isFav = listing ? isFavorite(listing.id) : false;
   const [reportOpen, setReportOpen] = useState(false);
   const [boostOpen, setBoostOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
