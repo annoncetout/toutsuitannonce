@@ -809,6 +809,7 @@ export type Database = {
           id: string
           last_used_at: string
           p256dh: string
+          platform: string | null
           user_agent: string | null
           user_id: string
         }
@@ -819,6 +820,7 @@ export type Database = {
           id?: string
           last_used_at?: string
           p256dh: string
+          platform?: string | null
           user_agent?: string | null
           user_id: string
         }
@@ -829,6 +831,7 @@ export type Database = {
           id?: string
           last_used_at?: string
           p256dh?: string
+          platform?: string | null
           user_agent?: string | null
           user_id?: string
         }
