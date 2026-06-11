@@ -101,15 +101,6 @@ const ListingDetail = () => {
       setListing({ ...(data as any), seller } as any);
       setLoading(false);
 
-      if (user) {
-        const { data: fav } = await supabase
-          .from("favorites")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("listing_id", id)
-          .maybeSingle();
-        if (!cancelled) setIsFav(!!fav);
-      }
     };
     load();
 
