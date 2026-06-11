@@ -138,16 +138,9 @@ const ListingDetail = () => {
 
   const toggleFav = async () => {
     if (!requireAuth({ title: "Ajouter aux favoris", message: "Connectez-vous pour sauvegarder cette annonce." })) return;
-    if (!user) return;
-    if (!listing) return;
-    if (isFav) {
-      await supabase.from("favorites").delete().eq("user_id", user.id).eq("listing_id", listing.id);
-      setIsFav(false);
-    } else {
-      await supabase.from("favorites").insert({ user_id: user.id, listing_id: listing.id });
-      setIsFav(true);
-      toast.success("Ajouté aux favoris ❤️");
-    }
+    if (!user || !listing) return;
+    const nowFav = await toggleFavorite(listing.id);
+    if (nowFav) toast.success("Ajouté aux favoris ❤️");
   };
 
   const submitReport = async () => {
