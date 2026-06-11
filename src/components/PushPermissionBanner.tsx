@@ -9,9 +9,9 @@ import {
 
 const DISMISS_KEY = "tsa:push-banner-dismissed-at";
 const PAGEVIEW_KEY = "tsa:push-pageviews";
-const DELAY_MS = 30_000;
-const SNOOZE_DAYS = 7;
-const PAGEVIEW_THRESHOLD = 2;
+const DELAY_MS = 15_000;
+const SNOOZE_DAYS = 3;
+const PAGEVIEW_THRESHOLD = 1;
 
 const PushPermissionBanner = () => {
   const { user } = useAuth();
