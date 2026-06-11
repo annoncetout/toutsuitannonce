@@ -137,11 +137,11 @@ const ListingDetail = () => {
   }, [id, user, navigate]);
 
   const toggleFav = async () => {
-    if (!requireAuth({ title: "Ajouter aux favoris", message: "Connectez-vous pour sauvegarder cette annonce." })) return;
-    if (!user || !listing) return;
+    if (!listing) return;
     const nowFav = await toggleFavorite(listing.id);
-    if (nowFav) toast.success("Ajouté aux favoris ❤️");
+    if (nowFav) toast.success(user ? "Ajouté aux favoris ❤️" : "Ajouté aux favoris ❤️ — connectez-vous pour les synchroniser");
   };
+
 
   const submitReport = async () => {
     if (!requireAuth({ title: "Signaler", message: "Connectez-vous pour signaler cette annonce." })) return;
