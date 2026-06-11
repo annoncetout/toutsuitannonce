@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Bell, MousePointerClick, Send, Eye, Loader2 } from "lucide-react";
+import { Bell, MousePointerClick, Send, Eye, Loader2, Smartphone, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 type Stats = { delivered: number; opens: number; clicks: number; dismiss: number };
@@ -18,7 +20,24 @@ type Row = {
 const PushAnalyticsAdminTab = () => {
   const [stats, setStats] = useState<Stats>({ delivered: 0, opens: 0, clicks: 0, dismiss: 0 });
   const [rows, setRows] = useState<Row[]>([]);
+  const [sending, setSending] = useState(false);
+
   const [loading, setLoading] = useState(true);
+
+  async function sendTest(scope: "self" | "all") {
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-send-test-push", { body: { scope } });
+      if (error) throw error;
+      toast.success(`Test envoyé (${(data as any)?.inserted ?? 0} notification(s) créée(s)).`);
+      setTimeout(() => void load(), 1500);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Échec de l'envoi du test");
+    } finally {
+      setSending(false);
+    }
+  }
+
 
   useEffect(() => { void load(); }, []);
 
@@ -81,6 +100,22 @@ const PushAnalyticsAdminTab = () => {
         <StatCard icon={<MousePointerClick className="h-4 w-4" />} label="Clics" value={stats.clicks} />
         <StatCard icon={<Bell className="h-4 w-4" />} label="Taux de clic" value={`${ctr}%`} highlight />
       </div>
+
+      <Card className="p-4 border-primary/30">
+        <h3 className="font-semibold mb-1 flex items-center gap-2"><Send className="h-4 w-4 text-primary" /> Tester l'envoi push</h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          Vérifiez que vos appareils reçoivent bien les notifications. Le test s'envoie via le même pipeline (notifications → trigger → send-push) que les annonces.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="gold" disabled={sending} onClick={() => void sendTest("self")}>
+            <Smartphone className="h-4 w-4 mr-1" /> M'envoyer un test
+          </Button>
+          <Button size="sm" variant="outline" disabled={sending} onClick={() => void sendTest("all")}>
+            <Users className="h-4 w-4 mr-1" /> Envoyer à tous les utilisateurs
+          </Button>
+        </div>
+      </Card>
+
 
       <Card className="p-4">
         <h3 className="font-semibold mb-3">Historique des envois</h3>
