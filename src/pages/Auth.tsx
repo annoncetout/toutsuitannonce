@@ -32,6 +32,7 @@ const Auth = () => {
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
   const [resetBusy, setResetBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleForgotPassword = async () => {
     const target = email.trim().toLowerCase();
