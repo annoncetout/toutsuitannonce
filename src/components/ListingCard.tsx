@@ -34,8 +34,6 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!requireAuth({ title: "Ajouter aux favoris", message: "Connectez-vous pour sauvegarder vos annonces préférées." })) return;
-    if (!user) return;
     await toggle(listing.id);
   };
 
