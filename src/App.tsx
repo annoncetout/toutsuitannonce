@@ -77,6 +77,7 @@ const App = () => (
         <AuthProvider>
           <AuthPromptProvider>
           <Suspense fallback={<Fallback />}>
+            <PushOpenTracker />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
