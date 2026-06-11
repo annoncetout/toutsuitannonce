@@ -77,6 +77,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AuthPromptProvider>
+          <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
             <PushOpenTracker />
             <Routes>
@@ -108,6 +109,7 @@ const App = () => (
           </Suspense>
           <IOSInstallHint />
           <PushPermissionBanner />
+          </FavoritesProvider>
           </AuthPromptProvider>
         </AuthProvider>
       </BrowserRouter>
