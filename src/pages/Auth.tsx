@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
+import PasswordStrength from "@/components/PasswordStrength";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
