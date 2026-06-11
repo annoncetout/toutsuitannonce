@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
+import PasswordStrength from "@/components/PasswordStrength";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
@@ -266,6 +267,7 @@ const Auth = () => {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vous@exemple.com" className="pl-10" required />
                 </div>
+                {tab === "signup" && <PasswordStrength password={password} />}
               </div>
 
               <div className="space-y-2">
