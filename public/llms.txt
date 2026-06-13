@@ -1,0 +1,19 @@
+# TOUT SUITE ANNONCES
+
+> Plateforme de petites annonces gratuites au Sénégal — immobilier, véhicules, emploi, électronique, mode et services.
+
+TOUT SUITE ANNONCES (toutsuiteannonces) permet aux particuliers et professionnels de publier et trouver des annonces partout au Sénégal (Dakar, Thiès, Saint-Louis et plus). Site en français, prix en FCFA.
+
+## Pages
+
+- [Accueil](/): Page d'accueil avec annonces récentes, recommandations et top vendeurs.
+- [Toutes les annonces](/annonces): Recherche et filtres par catégorie, ville, prix.
+- [Immobilier](/annonces?category=immobilier): Vente et location de biens.
+- [Véhicules](/annonces?category=vehicules): Voitures, motos, utilitaires.
+- [Électronique](/annonces?category=electronique): Téléphones, ordinateurs, TV.
+- [Emploi](/annonces?category=emploi): Offres d'emploi au Sénégal.
+- [Mode & Beauté](/annonces?category=mode-beaute): Vêtements, accessoires, beauté.
+- [Top vendeurs](/top-vendeurs): Classement IA des meilleurs vendeurs.
+- [Tarifs](/tarifs): Boosts, options premium et abonnements pro.
+- [Qui sommes-nous](/qui-sommes-nous): Présentation du service.
+- [Installer l'application](/installer): Guide d'installation PWA iPhone et Android.

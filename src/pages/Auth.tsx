@@ -45,6 +45,10 @@ const Auth = () => {
   const redirectTo = useMemo(() => sanitizeAuthRedirect(searchParams.get("redirect")), [searchParams]);
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">(() => searchParams.get("mode") === "signup" ? "signup" : "login");
+  useSEO({
+    title: "Connexion / Inscription — TOUT DE SUITE Annonces",
+    description: "Connectez-vous ou créez votre compte pour publier, gérer vos annonces et contacter les vendeurs sur TOUT DE SUITE Annonces.",
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
