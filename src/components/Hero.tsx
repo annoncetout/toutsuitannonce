@@ -112,6 +112,7 @@ const Hero = () => {
                   onChange={(e) => setQ(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") onSearch(); }}
                   placeholder="Que recherchez-vous ?"
+                  aria-label="Rechercher des annonces"
                   className="pl-11 h-12 sm:h-14 bg-transparent border-0 focus-visible:ring-0 text-base text-white placeholder:text-white/70"
                 />
               </div>

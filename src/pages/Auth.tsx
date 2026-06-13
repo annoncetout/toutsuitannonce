@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
+import { useSEO } from "@/lib/seo";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z
@@ -44,6 +45,10 @@ const Auth = () => {
   const redirectTo = useMemo(() => sanitizeAuthRedirect(searchParams.get("redirect")), [searchParams]);
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">(() => searchParams.get("mode") === "signup" ? "signup" : "login");
+  useSEO({
+    title: "Connexion / Inscription — TOUT DE SUITE Annonces",
+    description: "Connectez-vous ou créez votre compte pour publier, gérer vos annonces et contacter les vendeurs sur TOUT DE SUITE Annonces.",
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -210,6 +215,8 @@ const Auth = () => {
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-block"><Logo /></div>
+          <h1 className="mt-4 text-2xl sm:text-3xl font-bold text-foreground">Connexion ou Inscription</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Accédez à votre compte TOUT DE SUITE pour publier et gérer vos annonces.</p>
         </div>
 
         <div className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 shadow-card">

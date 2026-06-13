@@ -46,7 +46,7 @@ const Footer = () => {
           </div>
           {cols.map((c) => (
             <div key={c.title}>
-              <h4 className="font-semibold text-foreground mb-4">{c.title}</h4>
+              <h3 className="font-semibold text-foreground mb-4">{c.title}</h3>
               <ul className="space-y-2">
                 {c.links.map((l) => (
                   <li key={l.label}>

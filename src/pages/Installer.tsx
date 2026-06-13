@@ -5,6 +5,14 @@ import { Card } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trackPwaEvent } from "@/lib/pwaAnalytics";
+import { useSEO } from "@/lib/seo";
+
+const FAQ_ITEMS = [
+  { q: "Est-ce que l'installation est gratuite ?", a: "Oui, 100% gratuite. Aucun téléchargement depuis l'App Store ou Google Play n'est nécessaire." },
+  { q: "L'app prend-elle de la place sur mon téléphone ?", a: "Très peu — quelques mégaoctets seulement, contre des centaines pour une app classique." },
+  { q: "Comment désinstaller l'application ?", a: "Appuyez longuement sur l'icône depuis votre écran d'accueil, puis choisissez « Supprimer » ou « Désinstaller »." },
+  { q: "Pourquoi le bouton « Installer » n'apparaît pas ?", a: "Sur iPhone, utilisez impérativement Safari. Sur Android, utilisez Chrome ou Edge. Si l'app est déjà installée, le bouton disparaît automatiquement." },
+];
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -62,6 +70,20 @@ const Installer = () => {
     }
     setDeferredPrompt(null);
   };
+
+  useSEO({
+    title: "Installer l'application TOUT DE SUITE sur iPhone et Android",
+    description: "Guide pas-à-pas pour installer l'app TOUT DE SUITE sur iPhone (Safari) et Android (Chrome). Accédez aux annonces en un clic, hors-ligne, sans App Store.",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  });
 
   useEffect(() => {
     document.title = "Installer l'application TOUT DE SUITE sur iPhone et Android";
@@ -187,24 +209,7 @@ const Installer = () => {
         <section className="max-w-3xl mx-auto mt-14">
           <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Questions fréquentes</h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "Est-ce que l'installation est gratuite ?",
-                a: "Oui, 100% gratuite. Aucun téléchargement depuis l'App Store ou Google Play n'est nécessaire.",
-              },
-              {
-                q: "L'app prend-elle de la place sur mon téléphone ?",
-                a: "Très peu — quelques mégaoctets seulement, contre des centaines pour une app classique.",
-              },
-              {
-                q: "Comment désinstaller l'application ?",
-                a: "Appuyez longuement sur l'icône depuis votre écran d'accueil, puis choisissez « Supprimer » ou « Désinstaller ».",
-              },
-              {
-                q: "Pourquoi le bouton « Installer » n'apparaît pas ?",
-                a: "Sur iPhone, utilisez impérativement Safari. Sur Android, utilisez Chrome ou Edge. Si l'app est déjà installée, le bouton disparaît automatiquement.",
-              },
-            ].map(({ q, a }) => (
+            {FAQ_ITEMS.map(({ q, a }) => (
               <Card key={q} className="p-5 border-border/60">
                 <h3 className="font-semibold text-foreground">{q}</h3>
                 <p className="text-sm text-muted-foreground mt-2">{a}</p>
