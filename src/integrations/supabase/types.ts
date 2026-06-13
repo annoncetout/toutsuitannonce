@@ -1381,6 +1381,96 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_stats_public: {
+        Row: {
+          account_age_days: number | null
+          active_listings_count: number | null
+          avatar_url: string | null
+          avg_rating: number | null
+          badge: Database["public"]["Enums"]["seller_badge"] | null
+          category_scores: Json | null
+          city: string | null
+          display_name: string | null
+          is_top_of_month: boolean | null
+          last_computed_at: string | null
+          listings_count: number | null
+          positive_reviews_count: number | null
+          publish_frequency: number | null
+          quality_score: number | null
+          rank_category: Json | null
+          rank_global: number | null
+          response_rate: number | null
+          reviews_count: number | null
+          sales_count: number | null
+          top_score: number | null
+          total_views: number | null
+          user_id: string | null
+        }
+        Insert: {
+          account_age_days?: number | null
+          active_listings_count?: number | null
+          avatar_url?: string | null
+          avg_rating?: number | null
+          badge?: Database["public"]["Enums"]["seller_badge"] | null
+          category_scores?: Json | null
+          city?: string | null
+          display_name?: string | null
+          is_top_of_month?: boolean | null
+          last_computed_at?: string | null
+          listings_count?: number | null
+          positive_reviews_count?: number | null
+          publish_frequency?: number | null
+          quality_score?: number | null
+          rank_category?: Json | null
+          rank_global?: number | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score?: number | null
+          total_views?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          account_age_days?: number | null
+          active_listings_count?: number | null
+          avatar_url?: string | null
+          avg_rating?: number | null
+          badge?: Database["public"]["Enums"]["seller_badge"] | null
+          category_scores?: Json | null
+          city?: string | null
+          display_name?: string | null
+          is_top_of_month?: boolean | null
+          last_computed_at?: string | null
+          listings_count?: number | null
+          positive_reviews_count?: number | null
+          publish_frequency?: number | null
+          quality_score?: number | null
+          rank_category?: Json | null
+          rank_global?: number | null
+          response_rate?: number | null
+          reviews_count?: number | null
+          sales_count?: number | null
+          top_score?: number | null
+          total_views?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       assign_top_seller_badges: { Args: never; Returns: undefined }
