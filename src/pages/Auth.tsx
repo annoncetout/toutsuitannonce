@@ -11,10 +11,29 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
-import PasswordStrength from "@/components/PasswordStrength";
+import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
-const passwordSchema = z.string().min(6, "Au moins 6 caractères").max(72);
+const passwordSchema = z
+  .string()
+  .max(72, "72 caractères maximum")
+  .superRefine((val, ctx) => {
+    const { valid, blocked, checks } = evaluatePassword(val);
+    if (blocked) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Ce mot de passe est trop courant, choisissez-en un autre.",
+      });
+      return;
+    }
+    if (!valid) {
+      const firstMissing = checks.find((c) => c.required && !c.ok);
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: firstMissing?.label ?? "Mot de passe invalide",
+      });
+    }
+  });
 const nameSchema = z.string().trim().min(2, "Au moins 2 caractères").max(80);
 const whatsappSchema = z.string().trim().regex(/^\+?[0-9\s-]{8,20}$/, "Numéro WhatsApp invalide");
 const GOOGLE_PROVIDER_CALLBACK_URL = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/callback`;
