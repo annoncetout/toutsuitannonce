@@ -80,10 +80,12 @@ const Auth = () => {
     e.preventDefault();
     try {
       emailSchema.parse(email);
-      passwordSchema.parse(password);
       if (tab === "signup") {
+        passwordSchema.parse(password);
         nameSchema.parse(name);
         whatsappSchema.parse(whatsapp);
+      } else {
+        z.string().min(1, "Mot de passe requis").max(72).parse(password);
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
