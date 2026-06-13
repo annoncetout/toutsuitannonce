@@ -1,20 +1,45 @@
-import { Check, X } from "lucide-react";
+import { AlertTriangle, Check, X } from "lucide-react";
 
 export type PasswordCheck = {
   label: string;
   ok: boolean;
+  required?: boolean;
 };
 
-export function evaluatePassword(password: string): { score: number; checks: PasswordCheck[] } {
+const BLOCKED_PASSWORDS = new Set([
+  "123456",
+  "12345678",
+  "password",
+  "qwerty",
+  "azerty",
+  "admin",
+  "welcome",
+]);
+
+export function isPasswordBlocked(password: string): boolean {
+  return BLOCKED_PASSWORDS.has(password.trim().toLowerCase());
+}
+
+export function evaluatePassword(password: string): {
+  score: number;
+  checks: PasswordCheck[];
+  valid: boolean;
+  blocked: boolean;
+  weak: boolean;
+} {
   const checks: PasswordCheck[] = [
-    { label: "Au moins 8 caractères", ok: password.length >= 8 },
-    { label: "Une lettre majuscule", ok: /[A-Z]/.test(password) },
-    { label: "Une lettre minuscule", ok: /[a-z]/.test(password) },
-    { label: "Un chiffre", ok: /[0-9]/.test(password) },
-    { label: "Un caractère spécial (!@#…)", ok: /[^A-Za-z0-9]/.test(password) },
+    { label: "Au moins 8 caractères", ok: password.length >= 8, required: true },
+    { label: "Au moins une lettre", ok: /[A-Za-z]/.test(password), required: true },
+    { label: "Au moins un chiffre", ok: /[0-9]/.test(password), required: true },
+    { label: "Une lettre majuscule (recommandé)", ok: /[A-Z]/.test(password) },
+    { label: "Un caractère spécial (recommandé)", ok: /[^A-Za-z0-9]/.test(password) },
   ];
   const score = checks.filter((c) => c.ok).length;
-  return { score, checks };
+  const requiredOk = checks.filter((c) => c.required).every((c) => c.ok);
+  const blocked = isPasswordBlocked(password);
+  const valid = requiredOk && !blocked;
+  const weak = valid && score < 5;
+  return { score, checks, valid, blocked, weak };
 }
 
 const LEVELS = [
@@ -27,7 +52,7 @@ const LEVELS = [
 ];
 
 export default function PasswordStrength({ password }: { password: string }) {
-  const { score, checks } = evaluatePassword(password);
+  const { score, checks, valid, blocked, weak } = evaluatePassword(password);
   const level = LEVELS[score];
 
   if (!password) {
@@ -56,12 +81,27 @@ export default function PasswordStrength({ password }: { password: string }) {
         ))}
       </div>
       <p className={`text-xs font-medium ${level.text}`}>Force : {level.label}</p>
+
+      {blocked && (
+        <p className="flex items-start gap-1.5 text-xs font-medium text-destructive">
+          <X className="mt-0.5 h-3 w-3 shrink-0" />
+          Ce mot de passe est trop courant et n’est pas autorisé.
+        </p>
+      )}
+
+      {!blocked && valid && weak && (
+        <p className="flex items-start gap-1.5 text-xs font-medium text-yellow-600">
+          <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+          Mot de passe faible, nous recommandons un mot de passe plus sécurisé.
+        </p>
+      )}
+
       <ul className="space-y-1 text-xs">
         {checks.map((c) => (
           <li
             key={c.label}
             className={`flex items-center gap-1.5 ${
-              c.ok ? "text-green-600" : "text-muted-foreground"
+              c.ok ? "text-green-600" : c.required ? "text-destructive" : "text-muted-foreground"
             }`}
           >
             {c.ok ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 opacity-60" />}
