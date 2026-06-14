@@ -54,6 +54,21 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [pendingEmail, setPendingEmail] = useState(() => localStorage.getItem("pending-confirmation-email") ?? "");
+
+  // On mount, verify if the (possibly stored) pending email is actually already confirmed.
+  // If so, clear the banner permanently so it never re-appears after confirmation.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (data.user?.email_confirmed_at) {
+        localStorage.removeItem("pending-confirmation-email");
+        setPendingEmail("");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
   const [resetBusy, setResetBusy] = useState(false);
