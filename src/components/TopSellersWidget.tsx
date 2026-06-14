@@ -51,7 +51,7 @@ const TopSellersWidget = () => {
 
   const load = async () => {
     const { data } = await supabase
-      .from("seller_stats")
+      .from("seller_stats_public")
       .select(SELECT_COLS)
       .gt("active_listings_count", 0)
       .order("top_score", { ascending: false })
