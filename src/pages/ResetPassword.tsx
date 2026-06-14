@@ -35,7 +35,7 @@ const ResetPassword = () => {
     if (error) return toast.error(error.message);
     toast.success("Mot de passe mis à jour");
     await supabase.auth.signOut();
-    navigate("/admin/login", { replace: true });
+    navigate("/auth", { replace: true });
   };
 
   return (
