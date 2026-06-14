@@ -356,6 +356,7 @@ const Auth = () => {
           <a href="/" className="hover:text-primary">← Retour à l'accueil</a>
         </p>
       </div>
+      <ForgotPasswordDialog open={forgotOpen} onOpenChange={setForgotOpen} defaultEmail={email} />
     </div>
   );
 };
