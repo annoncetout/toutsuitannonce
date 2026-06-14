@@ -62,7 +62,7 @@ export default function TopSellers() {
     (async () => {
       setLoading(true);
       const { data } = await supabase
-        .from("seller_stats")
+        .from("seller_stats_public")
         .select(
           "user_id, top_score, badge, rank_global, active_listings_count, sales_count, avg_rating, reviews_count, category_scores, display_name, avatar_url, city, total_views, response_rate, account_age_days, quality_score",
         )
