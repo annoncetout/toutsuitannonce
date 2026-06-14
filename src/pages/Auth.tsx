@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
+import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 import { useSEO } from "@/lib/seo";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
