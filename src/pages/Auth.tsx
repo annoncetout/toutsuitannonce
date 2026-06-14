@@ -186,7 +186,16 @@ const Auth = () => {
     });
     setResendBusy(false);
 
-    if (error) return toast.error(error.message);
+    if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already") && (msg.includes("confirm") || msg.includes("registered") || msg.includes("verified"))) {
+        localStorage.removeItem("pending-confirmation-email");
+        setPendingEmail("");
+        toast.success("Votre email est déjà confirmé. Connectez-vous.");
+        return;
+      }
+      return toast.error(error.message);
+    }
     localStorage.setItem("pending-confirmation-email", targetEmail);
     setPendingEmail(targetEmail);
     toast.success("Email envoyé avec succès", {
