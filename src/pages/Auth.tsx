@@ -341,11 +341,11 @@ const Auth = () => {
               {tab === "login" && (
                 <button
                   type="button"
-                  onClick={handleForgotPassword}
-                  disabled={resetBusy || busy}
+                  onClick={() => setForgotOpen(true)}
+                  disabled={busy}
                   className="block mx-auto text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline disabled:opacity-60"
                 >
-                  {resetBusy ? "Envoi…" : "Mot de passe oublié ?"}
+                  Mot de passe oublié ?
                 </button>
               )}
             </form>
