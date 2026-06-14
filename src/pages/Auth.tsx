@@ -253,17 +253,29 @@ const Auth = () => {
                   <p className="mt-1 text-muted-foreground break-words">
                     Confirmez votre adresse <span className="text-foreground">{pendingEmail}</span> avant de vous connecter.
                   </p>
-                  <Button
-                    type="button"
-                    variant="outlineGold"
-                    size="sm"
-                    className="mt-3 w-full sm:w-auto"
-                    onClick={handleResendConfirmation}
-                    disabled={resendBusy || busy}
-                  >
-                    {resendBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                    Renvoyer l’email de confirmation
-                  </Button>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      variant="outlineGold"
+                      size="sm"
+                      onClick={handleResendConfirmation}
+                      disabled={resendBusy || busy}
+                    >
+                      {resendBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                      Renvoyer l’email de confirmation
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        localStorage.removeItem("pending-confirmation-email");
+                        setPendingEmail("");
+                      }}
+                    >
+                      J’ai déjà confirmé
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
