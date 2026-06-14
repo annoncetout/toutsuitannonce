@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
+import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 import { useSEO } from "@/lib/seo";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
@@ -71,26 +72,8 @@ const Auth = () => {
   }, []);
   const [busy, setBusy] = useState(false);
   const [resendBusy, setResendBusy] = useState(false);
-  const [resetBusy, setResetBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleForgotPassword = async () => {
-    const target = email.trim().toLowerCase();
-    try { emailSchema.parse(target); } catch {
-      toast.error("Entrez votre email pour réinitialiser le mot de passe");
-      return;
-    }
-    setResetBusy(true);
-    const redirectUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/reset-password`
-      : "https://www.toutsuiteannonces.com/reset-password";
-    const { error } = await supabase.auth.resetPasswordForEmail(target, { redirectTo: redirectUrl });
-    setResetBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Email de réinitialisation envoyé", {
-      description: "Vérifiez votre boîte de réception (et les spams).",
-    });
-  };
+  const [forgotOpen, setForgotOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) navigate(redirectTo, { replace: true });
@@ -358,11 +341,11 @@ const Auth = () => {
               {tab === "login" && (
                 <button
                   type="button"
-                  onClick={handleForgotPassword}
-                  disabled={resetBusy || busy}
+                  onClick={() => setForgotOpen(true)}
+                  disabled={busy}
                   className="block mx-auto text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline disabled:opacity-60"
                 >
-                  {resetBusy ? "Envoi…" : "Mot de passe oublié ?"}
+                  Mot de passe oublié ?
                 </button>
               )}
             </form>
@@ -373,6 +356,7 @@ const Auth = () => {
           <a href="/" className="hover:text-primary">← Retour à l'accueil</a>
         </p>
       </div>
+      <ForgotPasswordDialog open={forgotOpen} onOpenChange={setForgotOpen} defaultEmail={email} />
     </div>
   );
 };
