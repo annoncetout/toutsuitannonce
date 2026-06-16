@@ -112,6 +112,7 @@ const App = () => (
           </Suspense>
           <IOSInstallHint />
           <PushPermissionBanner />
+          <CookieConsent />
           </FavoritesProvider>
           </AuthPromptProvider>
         </AuthProvider>
