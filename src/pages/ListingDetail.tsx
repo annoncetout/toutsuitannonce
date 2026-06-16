@@ -23,6 +23,7 @@ import { RefreshCw, AlertTriangle, Zap } from "lucide-react";
 import ListingBadges from "@/components/ListingBadges";
 import BoostDialog from "@/components/BoostDialog";
 import AIRecommendations from "@/components/AIRecommendations";
+import { trackEvent } from "@/lib/analytics";
 
 interface ListingDetail {
   id: string;
