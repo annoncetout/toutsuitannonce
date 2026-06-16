@@ -437,6 +437,13 @@ const PublishListing = () => {
       return toast.error(error.message);
     }
 
+    trackEvent("create_listing", {
+      listing_id: inserted.id,
+      category_id: form.category_id,
+      premium: premiumRequested,
+    });
+
+
     if (premiumRequested) {
       const { error: txErr } = await supabase.from("transactions").insert({
         user_id: user.id,
