@@ -111,6 +111,7 @@ const Auth = () => {
       });
       if (error) toast.error(error.message);
       else {
+        trackEvent("sign_up", { method: "email" });
         localStorage.setItem("pending-confirmation-email", normalizedEmail);
         setPendingEmail(normalizedEmail);
         setTab("login");
