@@ -14,6 +14,7 @@ import Logo from "@/components/Logo";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 import { useSEO } from "@/lib/seo";
+import { trackEvent } from "@/lib/analytics";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z
