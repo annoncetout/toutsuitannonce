@@ -23,6 +23,7 @@ import { RefreshCw, AlertTriangle, Zap } from "lucide-react";
 import ListingBadges from "@/components/ListingBadges";
 import BoostDialog from "@/components/BoostDialog";
 import AIRecommendations from "@/components/AIRecommendations";
+import { trackEvent } from "@/lib/analytics";
 
 interface ListingDetail {
   id: string;
@@ -100,6 +101,11 @@ const ListingDetail = () => {
       if (cancelled) return;
       setListing({ ...(data as any), seller } as any);
       setLoading(false);
+      trackEvent("view_listing", {
+        listing_id: (data as any).id,
+        category_id: (data as any).category_id ?? null,
+      });
+
 
     };
     load();
@@ -339,6 +345,7 @@ const ListingDetail = () => {
                     className="w-full"
                     onClick={() => {
                       if (!requireAuth({ title: "Contacter le vendeur", message: "Connectez-vous pour voir le numéro et contacter le vendeur." })) return;
+                      trackEvent("whatsapp_click", { listing_id: listing.id });
                       supabase.rpc("increment_listing_phone_click", { _listing_id: listing.id, _session_hash: `${user?.id ?? "anon"}-wa`, _channel: "whatsapp" });
                       window.open(`https://wa.me/${waNumber}?text=${waMsg}`, "_blank", "noopener,noreferrer");
                     }}

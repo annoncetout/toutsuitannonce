@@ -27,6 +27,7 @@ import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { MAX_GALLERY_IMAGES } from "@/components/ImageGallery";
 import { deleteFromStorage, uploadToStorage } from "@/lib/storageUpload";
+import { trackEvent } from "@/lib/analytics";
 
 const PREMIUM_PRICE_FCFA = 2000;
 const PREMIUM_DURATION_DAYS = 30;
@@ -436,6 +437,13 @@ const PublishListing = () => {
       return toast.error(error.message);
     }
 
+    trackEvent("create_listing", {
+      listing_id: inserted.id,
+      category_id: form.category_id,
+      premium: premiumRequested,
+    });
+
+
     if (premiumRequested) {
       const { error: txErr } = await supabase.from("transactions").insert({
         user_id: user.id,
@@ -450,6 +458,11 @@ const PublishListing = () => {
       if (txErr) {
         toast.warning("Annonce publiée. Demande Premium non enregistrée : " + txErr.message);
       } else {
+        trackEvent("premium_purchase", {
+          listing_id: inserted.id,
+          value: PREMIUM_PRICE_FCFA,
+          currency: "XOF",
+        });
         toast.success(
           `Annonce publiée ! Le Premium s'activera après confirmation du paiement (${PREMIUM_PRICE_FCFA.toLocaleString("fr-FR")} FCFA).`,
         );

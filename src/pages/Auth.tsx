@@ -14,6 +14,7 @@ import Logo from "@/components/Logo";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog";
 import { useSEO } from "@/lib/seo";
+import { trackEvent } from "@/lib/analytics";
 
 const emailSchema = z.string().trim().email("Email invalide").max(255);
 const passwordSchema = z
@@ -110,6 +111,7 @@ const Auth = () => {
       });
       if (error) toast.error(error.message);
       else {
+        trackEvent("sign_up", { method: "email" });
         localStorage.setItem("pending-confirmation-email", normalizedEmail);
         setPendingEmail(normalizedEmail);
         setTab("login");
@@ -143,6 +145,7 @@ const Auth = () => {
           await supabase.auth.signOut();
           toast.error("Ce compte est suspendu. Contactez le support.");
         } else {
+          trackEvent("login", { method: "email" });
           localStorage.removeItem("pending-confirmation-email");
           setPendingEmail("");
           toast.success("Bienvenue !");

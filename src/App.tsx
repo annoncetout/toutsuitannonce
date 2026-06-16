@@ -14,6 +14,8 @@ import AuthPromptGate from "./components/AuthPromptGate.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
 import PushPermissionBanner from "./components/PushPermissionBanner.tsx";
 import PushOpenTracker from "./components/PushOpenTracker.tsx";
+import CookieConsent from "./components/CookieConsent.tsx";
+import RouteTracker from "./components/RouteTracker.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
 function lazyWithRetry<T extends React.ComponentType>(
@@ -80,6 +82,7 @@ const App = () => (
           <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
             <PushOpenTracker />
+            <RouteTracker />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
@@ -109,6 +112,7 @@ const App = () => (
           </Suspense>
           <IOSInstallHint />
           <PushPermissionBanner />
+          <CookieConsent />
           </FavoritesProvider>
           </AuthPromptProvider>
         </AuthProvider>
