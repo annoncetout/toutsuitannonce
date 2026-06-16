@@ -82,6 +82,7 @@ const App = () => (
           <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
             <PushOpenTracker />
+            <RouteTracker />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
