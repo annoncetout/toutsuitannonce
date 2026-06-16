@@ -458,6 +458,11 @@ const PublishListing = () => {
       if (txErr) {
         toast.warning("Annonce publiée. Demande Premium non enregistrée : " + txErr.message);
       } else {
+        trackEvent("premium_purchase", {
+          listing_id: inserted.id,
+          value: PREMIUM_PRICE_FCFA,
+          currency: "XOF",
+        });
         toast.success(
           `Annonce publiée ! Le Premium s'activera après confirmation du paiement (${PREMIUM_PRICE_FCFA.toLocaleString("fr-FR")} FCFA).`,
         );
