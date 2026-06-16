@@ -101,6 +101,11 @@ const ListingDetail = () => {
       if (cancelled) return;
       setListing({ ...(data as any), seller } as any);
       setLoading(false);
+      trackEvent("view_listing", {
+        listing_id: (data as any).id,
+        category_id: (data as any).category_id ?? null,
+      });
+
 
     };
     load();
