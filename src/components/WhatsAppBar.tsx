@@ -24,6 +24,7 @@ const WhatsAppBar = () => {
             href="https://wa.me/221784716055"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent("whatsapp_click", { source: "support_bar" })}
           >
             <MessageCircle className="w-4 h-4" />
             +221 78 471 60 55
