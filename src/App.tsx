@@ -14,7 +14,6 @@ import AuthPromptGate from "./components/AuthPromptGate.tsx";
 import IOSInstallHint from "./components/IOSInstallHint.tsx";
 import PushPermissionBanner from "./components/PushPermissionBanner.tsx";
 import PushOpenTracker from "./components/PushOpenTracker.tsx";
-import CookieConsent from "./components/CookieConsent.tsx";
 import RouteTracker from "./components/RouteTracker.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
@@ -112,7 +111,6 @@ const App = () => (
           </Suspense>
           <IOSInstallHint />
           <PushPermissionBanner />
-          <CookieConsent />
           </FavoritesProvider>
           </AuthPromptProvider>
         </AuthProvider>

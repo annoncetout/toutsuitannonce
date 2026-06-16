@@ -1,5 +1,4 @@
-// Google Analytics 4 (gtag) helper with consent gating.
-// Default measurement ID can be overridden via VITE_GA_MEASUREMENT_ID.
+// Google Analytics 4 (gtag) helper — loaded immediately on app start.
 declare global {
   interface Window {
     dataLayer: unknown[];
@@ -8,7 +7,6 @@ declare global {
 }
 
 const DEFAULT_GA_ID = "G-0K0RLGS9EH";
-const CONSENT_KEY = "ga-consent-v1"; // values: "granted" | "denied"
 
 export const GA_ID: string =
   (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined) || DEFAULT_GA_ID;
@@ -27,40 +25,17 @@ function ensureGtagStub() {
   }
 }
 
+// Kept for backwards compatibility (no-ops now that consent is not required).
 export function getAnalyticsConsent(): "granted" | "denied" | null {
-  if (typeof window === "undefined") return null;
-  const v = localStorage.getItem(CONSENT_KEY);
-  return v === "granted" || v === "denied" ? v : null;
+  return "granted";
 }
-
-export function setAnalyticsConsent(value: "granted" | "denied") {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(CONSENT_KEY, value);
-  ensureGtagStub();
-  window.gtag("consent", "update", {
-    ad_storage: "denied",
-    analytics_storage: value,
-  });
-  if (value === "granted") initAnalytics();
+export function setAnalyticsConsent(_value: "granted" | "denied") {
+  // no-op
 }
 
 export function initAnalytics() {
   if (typeof window === "undefined" || !GA_ID) return;
   ensureGtagStub();
-
-  // Default consent: deny until user accepts (GDPR-friendly).
-  if (!configured) {
-    window.gtag("consent", "default", {
-      ad_storage: "denied",
-      analytics_storage: getAnalyticsConsent() === "granted" ? "granted" : "denied",
-      wait_for_update: 500,
-    });
-    window.gtag("js", new Date());
-    window.gtag("config", GA_ID, { send_page_view: false, anonymize_ip: true });
-    configured = true;
-  }
-
-  if (getAnalyticsConsent() !== "granted") return;
 
   if (!scriptInjected) {
     scriptInjected = true;
@@ -68,6 +43,12 @@ export function initAnalytics() {
     s.async = true;
     s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
     document.head.appendChild(s);
+  }
+
+  if (!configured) {
+    window.gtag("js", new Date());
+    window.gtag("config", GA_ID, { send_page_view: false, anonymize_ip: true });
+    configured = true;
   }
 }
 
