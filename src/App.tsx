@@ -61,6 +61,7 @@ const Pricing = lazyWithRetry(() => import("./pages/Pricing.tsx"));
 const NotificationsCenter = lazyWithRetry(() => import("./pages/NotificationsCenter.tsx"));
 const About = lazyWithRetry(() => import("./pages/About.tsx"));
 const TopSellers = lazyWithRetry(() => import("./pages/TopSellers.tsx"));
+const AnalyticsStatus = lazyWithRetry(() => import("./pages/AnalyticsStatus.tsx"));
 
 const queryClient = new QueryClient();
 
