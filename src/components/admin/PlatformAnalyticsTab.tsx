@@ -79,7 +79,7 @@ type Stats = {
   topSellers: { id: string; name: string; sales: number; score: number; city: string | null }[];
   topListings: { id: string; title: string; views: number; city: string | null }[];
   topCategories: { name: string; count: number }[];
-  topCities: { name: string; count: number }[];
+  topCities: { name: string; value: number }[];
 };
 
 const emptyStats: Stats = {
