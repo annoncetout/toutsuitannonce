@@ -160,7 +160,7 @@ export default function PlatformAnalyticsTab() {
       // Revenue
       const revPremium = txs.filter(t => t.type === "listing_boost" && (t.metadata as any)?.boost_type !== "urgent").reduce((s, t) => s + Number(t.amount || 0), 0);
       const revBoost = txs.filter(t => t.type === "listing_boost").reduce((s, t) => s + Number(t.amount || 0), 0);
-      const revAds = txs.filter(t => t.type === "advertisement" || (t.metadata as any)?.kind === "ad").reduce((s, t) => s + Number(t.amount || 0), 0);
+      const revAds = txs.filter(t => (t.metadata as any)?.kind === "ad" || (t.metadata as any)?.type === "advertisement").reduce((s, t) => s + Number(t.amount || 0), 0);
       const revMonth = txs.filter(t => new Date(t.created_at) >= startMonth).reduce((s, t) => s + Number(t.amount || 0), 0);
       const revTotal = txs.reduce((s, t) => s + Number(t.amount || 0), 0);
 
