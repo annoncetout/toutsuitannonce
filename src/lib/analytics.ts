@@ -36,19 +36,13 @@ export function setAnalyticsConsent(_value: "granted" | "denied") {
 export function initAnalytics() {
   if (typeof window === "undefined" || !GA_ID) return;
   ensureGtagStub();
-
-  if (!scriptInjected) {
-    scriptInjected = true;
-    const s = document.createElement("script");
-    s.async = true;
-    s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-    document.head.appendChild(s);
-  }
-
-  if (!configured) {
-    window.gtag("js", new Date());
-    window.gtag("config", GA_ID, { send_page_view: false, anonymize_ip: true });
-    configured = true;
+  // Script + config are already injected in index.html.
+  // Mark as configured to avoid duplicate calls.
+  scriptInjected = true;
+  configured = true;
+  if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console
+    console.log("Google Analytics chargé avec succès");
   }
 }
 
