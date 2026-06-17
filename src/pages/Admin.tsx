@@ -519,7 +519,7 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="analytics">
-            <PwaAnalyticsTab />
+            <PlatformAnalyticsTab />
           </TabsContent>
 
           <TabsContent value="ads">
