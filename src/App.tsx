@@ -107,6 +107,7 @@ const App = () => (
               <Route path="/qui-sommes-nous" element={<About />} />
               <Route path="/about" element={<About />} />
               <Route path="/top-vendeurs" element={<TopSellers />} />
+              <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
