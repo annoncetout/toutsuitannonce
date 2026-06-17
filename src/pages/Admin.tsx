@@ -7,7 +7,7 @@ import {
   History, CheckCircle2, XCircle, ArrowLeft, LogOut, KeyRound, Mail, BarChart3, Sparkles, Trophy, BellRing,
 } from "lucide-react";
 import Header from "@/components/Header";
-import PwaAnalyticsTab from "@/components/admin/PwaAnalyticsTab";
+import PlatformAnalyticsTab from "@/components/admin/PlatformAnalyticsTab";
 import ModerationAITab from "@/components/admin/ModerationAITab";
 import BoostsAdminTab from "@/components/admin/BoostsAdminTab";
 import PaymentsAdminTab from "@/components/admin/PaymentsAdminTab";
