@@ -61,6 +61,7 @@ const Pricing = lazyWithRetry(() => import("./pages/Pricing.tsx"));
 const NotificationsCenter = lazyWithRetry(() => import("./pages/NotificationsCenter.tsx"));
 const About = lazyWithRetry(() => import("./pages/About.tsx"));
 const TopSellers = lazyWithRetry(() => import("./pages/TopSellers.tsx"));
+const AnalyticsStatus = lazyWithRetry(() => import("./pages/AnalyticsStatus.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,7 @@ const App = () => (
               <Route path="/qui-sommes-nous" element={<About />} />
               <Route path="/about" element={<About />} />
               <Route path="/top-vendeurs" element={<TopSellers />} />
+              <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
