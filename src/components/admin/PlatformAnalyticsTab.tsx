@@ -448,8 +448,19 @@ export default function PlatformAnalyticsTab() {
               <div><Label className="text-xs">Au</Label><Input type="date" value={to} onChange={e => setTo(e.target.value)} className="w-40" /></div>
             </>
           )}
-          <div className="ml-auto flex gap-2">
-            <Button size="sm" variant="outline" onClick={loadAll}>
+          <div className="ml-auto flex items-center gap-2">
+            <div
+              key={pulse}
+              className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-full border ${
+                liveConnected ? "border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400" : "border-muted text-muted-foreground"
+              } transition-all`}
+              title={lastUpdate ? `Dernière mise à jour : ${lastUpdate.toLocaleTimeString("fr-FR")}` : "En attente"}
+            >
+              <span className={`w-2 h-2 rounded-full ${liveConnected ? "bg-green-500 animate-pulse" : "bg-muted-foreground"}`} />
+              {liveConnected ? "Temps réel" : "Hors ligne"}
+              {lastUpdate && <span className="opacity-70">· {lastUpdate.toLocaleTimeString("fr-FR")}</span>}
+            </div>
+            <Button size="sm" variant="outline" onClick={() => { loadAll().then(() => setLastUpdate(new Date())); }}>
               <Loader2 className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : "hidden"}`} />
               Rafraîchir
             </Button>
