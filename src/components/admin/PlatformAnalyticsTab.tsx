@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -263,17 +263,98 @@ export default function PlatformAnalyticsTab() {
 
   useEffect(() => { loadAll(); /* eslint-disable-next-line */ }, [fromDate, toDate]);
 
-  // Realtime: refresh on changes to listings / profiles / transactions
+  // Live indicator + last update timestamp
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [liveConnected, setLiveConnected] = useState(false);
+  const [pulse, setPulse] = useState(0);
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleReload = () => {
+    if (reloadTimer.current) clearTimeout(reloadTimer.current);
+    reloadTimer.current = setTimeout(() => {
+      loadAll().then(() => setLastUpdate(new Date()));
+    }, 1500);
+  };
+
+  const bump = (patch: Partial<Stats>) => {
+    setStats(prev => ({ ...prev, ...patch }));
+    setLastUpdate(new Date());
+    setPulse(p => p + 1);
+  };
+
+  // Realtime: incremental KPI bumps + debounced full reload
   useEffect(() => {
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+
     const ch = supabase
-      .channel("admin-analytics")
-      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => loadAll())
-      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => loadAll())
-      .on("postgres_changes", { event: "*", schema: "public", table: "transactions" }, () => loadAll())
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-    // eslint-disable-next-line
-  }, []);
+      .channel("admin-analytics-live")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "profiles" }, (payload) => {
+        const created = new Date((payload.new as any)?.created_at || Date.now());
+        bump({
+          usersTotal: stats.usersTotal + 1,
+          usersToday: stats.usersToday + (created >= today0 ? 1 : 0),
+          usersWeek: stats.usersWeek + 1,
+          usersMonth: stats.usersMonth + 1,
+        });
+        toast.success("👤 Nouvel utilisateur inscrit", { duration: 3000 });
+        scheduleReload();
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles" }, () => {
+        // login / activity update profile.updated_at
+        scheduleReload();
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "listings" }, (payload) => {
+        const l: any = payload.new;
+        const created = new Date(l?.created_at || Date.now());
+        bump({
+          listingsTotal: stats.listingsTotal + 1,
+          listingsToday: stats.listingsToday + (created >= today0 ? 1 : 0),
+          listingsMonth: stats.listingsMonth + 1,
+          listingsPremium: stats.listingsPremium + (l?.is_premium ? 1 : 0),
+          listingsFree: stats.listingsFree + (l?.is_premium ? 0 : 1),
+        });
+        toast.success("📝 Nouvelle annonce publiée", { duration: 3000 });
+        scheduleReload();
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "listings" }, () => {
+        scheduleReload();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "transactions" }, (payload) => {
+        const t: any = payload.new;
+        if (t?.status === "completed") {
+          const amt = Number(t.amount || 0);
+          bump({
+            revTotal: stats.revTotal + amt,
+            revMonth: stats.revMonth + amt,
+            revBoost: stats.revBoost + (t.type === "listing_boost" ? amt : 0),
+          });
+          toast.success(`💰 Paiement reçu : ${fmtMoney(amt)}`, { duration: 3500 });
+        }
+        scheduleReload();
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "activity_logs" }, (payload) => {
+        const a: any = payload.new;
+        if (a?.action === "login" || a?.action === "sign_in") {
+          setLastUpdate(new Date());
+          setPulse(p => p + 1);
+        }
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "pwa_install_events" }, (payload) => {
+        const e: any = payload.new;
+        if (e?.event_type === "page_view") {
+          bump({ pageViews: stats.pageViews + 1 });
+        }
+      })
+      .subscribe((status) => {
+        setLiveConnected(status === "SUBSCRIBED");
+      });
+
+    return () => {
+      if (reloadTimer.current) clearTimeout(reloadTimer.current);
+      supabase.removeChannel(ch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats.usersTotal, stats.listingsTotal, stats.revTotal, stats.pageViews]);
 
   const exportCsv = () => {
     const lines: string[] = [];
@@ -367,8 +448,19 @@ export default function PlatformAnalyticsTab() {
               <div><Label className="text-xs">Au</Label><Input type="date" value={to} onChange={e => setTo(e.target.value)} className="w-40" /></div>
             </>
           )}
-          <div className="ml-auto flex gap-2">
-            <Button size="sm" variant="outline" onClick={loadAll}>
+          <div className="ml-auto flex items-center gap-2">
+            <div
+              key={pulse}
+              className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-full border ${
+                liveConnected ? "border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400" : "border-muted text-muted-foreground"
+              } transition-all`}
+              title={lastUpdate ? `Dernière mise à jour : ${lastUpdate.toLocaleTimeString("fr-FR")}` : "En attente"}
+            >
+              <span className={`w-2 h-2 rounded-full ${liveConnected ? "bg-green-500 animate-pulse" : "bg-muted-foreground"}`} />
+              {liveConnected ? "Temps réel" : "Hors ligne"}
+              {lastUpdate && <span className="opacity-70">· {lastUpdate.toLocaleTimeString("fr-FR")}</span>}
+            </div>
+            <Button size="sm" variant="outline" onClick={() => { loadAll().then(() => setLastUpdate(new Date())); }}>
               <Loader2 className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : "hidden"}`} />
               Rafraîchir
             </Button>
