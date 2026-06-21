@@ -14,6 +14,7 @@ import PaymentsAdminTab from "@/components/admin/PaymentsAdminTab";
 import AdsAdminTab from "@/components/admin/AdsAdminTab";
 import TopSellersAdminTab from "@/components/admin/TopSellersAdminTab";
 import PushAnalyticsAdminTab from "@/components/admin/PushAnalyticsAdminTab";
+import OneSignalAdminTab from "@/components/admin/OneSignalAdminTab";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -515,11 +516,20 @@ const Admin = () => {
             <TabsTrigger value="ads"><Megaphone className="w-4 h-4 mr-1" />Publicités</TabsTrigger>
             <TabsTrigger value="top-sellers"><Trophy className="w-4 h-4 mr-1" />Top Vendeurs</TabsTrigger>
             <TabsTrigger value="push"><BellRing className="w-4 h-4 mr-1" />Push</TabsTrigger>
+            <TabsTrigger value="onesignal"><BellRing className="w-4 h-4 mr-1" />OneSignal</TabsTrigger>
             <TabsTrigger value="settings"><SettingsIcon className="w-4 h-4 mr-1" />Paramètres</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
             <PlatformAnalyticsTab />
+          </TabsContent>
+
+          <TabsContent value="onesignal">
+            <OneSignalAdminTab />
+          </TabsContent>
+
+          <TabsContent value="push">
+            <PushAnalyticsAdminTab />
           </TabsContent>
 
           <TabsContent value="ads">
