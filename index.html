@@ -31,7 +31,21 @@
         await OneSignal.init({
           appId: "17af1f2c-0b85-426a-819f-298b4d03fc17",
           allowLocalhostAsSecureOrigin: true,
-          notifyButton: { enable: true },
+          notifyButton: { enable: true, size: 'medium', position: 'bottom-right' },
+          promptOptions: {
+            slidedown: {
+              prompts: [{
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Recevez les nouvelles annonces de TOUT SUITE ANNONCES dès leur publication.",
+                  acceptButton: "Activer",
+                  cancelButton: "Plus tard"
+                },
+                delay: { pageViews: 1, timeDelay: 3 }
+              }]
+            }
+          }
         });
         console.log('OneSignal initialisé');
       });
