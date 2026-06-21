@@ -23,6 +23,19 @@
       gtag('config', 'G-0K0RLGS9EH', { anonymize_ip: true });
       console.log('Google Analytics chargé avec succès');
     </script>
+    <!-- OneSignal Web SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "17af1f2c-0b85-426a-819f-298b4d03fc17",
+          allowLocalhostAsSecureOrigin: true,
+          notifyButton: { enable: true },
+        });
+        console.log('OneSignal initialisé');
+      });
+    </script>
     <link rel="manifest" href="/manifest.json" />
     <!-- Perf: preconnect to critical third-parties -->
     <link rel="preconnect" href="https://yyendbkedzfnsmjiclhg.supabase.co" crossorigin />
