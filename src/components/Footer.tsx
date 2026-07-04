@@ -29,6 +29,7 @@ const Footer = () => {
         { label: "Centre d'aide", to: "#" },
         { label: "Conditions", to: "#" },
         { label: "Confidentialité", to: "#" },
+        { label: "Connecter un assistant IA", to: "/connect" },
         { label: "Contact", to: "#" },
       ],
     },
