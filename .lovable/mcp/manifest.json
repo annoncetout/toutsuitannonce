@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "tout-suite-annonces-mcp",
+      "version": "0.1.0",
+      "title": "Tout Suite Annonces"
+    },
+    "tools": [
+      {
+        "name": "search_listings",
+        "title": "Search listings",
+        "description": "Search active, approved classified ads on Tout Suite Annonces. Filter by keyword, location, price range, and sort. Returns up to 20 listings.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "Keyword to match in title/description.",
+              "type": "string"
+            },
+            "location": {
+              "description": "City or region substring.",
+              "type": "string"
+            },
+            "min_price": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_price": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sort": {
+              "description": "Sort order (default: recent).",
+              "type": "string",
+              "enum": [
+                "recent",
+                "price_asc",
+                "price_desc"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_listing",
+        "title": "Get listing details",
+        "description": "Fetch the full details of a single listing by its ID.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The listing UUID."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_categories",
+        "title": "List categories",
+        "description": "List all classified ad categories available on Tout Suite Annonces.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
