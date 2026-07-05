@@ -1,5 +1,3 @@
-import logoAsset from "@/assets/logo-tout-de-suite.png.asset.json";
-
 const Logo = () => (
   <a
     href="/"
@@ -8,7 +6,7 @@ const Logo = () => (
     className="flex items-center group animate-fade-in min-w-0 max-w-full shrink-0"
   >
     <img
-      src={logoAsset.url}
+      src="/logo.png"
       alt="TOUT DE SUITE ANNONCES — Petites annonces au Sénégal"
       width={320}
       height={80}
