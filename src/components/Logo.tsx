@@ -18,7 +18,7 @@ const Logo = () => (
         SUITE
       </span>
     </div>
-    <span className="hidden md:block text-[11px] tracking-[0.35em] text-primary/80 font-semibold ml-1 mt-1.5 transition-opacity duration-300 group-hover:text-primary whitespace-nowrap">
+    <span className="hidden md:block text-[11px] tracking-[0.35em] text-primary/80 font-semibold ml-3 mt-1.5 transition-opacity duration-300 group-hover:text-primary whitespace-nowrap">
       ANNONCES
     </span>
   </a>
