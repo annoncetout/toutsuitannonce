@@ -65,6 +65,13 @@ describe("Logo — responsive overflow guards", () => {
     expect(tag.className).toMatch(/md:block/);
   });
 
+  it('"ANNONCES" tagline keeps a visible gap after "SUITE" on desktop', () => {
+    const { getByText } = render(<Logo />);
+    const tag = getByText("ANNONCES");
+    // ml-6 (1.5rem) guarantees a clear visual space between SUITE and ANNONCES
+    expect(tag.className).toMatch(/\bml-6\b/);
+  });
+
   it("TOUT/SUITE wordmarks scale up responsively (mobile → desktop)", () => {
     const { getByText } = render(<Logo />);
     for (const word of ["TOUT", "SUITE"]) {
