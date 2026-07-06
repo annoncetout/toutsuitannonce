@@ -63,6 +63,7 @@ const About = lazyWithRetry(() => import("./pages/About.tsx"));
 const TopSellers = lazyWithRetry(() => import("./pages/TopSellers.tsx"));
 const AnalyticsStatus = lazyWithRetry(() => import("./pages/AnalyticsStatus.tsx"));
 const Connect = lazyWithRetry(() => import("./pages/Connect.tsx"));
+const SellerProfile = lazyWithRetry(() => import("./pages/SellerProfile.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => (
               <Route path="/top-vendeurs" element={<TopSellers />} />
               <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="/connect" element={<Connect />} />
+              <Route path="/vendeur/:userId" element={<SellerProfile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
