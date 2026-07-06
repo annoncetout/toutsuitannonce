@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Award,
   BadgeCheck,
@@ -146,6 +146,7 @@ const trackProPricingClick = (location: string) => {
 };
 
 const About = () => {
+  const [missionExpanded, setMissionExpanded] = useState(false);
   useEffect(() => {
     document.title = PAGE_TITLE;
     trackEvent("page_view", { page: "about", path: "/qui-sommes-nous" });
@@ -251,69 +252,12 @@ const About = () => {
           </div>
         </section>
 
-        {/* RÉFÉRENCES & CHIFFRES CLÉS */}
+        {/* RÉFÉRENCES & CHIFFRES CLÉS — masqué (TODO: réactiver avec contenu à jour) */}
+        {false && (
         <section className="border-b border-border bg-card/40">
-          <div className="container mx-auto px-4 py-20">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 text-primary text-[11px] font-semibold tracking-[0.25em] uppercase">
-                <Trophy className="w-3.5 h-3.5" /> Références & chiffres clés
-              </span>
-              <h2 className="mt-4 font-display text-3xl md:text-5xl font-bold text-foreground leading-tight">
-                Une plateforme qui inspire confiance.
-              </h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
-                Des milliers d'annonceurs, particuliers et professionnels nous font confiance chaque jour pour
-                acheter, vendre et développer leur activité en toute sérénité.
-              </p>
-            </div>
-
-            {/* Stats grid */}
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {stats.map(({ icon: Icon, value, label }) => (
-                <div
-                  key={label}
-                  className="relative p-6 rounded-2xl bg-gradient-to-br from-card to-card/60 border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-gold group overflow-hidden"
-                >
-                  <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors" />
-                  <Icon className="w-5 h-5 text-primary mb-3" />
-                  <div className="font-display text-4xl md:text-5xl font-extrabold text-gradient-gold leading-none">
-                    {value}
-                  </div>
-                  <div className="mt-3 text-xs md:text-sm text-muted-foreground uppercase tracking-widest">
-                    {label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Badges premium */}
-            <div className="mt-10 p-6 md:p-8 rounded-2xl bg-background/50 border border-border">
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-                {badges.map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2.5 text-sm">
-                    <span className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                      <Icon className="w-4 h-4" />
-                    </span>
-                    <span className="text-foreground/80 font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {milestones.map((m) => (
-                <div key={m.year} className="relative pl-6">
-                  <span className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_12px_hsl(43_74%_56%/0.8)]" />
-                  <div className="absolute left-[5px] top-5 bottom-0 w-px bg-gradient-to-b from-primary/40 to-transparent" />
-                  <div className="font-display text-2xl font-extrabold text-gradient-gold">{m.year}</div>
-                  <div className="mt-1 font-semibold text-foreground">{m.title}</div>
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{m.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="container mx-auto px-4 py-20" />
         </section>
+        )}
 
         {/* MISSION */}
         <section className="container mx-auto px-4 py-24 grid md:grid-cols-2 gap-16 items-center">
@@ -327,13 +271,28 @@ const About = () => {
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">
               Nous bâtissons un marché numérique où chaque annonce est valorisée, chaque utilisateur respecté et
-              chaque transaction encadrée. Notre équipe combine ingénierie logicielle, design produit et expertise
-              en confiance numérique pour offrir une expérience à la hauteur des standards internationaux.
+              chaque transaction encadrée. De la publication à la conclusion de la vente, nous nous occupons de tout.
             </p>
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
-              avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
-            </p>
+            {missionExpanded && (
+              <>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  Notre équipe combine ingénierie logicielle, design produit et expertise en confiance numérique
+                  pour offrir une expérience à la hauteur des standards internationaux.
+                </p>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
+                  avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
+                </p>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={() => setMissionExpanded((v) => !v)}
+              className="mt-4 inline-flex items-center gap-1 text-primary font-semibold text-sm hover:underline"
+              aria-expanded={missionExpanded}
+            >
+              {missionExpanded ? "Réduire" : "Lire la suite"} →
+            </button>
           </div>
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-radial-gold opacity-50 blur-2xl" />
@@ -461,54 +420,12 @@ const About = () => {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className="border-y border-border bg-card/40">
-          <div className="container mx-auto px-4 py-24">
-            <div className="max-w-2xl mx-auto text-center">
-              <span className="inline-flex items-center gap-2 text-primary text-[11px] font-semibold tracking-[0.25em] uppercase">
-                <Award className="w-3.5 h-3.5" /> Ils nous font confiance
-              </span>
-              <h2 className="mt-4 font-display text-3xl md:text-5xl font-bold text-foreground leading-tight">
-                La parole à nos partenaires.
-              </h2>
-            </div>
-            <Carousel opts={{ align: "start", loop: true }} className="mt-12 max-w-5xl mx-auto">
-              <CarouselContent className="-ml-4">
-                {testimonials.map((t) => (
-                  <CarouselItem key={t.author} className="pl-4 md:basis-1/2">
-                    <figure className="relative h-full p-8 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors">
-                      <Quote className="absolute top-5 right-5 w-8 h-8 text-primary/20" />
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex gap-0.5 text-primary">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-current" />
-                          ))}
-                        </div>
-                        {t.verified && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold uppercase tracking-wider">
-                            <BadgeCheck className="w-3 h-3" /> Annonce vérifiée
-                          </span>
-                        )}
-                      </div>
-                      <blockquote className="text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
-                      <figcaption className="mt-5 pt-5 border-t border-border flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">
-                          {t.author.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-foreground text-sm">{t.author}</div>
-                          <div className="text-xs text-muted-foreground mt-0.5">{t.role}</div>
-                        </div>
-                      </figcaption>
-                    </figure>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
-              <CarouselNext className="hidden md:flex -right-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
-            </Carousel>
-          </div>
-        </section>
+        {/* TESTIMONIALS — masqué (TODO: réactiver avec de vrais témoignages) */}
+        {false && (
+          <section className="border-y border-border bg-card/40">
+            <div className="container mx-auto px-4 py-24" />
+          </section>
+        )}
 
         {/* FINAL CTA */}
         <section className="container mx-auto px-4 py-20">
