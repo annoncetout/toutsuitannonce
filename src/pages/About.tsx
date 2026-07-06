@@ -251,69 +251,12 @@ const About = () => {
           </div>
         </section>
 
-        {/* RÉFÉRENCES & CHIFFRES CLÉS */}
+        {/* RÉFÉRENCES & CHIFFRES CLÉS — masqué (TODO: réactiver avec contenu à jour) */}
+        {false && (
         <section className="border-b border-border bg-card/40">
-          <div className="container mx-auto px-4 py-20">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 text-primary text-[11px] font-semibold tracking-[0.25em] uppercase">
-                <Trophy className="w-3.5 h-3.5" /> Références & chiffres clés
-              </span>
-              <h2 className="mt-4 font-display text-3xl md:text-5xl font-bold text-foreground leading-tight">
-                Une plateforme qui inspire confiance.
-              </h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
-                Des milliers d'annonceurs, particuliers et professionnels nous font confiance chaque jour pour
-                acheter, vendre et développer leur activité en toute sérénité.
-              </p>
-            </div>
-
-            {/* Stats grid */}
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {stats.map(({ icon: Icon, value, label }) => (
-                <div
-                  key={label}
-                  className="relative p-6 rounded-2xl bg-gradient-to-br from-card to-card/60 border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-gold group overflow-hidden"
-                >
-                  <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors" />
-                  <Icon className="w-5 h-5 text-primary mb-3" />
-                  <div className="font-display text-4xl md:text-5xl font-extrabold text-gradient-gold leading-none">
-                    {value}
-                  </div>
-                  <div className="mt-3 text-xs md:text-sm text-muted-foreground uppercase tracking-widest">
-                    {label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Badges premium */}
-            <div className="mt-10 p-6 md:p-8 rounded-2xl bg-background/50 border border-border">
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-                {badges.map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2.5 text-sm">
-                    <span className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                      <Icon className="w-4 h-4" />
-                    </span>
-                    <span className="text-foreground/80 font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {milestones.map((m) => (
-                <div key={m.year} className="relative pl-6">
-                  <span className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_12px_hsl(43_74%_56%/0.8)]" />
-                  <div className="absolute left-[5px] top-5 bottom-0 w-px bg-gradient-to-b from-primary/40 to-transparent" />
-                  <div className="font-display text-2xl font-extrabold text-gradient-gold">{m.year}</div>
-                  <div className="mt-1 font-semibold text-foreground">{m.title}</div>
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{m.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="container mx-auto px-4 py-20" />
         </section>
+        )}
 
         {/* MISSION */}
         <section className="container mx-auto px-4 py-24 grid md:grid-cols-2 gap-16 items-center">
