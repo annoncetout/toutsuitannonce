@@ -420,54 +420,12 @@ const About = () => {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className="border-y border-border bg-card/40">
-          <div className="container mx-auto px-4 py-24">
-            <div className="max-w-2xl mx-auto text-center">
-              <span className="inline-flex items-center gap-2 text-primary text-[11px] font-semibold tracking-[0.25em] uppercase">
-                <Award className="w-3.5 h-3.5" /> Ils nous font confiance
-              </span>
-              <h2 className="mt-4 font-display text-3xl md:text-5xl font-bold text-foreground leading-tight">
-                La parole à nos partenaires.
-              </h2>
-            </div>
-            <Carousel opts={{ align: "start", loop: true }} className="mt-12 max-w-5xl mx-auto">
-              <CarouselContent className="-ml-4">
-                {testimonials.map((t) => (
-                  <CarouselItem key={t.author} className="pl-4 md:basis-1/2">
-                    <figure className="relative h-full p-8 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors">
-                      <Quote className="absolute top-5 right-5 w-8 h-8 text-primary/20" />
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex gap-0.5 text-primary">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-current" />
-                          ))}
-                        </div>
-                        {t.verified && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold uppercase tracking-wider">
-                            <BadgeCheck className="w-3 h-3" /> Annonce vérifiée
-                          </span>
-                        )}
-                      </div>
-                      <blockquote className="text-foreground/90 leading-relaxed">"{t.quote}"</blockquote>
-                      <figcaption className="mt-5 pt-5 border-t border-border flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-gold flex items-center justify-center text-primary-foreground font-bold text-sm shrink-0">
-                          {t.author.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-foreground text-sm">{t.author}</div>
-                          <div className="text-xs text-muted-foreground mt-0.5">{t.role}</div>
-                        </div>
-                      </figcaption>
-                    </figure>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
-              <CarouselNext className="hidden md:flex -right-4 bg-card border-primary/30 hover:bg-primary hover:text-primary-foreground" />
-            </Carousel>
-          </div>
-        </section>
+        {/* TESTIMONIALS — masqué (TODO: réactiver avec de vrais témoignages) */}
+        {false && (
+          <section className="border-y border-border bg-card/40">
+            <div className="container mx-auto px-4 py-24" />
+          </section>
+        )}
 
         {/* FINAL CTA */}
         <section className="container mx-auto px-4 py-20">
