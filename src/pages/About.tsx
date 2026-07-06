@@ -270,13 +270,28 @@ const About = () => {
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">
               Nous bâtissons un marché numérique où chaque annonce est valorisée, chaque utilisateur respecté et
-              chaque transaction encadrée. Notre équipe combine ingénierie logicielle, design produit et expertise
-              en confiance numérique pour offrir une expérience à la hauteur des standards internationaux.
+              chaque transaction encadrée. De la publication à la conclusion de la vente, nous nous occupons de tout.
             </p>
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
-              avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
-            </p>
+            {missionExpanded && (
+              <>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  Notre équipe combine ingénierie logicielle, design produit et expertise en confiance numérique
+                  pour offrir une expérience à la hauteur des standards internationaux.
+                </p>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
+                  avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
+                </p>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={() => setMissionExpanded((v) => !v)}
+              className="mt-4 inline-flex items-center gap-1 text-primary font-semibold text-sm hover:underline"
+              aria-expanded={missionExpanded}
+            >
+              {missionExpanded ? "Réduire" : "Lire la suite"} →
+            </button>
           </div>
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-radial-gold opacity-50 blur-2xl" />
