@@ -146,6 +146,7 @@ const trackProPricingClick = (location: string) => {
 };
 
 const About = () => {
+  const [missionExpanded, setMissionExpanded] = useState(false);
   useEffect(() => {
     document.title = PAGE_TITLE;
     trackEvent("page_view", { page: "about", path: "/qui-sommes-nous" });
