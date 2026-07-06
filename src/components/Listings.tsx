@@ -113,7 +113,7 @@ const Listings = () => {
           <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold">Annonces récentes</h2>
         </div>
         <Link to="/annonces" className="shrink-0 text-sm text-primary hover:underline font-medium">
-          Voir tout →
+          Voir toutes les annonces →
         </Link>
       </div>
 

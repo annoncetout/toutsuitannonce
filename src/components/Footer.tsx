@@ -42,7 +42,7 @@ const Footer = () => {
           <div>
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-              La plateforme numéro 1 pour tous vos annonces simples, rapides et efficaces.
+              La plateforme numéro 1 pour toutes vos annonces — simples, rapides et efficaces.
             </p>
           </div>
           {cols.map((c) => (
