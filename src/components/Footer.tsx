@@ -10,7 +10,7 @@ const Footer = () => {
         { label: "Immobilier", to: "/annonces?categorie=immobilier" },
         { label: "Véhicules", to: "/annonces?categorie=vehicules" },
         { label: "Électronique", to: "/annonces?categorie=electronique" },
-        { label: "Emploi", to: "/annonces?categorie=emploi" },
+        { label: "emploi", to: "/annonces?categorie=emploi" },
         { label: "Mode & Beauté", to: "/annonces?categorie=mode" },
       ],
     },
@@ -18,9 +18,9 @@ const Footer = () => {
       title: "À propos",
       links: [
         { label: "Qui sommes-nous", to: "/qui-sommes-nous" },
-        { label: "Blog", to: "#" },
-        { label: "Carrières", to: "#" },
-        { label: "Presse", to: "#" },
+        { label: "Blog", to: "/annonces" },
+        { label: "Carrières", to: "/qui-sommes-nous#carrieres" },
+        { label: "Presse", to: "/qui-sommes-nous#presse" },
       ],
     },
     {

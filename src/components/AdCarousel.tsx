@@ -84,12 +84,11 @@ const AdCarousel = () => {
 
   const handleClick = async (ad: Ad) => {
     supabase.rpc("increment_ad_metric", { _ad_id: ad.id, _metric: "click" });
-    if (ad.redirect_url) {
-      if (/^https?:\/\//i.test(ad.redirect_url)) {
-        window.open(ad.redirect_url, "_blank", "noopener,noreferrer");
-      } else {
-        window.location.href = ad.redirect_url;
-      }
+    const target = ad.redirect_url || "/annonces?sort=premium";
+    if (/^https?:\/\//i.test(target)) {
+      window.open(target, "_blank", "noopener,noreferrer");
+    } else {
+      window.location.href = target;
     }
   };
 
