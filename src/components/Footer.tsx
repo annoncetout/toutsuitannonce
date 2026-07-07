@@ -18,9 +18,9 @@ const Footer = () => {
       title: "À propos",
       links: [
         { label: "Qui sommes-nous", to: "/qui-sommes-nous" },
-        { label: "Blog", to: "#" },
-        { label: "Carrières", to: "#" },
-        { label: "Presse", to: "#" },
+        { label: "Blog", to: "/annonces" },
+        { label: "Carrières", to: "/qui-sommes-nous#carrieres" },
+        { label: "Presse", to: "/qui-sommes-nous#presse" },
       ],
     },
     {
