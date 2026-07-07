@@ -10,7 +10,7 @@ const Footer = () => {
         { label: "Immobilier", to: "/annonces?categorie=immobilier" },
         { label: "Véhicules", to: "/annonces?categorie=vehicules" },
         { label: "Électronique", to: "/annonces?categorie=electronique" },
-        { label: "Emploi", to: "/annonces?categorie=emploi" },
+        { label: "emploi", to: "/annonces?categorie=emploi" },
         { label: "Mode & Beauté", to: "/annonces?categorie=mode" },
       ],
     },
