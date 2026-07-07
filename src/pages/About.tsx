@@ -273,25 +273,33 @@ const About = () => {
               Nous bâtissons un marché numérique où chaque annonce est valorisée, chaque utilisateur respecté et
               chaque transaction encadrée. De la publication à la conclusion de la vente, nous nous occupons de tout.
             </p>
-            {missionExpanded && (
-              <>
-                <p className="mt-4 text-muted-foreground leading-relaxed">
-                  Notre équipe combine ingénierie logicielle, design produit et expertise en confiance numérique
-                  pour offrir une expérience à la hauteur des standards internationaux.
-                </p>
-                <p className="mt-4 text-muted-foreground leading-relaxed">
-                  Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
-                  avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
-                </p>
-              </>
-            )}
+            <div
+              id="mission-more"
+              hidden={!missionExpanded}
+              aria-hidden={!missionExpanded}
+            >
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                Notre équipe combine ingénierie logicielle, design produit et expertise en confiance numérique
+                pour offrir une expérience à la hauteur des standards internationaux.
+              </p>
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                Particulier ou professionnel, TOUT SUITE Annonces vous accompagne avec des outils concrets : mise en
+                avant payante, statistiques de visibilité, messagerie intégrée, modération IA et support humain dédié.
+              </p>
+            </div>
             <button
               type="button"
               onClick={() => setMissionExpanded((v) => !v)}
-              className="mt-4 inline-flex items-center gap-1 text-primary font-semibold text-sm hover:underline"
+              className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded"
               aria-expanded={missionExpanded}
+              aria-controls="mission-more"
+              aria-label={missionExpanded ? "Réduire la description de la mission" : "Lire la suite de la description de la mission"}
             >
-              {missionExpanded ? "Réduire" : "Lire la suite"} →
+              {missionExpanded ? "Réduire" : "Lire la suite"}
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${missionExpanded ? "rotate-180" : ""}`}
+                aria-hidden="true"
+              />
             </button>
           </div>
           <div className="relative">
