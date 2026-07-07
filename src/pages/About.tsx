@@ -5,6 +5,7 @@ import {
   BarChart3,
   Building2,
   CheckCircle2,
+  ChevronDown,
   Crown,
   Gauge,
   Globe,
