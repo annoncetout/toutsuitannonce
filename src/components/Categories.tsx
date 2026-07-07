@@ -5,7 +5,7 @@ const categories = [
   { icon: Home, label: "Immobilier", desc: "Maisons, Appartements, Terrains...", slug: "immobilier" },
   { icon: Car, label: "Véhicules", desc: "Voitures, Motos, Camions...", slug: "vehicules" },
   { icon: Smartphone, label: "Électronique", desc: "Téléphones, Ordinateurs, Accessoires...", slug: "electronique" },
-  { icon: Briefcase, label: "Emploi", desc: "Offres d'emploi, Recrutement...", slug: "emploi" },
+  { icon: Briefcase, label: "emploi", desc: "Offres d'emploi, Recrutement...", slug: "emploi" },
   { icon: ShoppingBag, label: "Mode & Beauté", desc: "Vêtements, Chaussures, Parfums...", slug: "mode-beaute" },
   { icon: MoreHorizontal, label: "Divers", desc: "Maison, Services, Autres...", slug: "divers" },
 ];
