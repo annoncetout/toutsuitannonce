@@ -42,6 +42,7 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
     : "À discuter";
 
   return (
+    <div className="card-3d-wrap">
     <article
       onClick={() => {
         import("@/lib/analytics").then(({ trackEvent }) =>
@@ -53,8 +54,22 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
         );
         navigate(listingPath(listing.title, listing.id));
       }}
-      className="group relative rounded-2xl overflow-hidden bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-gold cursor-pointer"
+      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${
+        listing.is_premium
+          ? "border-primary/40 shadow-[0_0_0_1px_hsl(43_74%_56%/0.25),0_20px_50px_-20px_hsl(43_74%_56%/0.4)]"
+          : "border-border/50 hover:border-primary/50"
+      }`}
     >
+      {listing.is_premium && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background:
+              "radial-gradient(600px circle at 50% -20%, hsl(45 95% 65% / 0.18), transparent 60%)",
+          }}
+        />
+      )}
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
         {listing.images[0] ? (
           <img
@@ -110,6 +125,7 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
       </div>
       <ReportListingDialog listingId={listing.id} open={reportOpen} onOpenChange={setReportOpen} />
     </article>
+    </div>
   );
 };
 

@@ -15,6 +15,7 @@ import IOSInstallHint from "./components/IOSInstallHint.tsx";
 import PushPermissionBanner from "./components/PushPermissionBanner.tsx";
 import PushOpenTracker from "./components/PushOpenTracker.tsx";
 import RouteTracker from "./components/RouteTracker.tsx";
+import PageTransition from "./components/PageTransition.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
 function lazyWithRetry<T extends React.ComponentType>(
@@ -86,17 +87,17 @@ const App = () => (
             <PushOpenTracker />
             <RouteTracker />
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+              <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
               <Route path="/profil" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/mon-compte" element={<RequireAuth><Profile /></RequireAuth>} />
               <Route path="/publier" element={<AuthPromptGate title="Publier une annonce" message="Connectez-vous pour publier votre annonce gratuitement."><PublishListing /></AuthPromptGate>} />
-              <Route path="/annonces" element={<ListingsPage />} />
-              <Route path="/annonce/:id" element={<ListingDetail />} />
-              <Route path="/annonce/:slug/:id" element={<ListingDetail />} />
+              <Route path="/annonces" element={<PageTransition><ListingsPage /></PageTransition>} />
+              <Route path="/annonce/:id" element={<PageTransition><ListingDetail /></PageTransition>} />
+              <Route path="/annonce/:slug/:id" element={<PageTransition><ListingDetail /></PageTransition>} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/reset-password" element={<ResetPassword />} />
@@ -104,14 +105,14 @@ const App = () => (
               <Route path="/commande/confirmation" element={<OrderConfirmation />} />
               <Route path="/installer" element={<Installer />} />
               <Route path="/moderation/:caseId" element={<RequireAuth><ModerationCase /></RequireAuth>} />
-              <Route path="/tarifs" element={<Pricing />} />
+              <Route path="/tarifs" element={<PageTransition><Pricing /></PageTransition>} />
               <Route path="/notifications" element={<RequireAuth><NotificationsCenter /></RequireAuth>} />
-              <Route path="/qui-sommes-nous" element={<About />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/top-vendeurs" element={<TopSellers />} />
+              <Route path="/qui-sommes-nous" element={<PageTransition><About /></PageTransition>} />
+              <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+              <Route path="/top-vendeurs" element={<PageTransition><TopSellers /></PageTransition>} />
               <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="/connect" element={<Connect />} />
-              <Route path="/vendeur/:userId" element={<SellerProfile />} />
+              <Route path="/vendeur/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
