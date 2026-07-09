@@ -17,10 +17,10 @@ const Hero = () => {
     navigate(`/annonces?${params.toString()}`);
   };
   return (
-    <section className="relative overflow-hidden bg-gradient-hero">
-      {/* Glow background */}
+    <section className="relative overflow-hidden bg-gradient-hero [perspective:1400px]">
+      {/* Layered background */}
       <div
-        className="absolute inset-0 opacity-50"
+        className="absolute inset-0 opacity-40"
         style={{
           backgroundImage: `url(${heroBg})`,
           backgroundSize: "cover",
@@ -28,7 +28,23 @@ const Hero = () => {
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl animate-glow-pulse" />
+
+      {/* Animated 3D orbs */}
+      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-primary/15 blur-3xl animate-orb-drift" />
+      <div className="absolute top-1/3 -left-32 w-[420px] h-[420px] rounded-full bg-primary-glow/10 blur-3xl animate-orb-drift" style={{ animationDelay: "-6s" }} />
+      <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/10 blur-3xl animate-orb-drift" style={{ animationDelay: "-10s" }} />
+
+      {/* Animated grid mesh */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "linear-gradient(hsl(45 95% 65%) 1px, transparent 1px), linear-gradient(90deg, hsl(45 95% 65%) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+        }}
+      />
 
       <div className="container relative mx-auto px-4 py-12 sm:py-16 md:py-24 lg:py-28">
         {/* Premium tag */}
