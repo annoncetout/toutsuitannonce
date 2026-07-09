@@ -115,6 +115,10 @@
     background: var(--gradient-hero);
   }
 
+  .bg-gradient-radial-gold {
+    background: var(--gradient-radial-gold);
+  }
+
   .shadow-gold {
     box-shadow: var(--shadow-gold);
   }
