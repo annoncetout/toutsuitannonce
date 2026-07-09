@@ -15,6 +15,7 @@ import IOSInstallHint from "./components/IOSInstallHint.tsx";
 import PushPermissionBanner from "./components/PushPermissionBanner.tsx";
 import PushOpenTracker from "./components/PushOpenTracker.tsx";
 import RouteTracker from "./components/RouteTracker.tsx";
+import PageTransition from "./components/PageTransition.tsx";
 
 // Retry dynamic imports once and force-reload on stale chunks (after deploys)
 function lazyWithRetry<T extends React.ComponentType>(
