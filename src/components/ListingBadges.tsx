@@ -15,8 +15,14 @@ const ListingBadges = ({ listing, size = "sm" }: { listing: ListingBadgesData; s
   return (
     <div className="flex flex-wrap gap-1.5">
       {listing.is_premium && (
-        <span className={`${base} ${px} bg-gradient-gold text-primary-foreground`}>
-          <Crown className="w-3 h-3" /> Premium
+        <span className={`${base} ${px} relative bg-gradient-gold text-primary-foreground animate-premium-glow overflow-hidden`}>
+          <span aria-hidden className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              background: "linear-gradient(120deg, transparent 30%, hsl(0 0% 100% / 0.55) 50%, transparent 70%)",
+              backgroundSize: "200% 100%",
+              animation: "skeleton-shimmer 2.4s linear infinite",
+            }} />
+          <Crown className="w-3 h-3 relative animate-sparkle" /> <span className="relative">Premium</span>
         </span>
       )}
       {listing.is_urgent && (
