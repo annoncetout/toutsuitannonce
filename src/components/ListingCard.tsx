@@ -125,6 +125,7 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
       </div>
       <ReportListingDialog listingId={listing.id} open={reportOpen} onOpenChange={setReportOpen} />
     </article>
+    </div>
   );
 };
 
