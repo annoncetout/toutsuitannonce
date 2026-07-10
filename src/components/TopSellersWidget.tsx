@@ -55,10 +55,19 @@ const TopSellersWidget = () => {
       .select(SELECT_COLS)
       .gt("active_listings_count", 0)
       .order("top_score", { ascending: false })
-      .limit(20);
+      .limit(80);
     setRows((data ?? []) as unknown as Row[]);
     setLoading(false);
   };
+
+  // Rotation toutes les 48h : les vendeurs affichés changent à chaque fenêtre de 48h.
+  const WINDOW_MS = 48 * 60 * 60 * 1000;
+  const [windowIndex, setWindowIndex] = useState(() => Math.floor(Date.now() / WINDOW_MS));
+  useEffect(() => {
+    const msUntilNext = WINDOW_MS - (Date.now() % WINDOW_MS);
+    const t = setTimeout(() => setWindowIndex((i) => i + 1), msUntilNext + 500);
+    return () => clearTimeout(t);
+  }, [windowIndex]);
 
   useEffect(() => {
     load();
