@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSEO, SITE_URL, DEFAULT_IMAGE } from "@/lib/seo";
+import PageTransition from "@/components/PageTransition";
+import { ListingsGridSkeleton, EmptyState3D } from "@/components/Skeleton3D";
+
 
 interface Category { id: string; name: string; slug: string; }
 
