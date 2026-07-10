@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSEO, SITE_URL, DEFAULT_IMAGE } from "@/lib/seo";
+import PageTransition from "@/components/PageTransition";
+import { ListingsGridSkeleton, EmptyState3D } from "@/components/Skeleton3D";
+
 
 interface Category { id: string; name: string; slug: string; }
 
@@ -173,6 +176,7 @@ const ListingsPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+      <PageTransition>
       <main className="flex-1 container mx-auto px-4 py-8">
         <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
           {catName ? `Annonces ${catName.toLowerCase()}` : "Toutes les annonces"}
@@ -254,21 +258,24 @@ const ListingsPage = () => {
         )}
 
         {loading ? (
-          <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+          <ListingsGridSkeleton count={8} />
         ) : listings.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-border rounded-2xl">
-            <p className="text-muted-foreground mb-4">Aucune annonce trouvée.</p>
-            <Link to="/publier" className="text-primary hover:underline font-medium">Publier une annonce →</Link>
-          </div>
+          <EmptyState3D
+            title="Aucune annonce trouvée"
+            message={q || city || cat !== "all" ? "Essayez d'élargir vos critères ou de réinitialiser les filtres." : "Soyez le premier à publier une annonce dans cette catégorie."}
+            icon={<PackageSearch className="w-7 h-7 text-primary-foreground" />}
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {listings.map((l) => <ListingCard key={l.id} listing={l} />)}
           </div>
         )}
       </main>
+      </PageTransition>
       <Footer />
     </div>
   );
 };
+
 
 export default ListingsPage;

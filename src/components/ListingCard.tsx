@@ -31,11 +31,19 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
   const { isFavorite, toggle } = useFavorites();
   const isFav = isFavorite(listing.id);
   const [reportOpen, setReportOpen] = useState(false);
+  const [burst, setBurst] = useState(false);
+  const [tilt, setTilt] = useState(false);
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setBurst(true);
+    window.setTimeout(() => setBurst(false), 450);
     await toggle(listing.id);
   };
+
+  const handleTouchStart = () => setTilt(true);
+  const handleTouchEnd = () => window.setTimeout(() => setTilt(false), 350);
+
 
   const price = listing.price
     ? `${Number(listing.price).toLocaleString("fr-FR")} ${listing.currency}`
@@ -54,12 +62,16 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
         );
         navigate(listingPath(listing.title, listing.id));
       }}
-      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${tilt ? "card-3d-active" : ""} ${
         listing.is_premium
           ? "border-primary/40 shadow-[0_0_0_1px_hsl(43_74%_56%/0.25),0_20px_50px_-20px_hsl(43_74%_56%/0.4)]"
           : "border-border/50 hover:border-primary/50"
       }`}
     >
+
       {listing.is_premium && (
         <span
           aria-hidden
@@ -101,15 +113,17 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
           return null;
         })()}
         <button
-          aria-label="Favoris"
+          aria-label={isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
+          aria-pressed={isFav}
           onClick={toggleFav}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/80 backdrop-blur flex items-center justify-center border border-border hover:bg-primary/20"
+          className={`fav-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-background/80 backdrop-blur flex items-center justify-center border border-border ${isFav ? "is-fav border-primary/60" : "hover:bg-primary/20"}`}
         >
-          <Heart className={`w-4 h-4 ${isFav ? "fill-primary text-primary" : "text-foreground"}`} />
+          <Heart className={`w-4 h-4 ${isFav ? "fill-primary text-primary" : "text-foreground"} ${burst ? "fav-burst" : ""}`} />
         </button>
         <button
           aria-label="Signaler"
           onClick={(e) => { e.stopPropagation(); if (!requireAuth({ title: "Signaler une annonce", message: "Connectez-vous pour signaler cette annonce." })) return; setReportOpen(true); }}
+
           className="absolute top-3 right-14 w-9 h-9 rounded-full bg-background/80 backdrop-blur flex items-center justify-center border border-border hover:bg-destructive/20 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <Flag className="w-4 h-4" />
