@@ -62,12 +62,16 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
         );
         navigate(listingPath(listing.title, listing.id));
       }}
-      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${tilt ? "card-3d-active" : ""} ${
         listing.is_premium
           ? "border-primary/40 shadow-[0_0_0_1px_hsl(43_74%_56%/0.25),0_20px_50px_-20px_hsl(43_74%_56%/0.4)]"
           : "border-border/50 hover:border-primary/50"
       }`}
     >
+
       {listing.is_premium && (
         <span
           aria-hidden
