@@ -90,12 +90,17 @@ const TopSellersWidget = () => {
   }, []);
 
   const sorted = (() => {
-    if (cat === "all") return rows.slice(0, 10);
-    return [...rows]
-      .map((r) => ({ ...r, _s: Number(r.category_scores?.[cat] ?? 0) }))
-      .filter((r) => r._s > 0)
-      .sort((a, b) => b._s - a._s)
-      .slice(0, 10);
+    const base = cat === "all"
+      ? [...rows]
+      : [...rows]
+          .map((r) => ({ ...r, _s: Number(r.category_scores?.[cat] ?? 0) }))
+          .filter((r) => (r as Row & { _s: number })._s > 0)
+          .sort((a, b) => (b as Row & { _s: number })._s - (a as Row & { _s: number })._s);
+    // Rotation déterministe par fenêtre de 48h : décale la liste pour faire disparaître/apparaître des vendeurs.
+    if (base.length === 0) return base;
+    const offset = windowIndex % base.length;
+    const rotated = base.slice(offset).concat(base.slice(0, offset));
+    return rotated.slice(0, 10);
   })();
 
   return (
