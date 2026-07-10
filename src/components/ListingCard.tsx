@@ -31,11 +31,19 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
   const { isFavorite, toggle } = useFavorites();
   const isFav = isFavorite(listing.id);
   const [reportOpen, setReportOpen] = useState(false);
+  const [burst, setBurst] = useState(false);
+  const [tilt, setTilt] = useState(false);
 
   const toggleFav = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setBurst(true);
+    window.setTimeout(() => setBurst(false), 450);
     await toggle(listing.id);
   };
+
+  const handleTouchStart = () => setTilt(true);
+  const handleTouchEnd = () => window.setTimeout(() => setTilt(false), 350);
+
 
   const price = listing.price
     ? `${Number(listing.price).toLocaleString("fr-FR")} ${listing.currency}`
