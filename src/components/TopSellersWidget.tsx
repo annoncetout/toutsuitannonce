@@ -55,10 +55,19 @@ const TopSellersWidget = () => {
       .select(SELECT_COLS)
       .gt("active_listings_count", 0)
       .order("top_score", { ascending: false })
-      .limit(20);
+      .limit(80);
     setRows((data ?? []) as unknown as Row[]);
     setLoading(false);
   };
+
+  // Rotation toutes les 48h : les vendeurs affichés changent à chaque fenêtre de 48h.
+  const WINDOW_MS = 48 * 60 * 60 * 1000;
+  const [windowIndex, setWindowIndex] = useState(() => Math.floor(Date.now() / WINDOW_MS));
+  useEffect(() => {
+    const msUntilNext = WINDOW_MS - (Date.now() % WINDOW_MS);
+    const t = setTimeout(() => setWindowIndex((i) => i + 1), msUntilNext + 500);
+    return () => clearTimeout(t);
+  }, [windowIndex]);
 
   useEffect(() => {
     load();
@@ -81,12 +90,17 @@ const TopSellersWidget = () => {
   }, []);
 
   const sorted = (() => {
-    if (cat === "all") return rows.slice(0, 10);
-    return [...rows]
-      .map((r) => ({ ...r, _s: Number(r.category_scores?.[cat] ?? 0) }))
-      .filter((r) => r._s > 0)
-      .sort((a, b) => b._s - a._s)
-      .slice(0, 10);
+    const base = cat === "all"
+      ? [...rows]
+      : [...rows]
+          .map((r) => ({ ...r, _s: Number(r.category_scores?.[cat] ?? 0) }))
+          .filter((r) => (r as Row & { _s: number })._s > 0)
+          .sort((a, b) => (b as Row & { _s: number })._s - (a as Row & { _s: number })._s);
+    // Rotation déterministe par fenêtre de 48h : décale la liste pour faire disparaître/apparaître des vendeurs.
+    if (base.length === 0) return base;
+    const offset = windowIndex % base.length;
+    const rotated = base.slice(offset).concat(base.slice(0, offset));
+    return rotated.slice(0, 10);
   })();
 
   return (
