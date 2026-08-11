@@ -14,6 +14,7 @@ const navItems = [
   { label: "Accueil", to: "/" },
   { label: "Annonces", to: "/annonces" },
   { label: "Premium", to: "/annonces?sort=premium", accent: true },
+  { label: "Tout Colis", to: "/tout-colis" },
   { label: "Tarifs", to: "/tarifs" },
   { label: "Contact", to: "/#contact" },
 ];

@@ -65,6 +65,11 @@ const TopSellers = lazyWithRetry(() => import("./pages/TopSellers.tsx"));
 const AnalyticsStatus = lazyWithRetry(() => import("./pages/AnalyticsStatus.tsx"));
 const Connect = lazyWithRetry(() => import("./pages/Connect.tsx"));
 const SellerProfile = lazyWithRetry(() => import("./pages/SellerProfile.tsx"));
+const ToutColisHome = lazyWithRetry(() => import("./pages/toutcolis/ToutColisHome.tsx"));
+const SendParcel = lazyWithRetry(() => import("./pages/toutcolis/SendParcel.tsx"));
+const TransporterSpace = lazyWithRetry(() => import("./pages/toutcolis/TransporterSpace.tsx"));
+const ParcelsBrowse = lazyWithRetry(() => import("./pages/toutcolis/ParcelsBrowse.tsx"));
+const MyParcels = lazyWithRetry(() => import("./pages/toutcolis/MyParcels.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -113,6 +118,11 @@ const App = () => (
               <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="/connect" element={<Connect />} />
               <Route path="/vendeur/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
+              <Route path="/tout-colis" element={<PageTransition><ToutColisHome /></PageTransition>} />
+              <Route path="/tout-colis/annonces" element={<PageTransition><ParcelsBrowse /></PageTransition>} />
+              <Route path="/tout-colis/envoyer" element={<PageTransition><SendParcel /></PageTransition>} />
+              <Route path="/tout-colis/transporteur" element={<PageTransition><TransporterSpace /></PageTransition>} />
+              <Route path="/tout-colis/mes-colis" element={<RequireAuth><MyParcels /></RequireAuth>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
