@@ -712,6 +712,192 @@ export type Database = {
         }
         Relationships: []
       }
+      parcel_listings: {
+        Row: {
+          arrival_address: string | null
+          arrival_city: string
+          arrival_country: string
+          created_at: string
+          currency: string
+          declared_value: number | null
+          delivery_mode: string | null
+          departure_address: string | null
+          departure_city: string
+          departure_country: string
+          departure_date: string | null
+          description: string | null
+          height: number | null
+          id: string
+          length: number | null
+          parcel_type: string | null
+          price: number | null
+          recipient_name: string | null
+          recipient_phone: string | null
+          sender_name: string | null
+          sender_phone: string | null
+          sender_whatsapp: string | null
+          status: Database["public"]["Enums"]["parcel_status"]
+          type: Database["public"]["Enums"]["parcel_listing_type"]
+          updated_at: string
+          user_id: string
+          views_count: number
+          weight: number | null
+          width: number | null
+        }
+        Insert: {
+          arrival_address?: string | null
+          arrival_city: string
+          arrival_country?: string
+          created_at?: string
+          currency?: string
+          declared_value?: number | null
+          delivery_mode?: string | null
+          departure_address?: string | null
+          departure_city: string
+          departure_country?: string
+          departure_date?: string | null
+          description?: string | null
+          height?: number | null
+          id?: string
+          length?: number | null
+          parcel_type?: string | null
+          price?: number | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          sender_name?: string | null
+          sender_phone?: string | null
+          sender_whatsapp?: string | null
+          status?: Database["public"]["Enums"]["parcel_status"]
+          type?: Database["public"]["Enums"]["parcel_listing_type"]
+          updated_at?: string
+          user_id: string
+          views_count?: number
+          weight?: number | null
+          width?: number | null
+        }
+        Update: {
+          arrival_address?: string | null
+          arrival_city?: string
+          arrival_country?: string
+          created_at?: string
+          currency?: string
+          declared_value?: number | null
+          delivery_mode?: string | null
+          departure_address?: string | null
+          departure_city?: string
+          departure_country?: string
+          departure_date?: string | null
+          description?: string | null
+          height?: number | null
+          id?: string
+          length?: number | null
+          parcel_type?: string | null
+          price?: number | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          sender_name?: string | null
+          sender_phone?: string | null
+          sender_whatsapp?: string | null
+          status?: Database["public"]["Enums"]["parcel_status"]
+          type?: Database["public"]["Enums"]["parcel_listing_type"]
+          updated_at?: string
+          user_id?: string
+          views_count?: number
+          weight?: number | null
+          width?: number | null
+        }
+        Relationships: []
+      }
+      parcel_photos: {
+        Row: {
+          created_at: string
+          id: string
+          parcel_id: string
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          parcel_id: string
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          parcel_id?: string
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcel_photos_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcel_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parcel_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          parcel_listing_id: string | null
+          route_id: string | null
+          status: Database["public"]["Enums"]["parcel_request_status"]
+          transporter_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          parcel_listing_id?: string | null
+          route_id?: string | null
+          status?: Database["public"]["Enums"]["parcel_request_status"]
+          transporter_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          parcel_listing_id?: string | null
+          route_id?: string | null
+          status?: Database["public"]["Enums"]["parcel_request_status"]
+          transporter_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcel_requests_parcel_listing_id_fkey"
+            columns: ["parcel_listing_id"]
+            isOneToOne: false
+            referencedRelation: "parcel_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcel_requests_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcel_requests_transporter_id_fkey"
+            columns: ["transporter_id"]
+            isOneToOne: false
+            referencedRelation: "transporters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
@@ -1286,6 +1472,143 @@ export type Database = {
         }
         Relationships: []
       }
+      transport_routes: {
+        Row: {
+          arrival_city: string
+          arrival_country: string
+          available_volume: string | null
+          available_weight: number | null
+          conditions: string | null
+          created_at: string
+          currency: string
+          departure_city: string
+          departure_country: string
+          departure_date: string | null
+          departure_time: string | null
+          description: string | null
+          id: string
+          price: number | null
+          status: Database["public"]["Enums"]["transport_route_status"]
+          transporter_id: string
+          updated_at: string
+          user_id: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          arrival_city: string
+          arrival_country?: string
+          available_volume?: string | null
+          available_weight?: number | null
+          conditions?: string | null
+          created_at?: string
+          currency?: string
+          departure_city: string
+          departure_country?: string
+          departure_date?: string | null
+          departure_time?: string | null
+          description?: string | null
+          id?: string
+          price?: number | null
+          status?: Database["public"]["Enums"]["transport_route_status"]
+          transporter_id: string
+          updated_at?: string
+          user_id: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          arrival_city?: string
+          arrival_country?: string
+          available_volume?: string | null
+          available_weight?: number | null
+          conditions?: string | null
+          created_at?: string
+          currency?: string
+          departure_city?: string
+          departure_country?: string
+          departure_date?: string | null
+          departure_time?: string | null
+          description?: string | null
+          id?: string
+          price?: number | null
+          status?: Database["public"]["Enums"]["transport_route_status"]
+          transporter_id?: string
+          updated_at?: string
+          user_id?: string
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_routes_transporter_id_fkey"
+            columns: ["transporter_id"]
+            isOneToOne: false
+            referencedRelation: "transporters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transporters: {
+        Row: {
+          bio: string | null
+          city: string | null
+          created_at: string
+          display_name: string | null
+          documents: Json
+          id: string
+          is_suspended: boolean
+          max_weight: number | null
+          phone: string | null
+          photo: string | null
+          rating: number
+          total_trips: number
+          updated_at: string
+          user_id: string
+          vehicle_number: string | null
+          vehicle_type: string | null
+          verified: boolean
+          whatsapp: string | null
+        }
+        Insert: {
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          documents?: Json
+          id?: string
+          is_suspended?: boolean
+          max_weight?: number | null
+          phone?: string | null
+          photo?: string | null
+          rating?: number
+          total_trips?: number
+          updated_at?: string
+          user_id: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+          verified?: boolean
+          whatsapp?: string | null
+        }
+        Update: {
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          documents?: Json
+          id?: string
+          is_suspended?: boolean
+          max_weight?: number | null
+          phone?: string | null
+          photo?: string | null
+          rating?: number
+          total_trips?: number
+          updated_at?: string
+          user_id?: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+          verified?: boolean
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1564,6 +1887,19 @@ export type Database = {
         | "cleared"
         | "appealed"
       moderation_risk_level: "low" | "medium" | "high" | "critical"
+      parcel_listing_type: "send" | "transport"
+      parcel_request_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "completed"
+        | "cancelled"
+      parcel_status:
+        | "active"
+        | "matched"
+        | "delivered"
+        | "cancelled"
+        | "expired"
       payment_method:
         | "wave"
         | "orange_money"
@@ -1588,6 +1924,7 @@ export type Database = {
         | "subscription"
         | "commission"
         | "other"
+      transport_route_status: "active" | "full" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1728,6 +2065,15 @@ export const Constants = {
         "appealed",
       ],
       moderation_risk_level: ["low", "medium", "high", "critical"],
+      parcel_listing_type: ["send", "transport"],
+      parcel_request_status: [
+        "pending",
+        "accepted",
+        "rejected",
+        "completed",
+        "cancelled",
+      ],
+      parcel_status: ["active", "matched", "delivered", "cancelled", "expired"],
       payment_method: ["wave", "orange_money", "mtn", "card", "cash", "other"],
       report_status: ["open", "reviewed", "dismissed", "actioned"],
       report_target: ["listing", "user"],
@@ -1748,6 +2094,7 @@ export const Constants = {
         "commission",
         "other",
       ],
+      transport_route_status: ["active", "full", "completed", "cancelled"],
     },
   },
 } as const
