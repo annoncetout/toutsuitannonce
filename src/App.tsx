@@ -70,6 +70,8 @@ const SendParcel = lazyWithRetry(() => import("./pages/toutcolis/SendParcel.tsx"
 const TransporterSpace = lazyWithRetry(() => import("./pages/toutcolis/TransporterSpace.tsx"));
 const ParcelsBrowse = lazyWithRetry(() => import("./pages/toutcolis/ParcelsBrowse.tsx"));
 const MyParcels = lazyWithRetry(() => import("./pages/toutcolis/MyParcels.tsx"));
+const TransportersBrowse = lazyWithRetry(() => import("./pages/toutcolis/TransportersBrowse.tsx"));
+const RoutesBrowse = lazyWithRetry(() => import("./pages/toutcolis/RoutesBrowse.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -120,6 +122,8 @@ const App = () => (
               <Route path="/vendeur/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
               <Route path="/tout-colis" element={<PageTransition><ToutColisHome /></PageTransition>} />
               <Route path="/tout-colis/annonces" element={<PageTransition><ParcelsBrowse /></PageTransition>} />
+              <Route path="/tout-colis/transporteurs" element={<PageTransition><TransportersBrowse /></PageTransition>} />
+              <Route path="/tout-colis/routes" element={<PageTransition><RoutesBrowse /></PageTransition>} />
               <Route path="/tout-colis/envoyer" element={<PageTransition><SendParcel /></PageTransition>} />
               <Route path="/tout-colis/transporteur" element={<PageTransition><TransporterSpace /></PageTransition>} />
               <Route path="/tout-colis/mes-colis" element={<RequireAuth><MyParcels /></RequireAuth>} />
