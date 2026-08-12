@@ -256,6 +256,27 @@
       0 16px 30px -18px hsl(43 74% 56% / 0.45);
   }
 
+  /* Scroll / staged reveal */
+  @keyframes reveal-up {
+    0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .reveal-up { animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  /* Animated conveyor line (Tout Colis) */
+  @keyframes conveyor {
+    0% { background-position: 0 0; }
+    100% { background-position: 48px 0; }
+  }
+  .conveyor-line {
+    background-image: repeating-linear-gradient(
+      90deg,
+      hsl(45 95% 65% / 0.55) 0 14px,
+      transparent 14px 24px
+    );
+    animation: conveyor 1.6s linear infinite;
+  }
+
   /* GPU hints for animated layers */
   .animate-orb-drift, .animate-gradient-shift, .animate-premium-glow, .animate-sparkle, .animate-float, .skeleton-3d {
     will-change: transform, opacity;
@@ -263,6 +284,7 @@
     backface-visibility: hidden;
   }
 }
+
 
 /* Respect reduced motion: disable 3D tilt, shimmer, glow, particles */
 @media (prefers-reduced-motion: reduce) {
@@ -274,7 +296,8 @@
   }
   .card-3d:hover, .card-3d.card-3d-active { transform: none !important; box-shadow: var(--shadow-card) !important; }
   .animate-orb-drift, .animate-gradient-shift, .animate-premium-glow, .animate-sparkle, .animate-float,
-  .skeleton-3d, .page-enter, .fav-btn.is-fav { animation: none !important; }
+  .skeleton-3d, .page-enter, .reveal-up, .conveyor-line, .fav-btn.is-fav { animation: none !important; }
+
   .skeleton-3d { background: hsl(0 0% 12%) !important; }
   html { scroll-behavior: auto; }
 }
