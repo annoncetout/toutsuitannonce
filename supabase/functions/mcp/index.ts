@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { defineMcp, auth } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/search-listings.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.105.1";
@@ -123,11 +123,19 @@ var list_categories_default = defineTool3({
 });
 
 // src/lib/mcp/index.ts
+var SUPABASE_URL = "https://yyendbkedzfnsmjiclhg.supabase.co";
 var mcp_default = defineMcp({
   name: "tout-suite-annonces-mcp",
   title: "Tout Suite Annonces",
   version: "0.1.0",
   instructions: "Tools to browse classified ads on Tout Suite Annonces (Senegal). Use `list_categories` to discover categories, `search_listings` to find ads by keyword/location/price, and `get_listing` to fetch full details for a specific ad.",
+  auth: auth.oauth.issuer({
+    issuer: `${SUPABASE_URL}/auth/v1`,
+    jwksUri: `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`,
+    resource: `${SUPABASE_URL}/functions/v1/mcp`,
+    acceptedAudiences: ["authenticated"],
+    resourceName: "Tout Suite Annonces MCP"
+  }),
   tools: [search_listings_default, get_listing_default, list_categories_default]
 });
 
