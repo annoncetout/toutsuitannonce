@@ -118,10 +118,7 @@ const ToutColisHome = () => {
               className="reveal-up mt-5 max-w-3xl text-4xl font-bold leading-[1.1] text-foreground md:text-6xl"
               style={{ animationDelay: "80ms" }}
             >
-              Envoyez vos colis partout au Sénégal,
-              <span className="block bg-gradient-gold bg-clip-text text-transparent">
-                en toute confiance.
-              </span>
+              Envoyer vos colis partout au Senegal et dans le Monde
             </h1>
 
             <p
