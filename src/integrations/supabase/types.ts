@@ -838,6 +838,13 @@ export type Database = {
             referencedRelation: "parcel_listings"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "parcel_photos_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcel_listings_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       parcel_requests: {
@@ -883,6 +890,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "parcel_requests_parcel_listing_id_fkey"
+            columns: ["parcel_listing_id"]
+            isOneToOne: false
+            referencedRelation: "parcel_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "parcel_requests_route_id_fkey"
             columns: ["route_id"]
             isOneToOne: false
@@ -894,6 +908,13 @@ export type Database = {
             columns: ["transporter_id"]
             isOneToOne: false
             referencedRelation: "transporters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parcel_requests_transporter_id_fkey"
+            columns: ["transporter_id"]
+            isOneToOne: false
+            referencedRelation: "transporters_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1544,6 +1565,13 @@ export type Database = {
             referencedRelation: "transporters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "transport_routes_transporter_id_fkey"
+            columns: ["transporter_id"]
+            isOneToOne: false
+            referencedRelation: "transporters_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       transporters: {
@@ -1632,6 +1660,81 @@ export type Database = {
       }
     }
     Views: {
+      parcel_listings_public: {
+        Row: {
+          arrival_city: string | null
+          arrival_country: string | null
+          created_at: string | null
+          currency: string | null
+          declared_value: number | null
+          delivery_mode: string | null
+          departure_city: string | null
+          departure_country: string | null
+          departure_date: string | null
+          description: string | null
+          height: number | null
+          id: string | null
+          length: number | null
+          parcel_type: string | null
+          price: number | null
+          status: Database["public"]["Enums"]["parcel_status"] | null
+          type: Database["public"]["Enums"]["parcel_listing_type"] | null
+          updated_at: string | null
+          user_id: string | null
+          views_count: number | null
+          weight: number | null
+          width: number | null
+        }
+        Insert: {
+          arrival_city?: string | null
+          arrival_country?: string | null
+          created_at?: string | null
+          currency?: string | null
+          declared_value?: number | null
+          delivery_mode?: string | null
+          departure_city?: string | null
+          departure_country?: string | null
+          departure_date?: string | null
+          description?: string | null
+          height?: number | null
+          id?: string | null
+          length?: number | null
+          parcel_type?: string | null
+          price?: number | null
+          status?: Database["public"]["Enums"]["parcel_status"] | null
+          type?: Database["public"]["Enums"]["parcel_listing_type"] | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+          weight?: number | null
+          width?: number | null
+        }
+        Update: {
+          arrival_city?: string | null
+          arrival_country?: string | null
+          created_at?: string | null
+          currency?: string | null
+          declared_value?: number | null
+          delivery_mode?: string | null
+          departure_city?: string | null
+          departure_country?: string | null
+          departure_date?: string | null
+          description?: string | null
+          height?: number | null
+          id?: string | null
+          length?: number | null
+          parcel_type?: string | null
+          price?: number | null
+          status?: Database["public"]["Enums"]["parcel_status"] | null
+          type?: Database["public"]["Enums"]["parcel_listing_type"] | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+          weight?: number | null
+          width?: number | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"] | null
@@ -1794,6 +1897,54 @@ export type Database = {
           },
         ]
       }
+      transporters_public: {
+        Row: {
+          bio: string | null
+          city: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string | null
+          max_weight: number | null
+          photo: string | null
+          rating: number | null
+          total_trips: number | null
+          updated_at: string | null
+          user_id: string | null
+          vehicle_type: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          max_weight?: number | null
+          photo?: string | null
+          rating?: number | null
+          total_trips?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          vehicle_type?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          max_weight?: number | null
+          photo?: string | null
+          rating?: number | null
+          total_trips?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          vehicle_type?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_top_seller_badges: { Args: never; Returns: undefined }
@@ -1826,6 +1977,15 @@ export type Database = {
           listing_id: string
           phone: string
           seller_id: string
+          whatsapp: string
+        }[]
+      }
+      get_transporter_contact: {
+        Args: { _transporter_id: string }
+        Returns: {
+          display_name: string
+          id: string
+          phone: string
           whatsapp: string
         }[]
       }

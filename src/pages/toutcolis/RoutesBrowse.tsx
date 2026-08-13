@@ -28,9 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { contactTransporter } from "@/lib/toutcolisContact";
 import { SITE_URL, useSEO } from "@/lib/seo";
 import { cn } from "@/lib/utils";
-import { buildWhatsAppLink, formatDate, formatFcfa } from "@/lib/toutcolis";
+import { formatDate, formatFcfa } from "@/lib/toutcolis";
 
 interface RouteRow {
   id: string;
@@ -56,8 +57,6 @@ interface RouteRow {
     verified: boolean;
     rating: number;
     total_trips: number;
-    phone: string | null;
-    whatsapp: string | null;
   } | null;
 }
 
@@ -106,7 +105,7 @@ const RoutesBrowse = () => {
     setLoading(true);
     let q = supabase
       .from("transport_routes")
-      .select("*, transporter:transporters(display_name, photo, verified, rating, total_trips, phone, whatsapp)")
+      .select("*, transporter:transporters(display_name, photo, verified, rating, total_trips)")
       .limit(120);
     if (transporterId) q = q.eq("transporter_id", transporterId);
     const { data } = await q;
@@ -223,10 +222,6 @@ const RoutesBrowse = () => {
               const t = r.transporter;
               const meta = STATUS_META[r.status] ?? STATUS_META.active;
               const isOpen = open === r.id;
-              const wa = buildWhatsAppLink(
-                t?.whatsapp ?? t?.phone,
-                `Bonjour, je suis intéressé par votre trajet ${r.departure_city} → ${r.arrival_city}.`,
-              );
               return (
                 <Card
                   key={r.id}
@@ -324,9 +319,19 @@ const RoutesBrowse = () => {
                             <p className="mt-1 font-semibold text-primary">{formatFcfa(r.price, r.currency)}</p>
                           </div>
                         </div>
-                        {wa && r.status === "active" && (
-                          <Button asChild variant="gold" size="sm" className="mt-4 rounded-full">
-                            <a href={wa} target="_blank" rel="noopener noreferrer">Réserver ce trajet</a>
+                        {r.status === "active" && (
+                          <Button
+                            variant="gold"
+                            size="sm"
+                            className="mt-4 rounded-full"
+                            onClick={() =>
+                              contactTransporter(
+                                r.transporter_id,
+                                `Bonjour, je suis intéressé par votre trajet ${r.departure_city} → ${r.arrival_city}.`,
+                              )
+                            }
+                          >
+                            Réserver ce trajet
                           </Button>
                         )}
                       </div>
