@@ -66,8 +66,35 @@ const ToutColisHome = () => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
+  const [parcelType, setParcelType] = useState("");
+  const [weight, setWeight] = useState("");
   const [parcels, setParcels] = useState<ParcelItem[]>([]);
   const [routes, setRoutes] = useState<RouteItem[]>([]);
+
+  const quote = useMemo(
+    () =>
+      estimateQuote({
+        departure_country: "Sénégal",
+        departure_city: from,
+        arrival_country: "Sénégal",
+        arrival_city: to,
+        parcel_type: parcelType || undefined,
+        weight: weight.trim() === "" ? null : Number(weight),
+      }),
+    [from, to, parcelType, weight],
+  );
+
+  const goToSend = () => {
+    const params = new URLSearchParams();
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    if (date) params.set("date", date);
+    if (parcelType) params.set("type", parcelType);
+    if (weight) params.set("weight", weight);
+    const qs = params.toString();
+    navigate(`/tout-colis/envoyer${qs ? `?${qs}` : ""}`);
+  };
+
 
   useSEO({
     title: "TOUT COLIS — Envoi et transport de colis au Sénégal",
