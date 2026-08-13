@@ -175,22 +175,88 @@ const ToutColisHome = () => {
               </div>
             </Card>
 
+            {/* Estimation temps réel */}
+            <Card
+              className="reveal-up mt-4 border-primary/20 bg-card/70 p-4 shadow-card backdrop-blur-xl md:p-5"
+              style={{ animationDelay: "280ms" }}
+            >
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Calculator className="h-4 w-4 text-primary" />
+                Estimation instantanée du prix et du délai
+              </div>
+
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                <Select value={parcelType} onValueChange={setParcelType}>
+                  <SelectTrigger aria-label="Type de colis">
+                    <SelectValue placeholder="Type de colis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PARCEL_TYPES.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  aria-label="Poids estimé en kilogrammes"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  placeholder="Poids (kg)"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                />
+                <div className="flex items-center rounded-lg border border-primary/15 bg-background/50 px-3 py-2 text-xs text-muted-foreground">
+                  {quote.ready
+                    ? `${quote.scopeLabel} • ${quote.billableWeight} kg facturés`
+                    : `Complétez : ${quote.missing.join(", ")}`}
+                </div>
+              </div>
+
+              {quote.ready && (
+                <div className="mt-3 grid gap-3 animate-fade-in sm:grid-cols-2">
+                  <div className="rounded-xl border border-primary/20 bg-card/60 px-4 py-3">
+                    <p className="text-xs text-muted-foreground">Prix estimé</p>
+                    <p className="bg-gradient-gold bg-clip-text text-lg font-bold text-transparent">
+                      {formatFcfa(quote.priceMin)} – {formatFcfa(quote.priceMax)}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-primary/20 bg-card/60 px-4 py-3">
+                    <p className="text-xs text-muted-foreground">Délai estimé</p>
+                    <p className="text-lg font-bold text-foreground">
+                      {quote.daysMin === quote.daysMax
+                        ? `${quote.daysMin} jour${quote.daysMin > 1 ? "s" : ""}`
+                        : `${quote.daysMin} à ${quote.daysMax} jours`}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                Estimation indicative. Le tarif final est convenu directement avec le transporteur.
+              </p>
+            </Card>
+
             <div className="reveal-up mt-6 flex flex-wrap gap-3" style={{ animationDelay: "320ms" }}>
               <Button
                 variant="gold"
-                className="rounded-full transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-gold"
-                onClick={() => navigate("/tout-colis/envoyer")}
+                size="lg"
+                className="rounded-full px-8 text-base shadow-gold transition-transform duration-300 hover:-translate-y-0.5"
+                onClick={goToSend}
               >
-                <PackagePlus className="h-4 w-4" /> Envoyer un colis
+                <PackagePlus className="h-5 w-5" /> Envoyer un colis
               </Button>
               <Button
                 variant="outlineGold"
+                size="lg"
                 className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
                 onClick={() => navigate("/tout-colis/transporteur")}
               >
-                <Truck className="h-4 w-4" /> Devenir transporteur
+                <Truck className="h-5 w-5" /> Devenir transporteur
               </Button>
             </div>
+
 
             {/* Repères de confiance */}
             <div
