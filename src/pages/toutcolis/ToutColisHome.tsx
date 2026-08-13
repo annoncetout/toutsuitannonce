@@ -70,7 +70,7 @@ const ToutColisHome = () => {
     (async () => {
       const [p, r] = await Promise.all([
         supabase
-          .from("parcel_listings")
+          .from("parcel_listings_public")
           .select("*")
           .eq("status", "active")
           .order("created_at", { ascending: false })

@@ -55,7 +55,7 @@ const ParcelsBrowse = () => {
 
     if (tab === "colis") {
       let q = supabase
-        .from("parcel_listings")
+        .from("parcel_listings_public")
         .select("*")
         .eq("status", "active")
         .order("created_at", { ascending: false })

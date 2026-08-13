@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { contactTransporter } from "@/lib/toutcolisContact";
 import { SITE_URL, useSEO } from "@/lib/seo";
 import { buildWhatsAppLink, SENEGAL_CITIES, VEHICLE_TYPES } from "@/lib/toutcolis";
 
@@ -75,9 +76,8 @@ const TransportersBrowse = () => {
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase
-      .from("transporters")
-      .select("id, display_name, photo, bio, city, phone, whatsapp, vehicle_type, max_weight, verified, rating, total_trips, created_at")
-      .eq("is_suspended", false)
+      .from("transporters_public")
+      .select("id, display_name, photo, bio, city, vehicle_type, max_weight, verified, rating, total_trips, created_at")
       .limit(120);
     setItems((data as unknown as TransporterItem[]) ?? []);
     setLoading(false);
@@ -214,7 +214,6 @@ const TransportersBrowse = () => {
         ) : (
           <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((t, i) => {
-              const wa = buildWhatsAppLink(t.whatsapp ?? t.phone, `Bonjour ${t.display_name ?? ""}, je souhaite faire transporter un colis.`);
               return (
                 <Card
                   key={t.id}
@@ -252,11 +251,19 @@ const TransportersBrowse = () => {
                     <Button asChild variant="gold" size="sm" className="flex-1 rounded-full">
                       <Link to={`/tout-colis/routes?transporteur=${t.id}`}>Voir ses trajets</Link>
                     </Button>
-                    {wa && (
-                      <Button asChild variant="outline" size="sm" className="rounded-full">
-                        <a href={wa} target="_blank" rel="noopener noreferrer">Contacter</a>
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full"
+                      onClick={() =>
+                        contactTransporter(
+                          t.id,
+                          `Bonjour ${t.display_name ?? ""}, je souhaite faire transporter un colis.`,
+                        )
+                      }
+                    >
+                      Contacter
+                    </Button>
                   </div>
                 </Card>
               );
