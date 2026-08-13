@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
   CalendarDays,
+  Calculator,
   Clock3,
   Coins,
   MapPin,
@@ -23,8 +24,17 @@ import RouteCard, { RouteItem } from "@/components/toutcolis/RouteCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_URL, useSEO } from "@/lib/seo";
+import { estimateQuote, formatFcfa, PARCEL_TYPES } from "@/lib/toutcolis";
+
 
 const steps = [
   {
