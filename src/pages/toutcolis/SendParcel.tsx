@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Info,
   Loader2,
   MapPin,
   Package,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import QuoteEstimator from "@/components/toutcolis/QuoteEstimator";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -304,7 +306,49 @@ const SendParcel = () => {
           </ol>
         </section>
 
+        <QuoteEstimator
+          className="mt-6 reveal-up"
+          input={{
+            departure_country: form.departure_country,
+            departure_city: form.departure_city,
+            arrival_country: form.arrival_country,
+            arrival_city: form.arrival_city,
+            parcel_type: form.parcel_type,
+            weight: num(form.weight),
+            length: num(form.length),
+            width: num(form.width),
+            height: num(form.height),
+            declared_value: num(form.declared_value),
+            delivery_mode: form.delivery_mode,
+          }}
+        />
+
+        {/* Statut de validation de l'étape courante */}
+        {stepFields[step].length > 0 && (
+          <p
+            className={cn(
+              "mt-4 flex items-center gap-2 rounded-xl border px-3 py-2 text-xs transition-colors",
+              stepValid(step)
+                ? "border-primary/30 bg-primary/5 text-primary"
+                : "border-border/60 bg-card/40 text-muted-foreground",
+            )}
+            aria-live="polite"
+          >
+            {stepValid(step) ? (
+              <>
+                <Check className="h-3.5 w-3.5" /> Étape « {STEPS[step].label} » complète.
+              </>
+            ) : (
+              <>
+                <Info className="h-3.5 w-3.5" /> Champs à compléter :{" "}
+                {stepFields[step].filter((f) => errors[f]).length} restant(s).
+              </>
+            )}
+          </p>
+        )}
+
         <form onSubmit={onSubmit} className="mt-6 space-y-6">
+
           {step === 0 && (
             <Card key="step-0" className="border-primary/15 bg-card/60 p-5 animate-fade-in">
               <h2 className="font-semibold text-foreground">Votre trajet</h2>
