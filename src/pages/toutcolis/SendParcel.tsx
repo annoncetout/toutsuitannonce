@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -86,34 +87,39 @@ const FieldError = ({ message }: { message?: string }) =>
 
 const SendParcel = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [step, setStep] = useState(0);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [form, setForm] = useState<FormState>({
-    sender_name: "",
-    sender_phone: "",
-    sender_whatsapp: "",
-    recipient_name: "",
-    recipient_phone: "",
-    departure_country: "Sénégal",
-    departure_city: "",
-    departure_address: "",
-    arrival_country: "Sénégal",
-    arrival_city: "",
-    arrival_address: "",
-    departure_date: "",
-    parcel_type: "",
-    description: "",
-    weight: "",
-    length: "",
-    width: "",
-    height: "",
-    declared_value: "",
-    delivery_mode: "",
-    price: "",
+  const [form, setForm] = useState<FormState>(() => {
+    const prefillType = searchParams.get("type") ?? "";
+    return {
+      sender_name: "",
+      sender_phone: "",
+      sender_whatsapp: "",
+      recipient_name: "",
+      recipient_phone: "",
+      departure_country: "Sénégal",
+      departure_city: searchParams.get("from") ?? "",
+      departure_address: "",
+      arrival_country: "Sénégal",
+      arrival_city: searchParams.get("to") ?? "",
+      arrival_address: "",
+      departure_date: searchParams.get("date") ?? "",
+      parcel_type: PARCEL_TYPES.includes(prefillType) ? prefillType : "",
+      description: "",
+      weight: searchParams.get("weight") ?? "",
+      length: "",
+      width: "",
+      height: "",
+      declared_value: "",
+      delivery_mode: "",
+      price: "",
+    };
   });
+
 
   useSEO({
     title: "Envoyer un colis — TOUT COLIS",
