@@ -20,7 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { contactTransporter } from "@/lib/toutcolisContact";
 import { SITE_URL, useSEO } from "@/lib/seo";
-import { buildWhatsAppLink, SENEGAL_CITIES, VEHICLE_TYPES } from "@/lib/toutcolis";
+import { SENEGAL_CITIES, VEHICLE_TYPES } from "@/lib/toutcolis";
 
 interface TransporterItem {
   id: string;
@@ -28,8 +28,6 @@ interface TransporterItem {
   photo: string | null;
   bio: string | null;
   city: string | null;
-  phone: string | null;
-  whatsapp: string | null;
   vehicle_type: string | null;
   max_weight: number | null;
   verified: boolean;
