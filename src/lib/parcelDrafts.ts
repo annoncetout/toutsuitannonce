@@ -57,6 +57,7 @@ export const saveDraft = (
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
     step: draft.step,
+    archived: draft.archived ?? false,
     form: draft.form,
     summary: draft.summary,
   };
@@ -64,6 +65,21 @@ export const saveDraft = (
   return next;
 };
 
+/** Archive ou désarchive un brouillon. */
+export const setDraftArchived = (
+  userId: string | null | undefined,
+  id: string,
+  archived: boolean,
+) => {
+  persist(
+    userId,
+    listDrafts(userId).map((d) =>
+      d.id === id ? { ...d, archived, updatedAt: new Date().toISOString() } : d,
+    ),
+  );
+};
+
 export const deleteDraft = (userId: string | null | undefined, id: string) => {
   persist(userId, listDrafts(userId).filter((d) => d.id !== id));
 };
+
