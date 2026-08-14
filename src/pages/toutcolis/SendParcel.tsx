@@ -125,7 +125,8 @@ const SendParcel = () => {
       price: "",
     };
   });
-
+  const [draftId, setDraftId] = useState<string | null>(searchParams.get("draft"));
+  const [draftLoaded, setDraftLoaded] = useState(false);
 
   useSEO({
     title: "Envoyer un colis — TOUT COLIS",
@@ -137,6 +138,19 @@ const SendParcel = () => {
   const set = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const blur = (k: string) => setTouched((t) => ({ ...t, [k]: true }));
   const num = (v: string) => (v.trim() === "" ? null : Number(v));
+
+  // Reprise d'un brouillon enregistré
+  useEffect(() => {
+    if (draftLoaded || !draftId || !user) return;
+    const d = getDraft(user.id, draftId);
+    if (d) {
+      setForm((f) => ({ ...f, ...(d.form as Partial<FormState>) }));
+      setStep(Math.min(d.step, STEPS.length - 1));
+      toast.success("Brouillon repris", { description: "Complétez et publiez votre colis." });
+    }
+    setDraftLoaded(true);
+  }, [draftId, user, draftLoaded]);
+
 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
