@@ -192,53 +192,126 @@ const MyParcels = () => {
             </TabsContent>
 
             <TabsContent value="brouillons" className="mt-6">
-              {drafts.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Aucun brouillon. Depuis le formulaire d'envoi, cliquez sur « Enregistrer en brouillon » pour
-                  retrouver votre estimation ici.
-                </p>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {drafts.map((d) => (
-                    <Card key={d.id} className="border-primary/20 bg-card/60 p-4 animate-fade-in">
-                      <div className="flex items-start justify-between gap-2">
-                        <Badge variant="secondary" className="text-[10px]">
-                          <FileText className="mr-1 h-3 w-3" /> Brouillon
-                        </Badge>
-                        <button
-                          type="button"
-                          aria-label="Supprimer le brouillon"
-                          className="text-muted-foreground transition-colors hover:text-destructive"
-                          onClick={() => {
-                            deleteDraft(user?.id, d.id);
-                            setDrafts(listDrafts(user?.id));
-                            toast.success("Brouillon supprimé");
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                      <p className="mt-3 font-medium text-foreground">{d.summary.route}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {d.summary.parcelType} · {d.summary.weight}
-                      </p>
-                      <div className="mt-3 space-y-1 text-sm">
-                        <p className="font-semibold text-primary">{d.summary.priceLabel}</p>
-                        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Clock className="h-3 w-3" /> {d.summary.delayLabel}
-                        </p>
-                      </div>
-                      <p className="mt-3 text-[11px] text-muted-foreground">
-                        Modifié le {new Date(d.updatedAt).toLocaleDateString("fr-FR")}
-                      </p>
-                      <Button variant="gold" size="sm" className="mt-3 w-full rounded-full" asChild>
-                        <Link to={`/tout-colis/envoyer?draft=${d.id}`}>Reprendre et finaliser</Link>
+              {(() => {
+                const visible = drafts.filter((d) => !!d.archived === showArchivedDrafts);
+                return (
+                  <>
+                    <div className="mb-4 flex flex-wrap items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={showArchivedDrafts ? "outline" : "gold"}
+                        className="rounded-full"
+                        onClick={() => setShowArchivedDrafts(false)}
+                      >
+                        Actifs ({drafts.filter((d) => !d.archived).length})
                       </Button>
-                    </Card>
-                  ))}
-                </div>
-              )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={showArchivedDrafts ? "gold" : "outline"}
+                        className="rounded-full"
+                        onClick={() => setShowArchivedDrafts(true)}
+                      >
+                        <Archive className="h-3.5 w-3.5" /> Archivés (
+                        {drafts.filter((d) => d.archived).length})
+                      </Button>
+                    </div>
+
+                    {visible.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        {showArchivedDrafts
+                          ? "Aucun brouillon archivé."
+                          : "Aucun brouillon. Depuis le formulaire d'envoi, cliquez sur « Enregistrer en brouillon » pour retrouver votre estimation ici."}
+                      </p>
+                    ) : (
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {visible.map((d) => (
+                          <Card key={d.id} className="border-primary/20 bg-card/60 p-4 animate-fade-in">
+                            <div className="flex items-start justify-between gap-2">
+                              <Badge variant="secondary" className="text-[10px]">
+                                {d.archived ? (
+                                  <>
+                                    <Archive className="mr-1 h-3 w-3" /> Archivé
+                                  </>
+                                ) : (
+                                  <>
+                                    <FileText className="mr-1 h-3 w-3" /> Brouillon
+                                  </>
+                                )}
+                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  aria-label={d.archived ? "Restaurer le brouillon" : "Archiver le brouillon"}
+                                  title={d.archived ? "Restaurer" : "Archiver"}
+                                  className="text-muted-foreground transition-colors hover:text-primary"
+                                  onClick={() => {
+                                    setDraftArchived(user?.id, d.id, !d.archived);
+                                    setDrafts(listDrafts(user?.id));
+                                    toast.success(d.archived ? "Brouillon restauré" : "Brouillon archivé");
+                                  }}
+                                >
+                                  {d.archived ? (
+                                    <ArchiveRestore className="h-4 w-4" />
+                                  ) : (
+                                    <Archive className="h-4 w-4" />
+                                  )}
+                                </button>
+                                <button
+                                  type="button"
+                                  aria-label="Supprimer le brouillon"
+                                  title="Supprimer"
+                                  className="text-muted-foreground transition-colors hover:text-destructive"
+                                  onClick={() => {
+                                    deleteDraft(user?.id, d.id);
+                                    setDrafts(listDrafts(user?.id));
+                                    toast.success("Brouillon supprimé");
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                            <p className="mt-3 font-medium text-foreground">{d.summary.route}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {d.summary.parcelType} · {d.summary.weight}
+                            </p>
+                            <div className="mt-3 space-y-1 text-sm">
+                              <p className="font-semibold text-primary">{d.summary.priceLabel}</p>
+                              <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Clock className="h-3 w-3" /> {d.summary.delayLabel}
+                              </p>
+                            </div>
+                            <p className="mt-3 text-[11px] text-muted-foreground">
+                              Modifié le {new Date(d.updatedAt).toLocaleDateString("fr-FR")}
+                            </p>
+                            <div className="mt-3 flex gap-2">
+                              <Button variant="gold" size="sm" className="flex-1 rounded-full" asChild>
+                                <Link to={`/tout-colis/envoyer?draft=${d.id}`}>
+                                  <Pencil className="h-3.5 w-3.5" /> Modifier
+                                </Link>
+                              </Button>
+                              <Button variant="outline" size="sm" className="rounded-full" asChild>
+                                <a
+                                  href={buildDraftWhatsAppUrl(d)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="Partager l'estimation sur WhatsApp"
+                                >
+                                  <Share2 className="h-3.5 w-3.5" />
+                                </a>
+                              </Button>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </TabsContent>
+
           </Tabs>
         )}
       </main>
