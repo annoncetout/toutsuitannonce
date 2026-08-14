@@ -1,16 +1,19 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Clock,
   Info,
   Loader2,
   MapPin,
   Package,
   PackagePlus,
   Phone,
+  Save,
+  Sparkles,
   Upload,
   X,
 } from "lucide-react";
@@ -35,13 +38,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { uploadToStorage } from "@/lib/storageUpload";
 import { SITE_URL, useSEO } from "@/lib/seo";
 import { cn } from "@/lib/utils";
+import { deleteDraft, getDraft, saveDraft } from "@/lib/parcelDrafts";
 import {
   COUNTRIES,
   DELIVERY_MODES,
+  estimateQuote,
   formatFcfa,
   PARCEL_TYPES,
   SENEGAL_CITIES,
 } from "@/lib/toutcolis";
+
 
 const MAX_PHOTOS = 4;
 
