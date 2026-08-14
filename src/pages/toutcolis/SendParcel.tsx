@@ -761,9 +761,21 @@ const SendParcel = () => {
                     <dd className="font-bold text-foreground">{delayLabel}</dd>
                   </div>
                 </dl>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-4 w-full rounded-full sm:w-auto"
+                  asChild
+                >
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <Share2 className="h-4 w-4" /> Partager l'estimation sur WhatsApp
+                  </a>
+                </Button>
                 <p className="mt-3 text-[11px] text-muted-foreground">
                   Estimation indicative : le prix final est convenu avec le transporteur.
                 </p>
+
               </div>
             </Card>
           )}
