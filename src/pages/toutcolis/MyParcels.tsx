@@ -1,6 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Clock, FileText, Loader2, Package, Trash2, Truck } from "lucide-react";
+import {
+  Archive,
+  ArchiveRestore,
+  Clock,
+  FileText,
+  Loader2,
+  Package,
+  Pencil,
+  Share2,
+  Trash2,
+  Truck,
+} from "lucide-react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ParcelCard, { ParcelItem } from "@/components/toutcolis/ParcelCard";
@@ -13,7 +24,20 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SITE_URL, useSEO } from "@/lib/seo";
-import { deleteDraft, listDrafts, type ParcelDraft } from "@/lib/parcelDrafts";
+import { deleteDraft, listDrafts, setDraftArchived, type ParcelDraft } from "@/lib/parcelDrafts";
+
+/** Lien WhatsApp pré-rempli avec le récapitulatif de l'estimation. */
+const buildDraftWhatsAppUrl = (d: ParcelDraft) => {
+  const text = [
+    "*Estimation TOUT COLIS*",
+    `Trajet : ${d.summary.route}`,
+    `Type : ${d.summary.parcelType}`,
+    `Poids : ${d.summary.weight}`,
+    `Prix estimé : ${d.summary.priceLabel}`,
+    `Délai estimé : ${d.summary.delayLabel}`,
+  ].join("\n");
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+};
 
 interface RequestRow {
   id: string;
@@ -35,6 +59,7 @@ const MyParcels = () => {
   const [sent, setSent] = useState<RequestRow[]>([]);
   const [received, setReceived] = useState<RequestRow[]>([]);
   const [drafts, setDrafts] = useState<ParcelDraft[]>([]);
+  const [showArchivedDrafts, setShowArchivedDrafts] = useState(false);
 
   useSEO({
     title: "Mes colis et trajets — TOUT COLIS",
