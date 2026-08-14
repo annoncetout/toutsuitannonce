@@ -13,6 +13,7 @@ import {
   PackagePlus,
   Phone,
   Save,
+  Share2,
   Sparkles,
   Upload,
   X,
