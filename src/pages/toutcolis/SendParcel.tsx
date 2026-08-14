@@ -306,6 +306,8 @@ const SendParcel = () => {
         .select("id")
         .single();
       if (error) throw error;
+      if (draftId) deleteDraft(user.id, draftId);
+
 
       if (files.length) {
         const uploaded = await Promise.all(
