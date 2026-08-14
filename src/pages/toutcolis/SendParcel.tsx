@@ -1,16 +1,19 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Clock,
   Info,
   Loader2,
   MapPin,
   Package,
   PackagePlus,
   Phone,
+  Save,
+  Sparkles,
   Upload,
   X,
 } from "lucide-react";
@@ -35,13 +38,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { uploadToStorage } from "@/lib/storageUpload";
 import { SITE_URL, useSEO } from "@/lib/seo";
 import { cn } from "@/lib/utils";
+import { deleteDraft, getDraft, saveDraft } from "@/lib/parcelDrafts";
 import {
   COUNTRIES,
   DELIVERY_MODES,
+  estimateQuote,
   formatFcfa,
   PARCEL_TYPES,
   SENEGAL_CITIES,
 } from "@/lib/toutcolis";
+
 
 const MAX_PHOTOS = 4;
 
@@ -119,7 +125,8 @@ const SendParcel = () => {
       price: "",
     };
   });
-
+  const [draftId, setDraftId] = useState<string | null>(searchParams.get("draft"));
+  const [draftLoaded, setDraftLoaded] = useState(false);
 
   useSEO({
     title: "Envoyer un colis — TOUT COLIS",
@@ -131,6 +138,19 @@ const SendParcel = () => {
   const set = (k: keyof FormState, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const blur = (k: string) => setTouched((t) => ({ ...t, [k]: true }));
   const num = (v: string) => (v.trim() === "" ? null : Number(v));
+
+  // Reprise d'un brouillon enregistré
+  useEffect(() => {
+    if (draftLoaded || !draftId || !user) return;
+    const d = getDraft(user.id, draftId);
+    if (d) {
+      setForm((f) => ({ ...f, ...(d.form as Partial<FormState>) }));
+      setStep(Math.min(d.step, STEPS.length - 1));
+      toast.success("Brouillon repris", { description: "Complétez et publiez votre colis." });
+    }
+    setDraftLoaded(true);
+  }, [draftId, user, draftLoaded]);
+
 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
@@ -191,6 +211,58 @@ const SendParcel = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const quoteInput = useMemo(
+    () => ({
+      departure_country: form.departure_country,
+      departure_city: form.departure_city,
+      arrival_country: form.arrival_country,
+      arrival_city: form.arrival_city,
+      parcel_type: form.parcel_type,
+      weight: num(form.weight),
+      length: num(form.length),
+      width: num(form.width),
+      height: num(form.height),
+      declared_value: num(form.declared_value),
+      delivery_mode: form.delivery_mode,
+    }),
+    [form],
+  );
+
+  const quote = useMemo(() => estimateQuote(quoteInput), [quoteInput]);
+
+  const delayLabel = quote.ready
+    ? quote.daysMin === quote.daysMax
+      ? `${quote.daysMin} jour${quote.daysMin > 1 ? "s" : ""}`
+      : `${quote.daysMin} à ${quote.daysMax} jours`
+    : "À estimer";
+  const priceLabel = quote.ready
+    ? `${formatFcfa(quote.priceMin)} – ${formatFcfa(quote.priceMax)}`
+    : "À estimer";
+
+  const onSaveDraft = () => {
+    if (!user) {
+      navigate("/auth?redirect=/tout-colis/envoyer");
+      return;
+    }
+    const saved = saveDraft(user.id, {
+      id: draftId ?? undefined,
+      step,
+      form: { ...form },
+      summary: {
+        route: `${form.departure_city || "?"} (${form.departure_country}) → ${form.arrival_city || "?"} (${form.arrival_country})`,
+        parcelType: form.parcel_type || "Non précisé",
+        weight: form.weight ? `${form.weight} kg` : "—",
+        priceLabel,
+        delayLabel,
+      },
+    });
+    setDraftId(saved.id);
+    toast.success("Estimation sauvegardée en brouillon", {
+      description: "Retrouvez-la dans « Mes colis » pour finaliser plus tard.",
+    });
+  };
+
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -234,6 +306,8 @@ const SendParcel = () => {
         .select("id")
         .single();
       if (error) throw error;
+      if (draftId) deleteDraft(user.id, draftId);
+
 
       if (files.length) {
         const uploaded = await Promise.all(
@@ -312,22 +386,8 @@ const SendParcel = () => {
           </ol>
         </section>
 
-        <QuoteEstimator
-          className="mt-6 reveal-up"
-          input={{
-            departure_country: form.departure_country,
-            departure_city: form.departure_city,
-            arrival_country: form.arrival_country,
-            arrival_city: form.arrival_city,
-            parcel_type: form.parcel_type,
-            weight: num(form.weight),
-            length: num(form.length),
-            width: num(form.width),
-            height: num(form.height),
-            declared_value: num(form.declared_value),
-            delivery_mode: form.delivery_mode,
-          }}
-        />
+        <QuoteEstimator className="mt-6 reveal-up" input={quoteInput} />
+
 
         {/* Statut de validation de l'étape courante */}
         {stepFields[step].length > 0 && (
@@ -645,13 +705,66 @@ const SendParcel = () => {
                   {form.description}
                 </p>
               )}
+
+              {/* Récapitulatif de l'estimation */}
+              <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" /> Récapitulatif de l'estimation
+                </h3>
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Origine</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.departure_city || "—"} ({form.departure_country})
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Destination</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.arrival_city || "—"} ({form.arrival_country})
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Type de colis</dt>
+                    <dd className="font-medium text-foreground">{form.parcel_type || "Non précisé"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Poids</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.weight ? `${form.weight} kg` : "—"}
+                      {quote.ready && quote.billableWeight > Number(form.weight || 0)
+                        ? ` (facturable ${quote.billableWeight} kg)`
+                        : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Prix estimé</dt>
+                    <dd className="font-bold text-primary">{priceLabel}</dd>
+                  </div>
+                  <div>
+                    <dt className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" /> Délai estimé
+                    </dt>
+                    <dd className="font-bold text-foreground">{delayLabel}</dd>
+                  </div>
+                </dl>
+                <p className="mt-3 text-[11px] text-muted-foreground">
+                  Estimation indicative : le prix final est convenu avec le transporteur.
+                </p>
+              </div>
             </Card>
           )}
 
-          <div className="flex items-center justify-between gap-3">
-            <Button type="button" variant="ghost" className="rounded-full" onClick={goBack} disabled={step === 0}>
-              <ArrowLeft className="h-4 w-4" /> Retour
-            </Button>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" className="rounded-full" onClick={goBack} disabled={step === 0}>
+                <ArrowLeft className="h-4 w-4" /> Retour
+              </Button>
+              <Button type="button" variant="outlineGold" className="rounded-full" onClick={onSaveDraft}>
+                <Save className="h-4 w-4" /> Enregistrer en brouillon
+              </Button>
+            </div>
+
             {step < STEPS.length - 1 ? (
               <Button type="button" variant="gold" className="rounded-full" onClick={goNext}>
                 Continuer <ArrowRight className="h-4 w-4" />

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Package, Truck } from "lucide-react";
+import { Clock, FileText, Loader2, Package, Trash2, Truck } from "lucide-react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ParcelCard, { ParcelItem } from "@/components/toutcolis/ParcelCard";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SITE_URL, useSEO } from "@/lib/seo";
+import { deleteDraft, listDrafts, type ParcelDraft } from "@/lib/parcelDrafts";
 
 interface RequestRow {
   id: string;
@@ -33,6 +34,7 @@ const MyParcels = () => {
   const [routes, setRoutes] = useState<RouteItem[]>([]);
   const [sent, setSent] = useState<RequestRow[]>([]);
   const [received, setReceived] = useState<RequestRow[]>([]);
+  const [drafts, setDrafts] = useState<ParcelDraft[]>([]);
 
   useSEO({
     title: "Mes colis et trajets — TOUT COLIS",
@@ -64,6 +66,7 @@ const MyParcels = () => {
         .order("created_at", { ascending: false });
       setReceived((data as RequestRow[]) ?? []);
     }
+    setDrafts(listDrafts(user.id));
     setBusy(false);
   }, [user]);
 
@@ -120,6 +123,7 @@ const MyParcels = () => {
               <TabsTrigger value="trajets">Mes trajets ({routes.length})</TabsTrigger>
               <TabsTrigger value="recues">Demandes reçues ({received.length})</TabsTrigger>
               <TabsTrigger value="envoyees">Demandes envoyées ({sent.length})</TabsTrigger>
+              <TabsTrigger value="brouillons">Brouillons ({drafts.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="colis" className="mt-6">
@@ -184,6 +188,55 @@ const MyParcels = () => {
                     <p className="mt-2 text-sm text-muted-foreground">{req.message ?? "(sans message)"}</p>
                   </Card>
                 ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="brouillons" className="mt-6">
+              {drafts.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Aucun brouillon. Depuis le formulaire d'envoi, cliquez sur « Enregistrer en brouillon » pour
+                  retrouver votre estimation ici.
+                </p>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {drafts.map((d) => (
+                    <Card key={d.id} className="border-primary/20 bg-card/60 p-4 animate-fade-in">
+                      <div className="flex items-start justify-between gap-2">
+                        <Badge variant="secondary" className="text-[10px]">
+                          <FileText className="mr-1 h-3 w-3" /> Brouillon
+                        </Badge>
+                        <button
+                          type="button"
+                          aria-label="Supprimer le brouillon"
+                          className="text-muted-foreground transition-colors hover:text-destructive"
+                          onClick={() => {
+                            deleteDraft(user?.id, d.id);
+                            setDrafts(listDrafts(user?.id));
+                            toast.success("Brouillon supprimé");
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <p className="mt-3 font-medium text-foreground">{d.summary.route}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {d.summary.parcelType} · {d.summary.weight}
+                      </p>
+                      <div className="mt-3 space-y-1 text-sm">
+                        <p className="font-semibold text-primary">{d.summary.priceLabel}</p>
+                        <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" /> {d.summary.delayLabel}
+                        </p>
+                      </div>
+                      <p className="mt-3 text-[11px] text-muted-foreground">
+                        Modifié le {new Date(d.updatedAt).toLocaleDateString("fr-FR")}
+                      </p>
+                      <Button variant="gold" size="sm" className="mt-3 w-full rounded-full" asChild>
+                        <Link to={`/tout-colis/envoyer?draft=${d.id}`}>Reprendre et finaliser</Link>
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
               )}
             </TabsContent>
           </Tabs>
