@@ -5,6 +5,8 @@ export interface ParcelDraft {
   createdAt: string;
   updatedAt: string;
   step: number;
+  /** Brouillon rangé dans les archives (masqué de la liste active). */
+  archived?: boolean;
   /** Copie des champs du formulaire d'envoi. */
   form: Record<string, string>;
   /** Résumé de l'estimation au moment de la sauvegarde. */
@@ -16,6 +18,7 @@ export interface ParcelDraft {
     delayLabel: string;
   };
 }
+
 
 const key = (userId?: string | null) => `toutcolis:drafts:${userId ?? "anon"}`;
 
@@ -54,6 +57,7 @@ export const saveDraft = (
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
     step: draft.step,
+    archived: draft.archived ?? false,
     form: draft.form,
     summary: draft.summary,
   };
@@ -61,6 +65,21 @@ export const saveDraft = (
   return next;
 };
 
+/** Archive ou désarchive un brouillon. */
+export const setDraftArchived = (
+  userId: string | null | undefined,
+  id: string,
+  archived: boolean,
+) => {
+  persist(
+    userId,
+    listDrafts(userId).map((d) =>
+      d.id === id ? { ...d, archived, updatedAt: new Date().toISOString() } : d,
+    ),
+  );
+};
+
 export const deleteDraft = (userId: string | null | undefined, id: string) => {
   persist(userId, listDrafts(userId).filter((d) => d.id !== id));
 };
+

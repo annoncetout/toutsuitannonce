@@ -13,6 +13,7 @@ import {
   PackagePlus,
   Phone,
   Save,
+  Share2,
   Sparkles,
   Upload,
   X,
@@ -238,6 +239,19 @@ const SendParcel = () => {
   const priceLabel = quote.ready
     ? `${formatFcfa(quote.priceMin)} – ${formatFcfa(quote.priceMax)}`
     : "À estimer";
+
+  const whatsappUrl = useMemo(() => {
+    const text = [
+      "*Estimation TOUT COLIS*",
+      `Trajet : ${form.departure_city || "?"} (${form.departure_country}) → ${form.arrival_city || "?"} (${form.arrival_country})`,
+      `Type : ${form.parcel_type || "Non précisé"}`,
+      `Poids : ${form.weight ? `${form.weight} kg` : "—"}`,
+      `Prix estimé : ${priceLabel}`,
+      `Délai estimé : ${delayLabel}`,
+    ].join("\n");
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  }, [form, priceLabel, delayLabel]);
+
 
   const onSaveDraft = () => {
     if (!user) {
@@ -748,9 +762,21 @@ const SendParcel = () => {
                     <dd className="font-bold text-foreground">{delayLabel}</dd>
                   </div>
                 </dl>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-4 w-full rounded-full sm:w-auto"
+                  asChild
+                >
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <Share2 className="h-4 w-4" /> Partager l'estimation sur WhatsApp
+                  </a>
+                </Button>
                 <p className="mt-3 text-[11px] text-muted-foreground">
                   Estimation indicative : le prix final est convenu avec le transporteur.
                 </p>
+
               </div>
             </Card>
           )}
