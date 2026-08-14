@@ -717,13 +717,66 @@ const SendParcel = () => {
                   {form.description}
                 </p>
               )}
+
+              {/* Récapitulatif de l'estimation */}
+              <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 p-4">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Sparkles className="h-4 w-4 text-primary" /> Récapitulatif de l'estimation
+                </h3>
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Origine</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.departure_city || "—"} ({form.departure_country})
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Destination</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.arrival_city || "—"} ({form.arrival_country})
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Type de colis</dt>
+                    <dd className="font-medium text-foreground">{form.parcel_type || "Non précisé"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Poids</dt>
+                    <dd className="font-medium text-foreground">
+                      {form.weight ? `${form.weight} kg` : "—"}
+                      {quote.ready && quote.billableWeight > Number(form.weight || 0)
+                        ? ` (facturable ${quote.billableWeight} kg)`
+                        : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Prix estimé</dt>
+                    <dd className="font-bold text-primary">{priceLabel}</dd>
+                  </div>
+                  <div>
+                    <dt className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" /> Délai estimé
+                    </dt>
+                    <dd className="font-bold text-foreground">{delayLabel}</dd>
+                  </div>
+                </dl>
+                <p className="mt-3 text-[11px] text-muted-foreground">
+                  Estimation indicative : le prix final est convenu avec le transporteur.
+                </p>
+              </div>
             </Card>
           )}
 
-          <div className="flex items-center justify-between gap-3">
-            <Button type="button" variant="ghost" className="rounded-full" onClick={goBack} disabled={step === 0}>
-              <ArrowLeft className="h-4 w-4" /> Retour
-            </Button>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="ghost" className="rounded-full" onClick={goBack} disabled={step === 0}>
+                <ArrowLeft className="h-4 w-4" /> Retour
+              </Button>
+              <Button type="button" variant="outlineGold" className="rounded-full" onClick={onSaveDraft}>
+                <Save className="h-4 w-4" /> Enregistrer en brouillon
+              </Button>
+            </div>
+
             {step < STEPS.length - 1 ? (
               <Button type="button" variant="gold" className="rounded-full" onClick={goNext}>
                 Continuer <ArrowRight className="h-4 w-4" />
