@@ -384,22 +384,8 @@ const SendParcel = () => {
           </ol>
         </section>
 
-        <QuoteEstimator
-          className="mt-6 reveal-up"
-          input={{
-            departure_country: form.departure_country,
-            departure_city: form.departure_city,
-            arrival_country: form.arrival_country,
-            arrival_city: form.arrival_city,
-            parcel_type: form.parcel_type,
-            weight: num(form.weight),
-            length: num(form.length),
-            width: num(form.width),
-            height: num(form.height),
-            declared_value: num(form.declared_value),
-            delivery_mode: form.delivery_mode,
-          }}
-        />
+        <QuoteEstimator className="mt-6 reveal-up" input={quoteInput} />
+
 
         {/* Statut de validation de l'étape courante */}
         {stepFields[step].length > 0 && (
