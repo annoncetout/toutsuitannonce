@@ -239,6 +239,19 @@ const SendParcel = () => {
     ? `${formatFcfa(quote.priceMin)} – ${formatFcfa(quote.priceMax)}`
     : "À estimer";
 
+  const whatsappUrl = useMemo(() => {
+    const text = [
+      "*Estimation TOUT COLIS*",
+      `Trajet : ${form.departure_city || "?"} (${form.departure_country}) → ${form.arrival_city || "?"} (${form.arrival_country})`,
+      `Type : ${form.parcel_type || "Non précisé"}`,
+      `Poids : ${form.weight ? `${form.weight} kg` : "—"}`,
+      `Prix estimé : ${priceLabel}`,
+      `Délai estimé : ${delayLabel}`,
+    ].join("\n");
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  }, [form, priceLabel, delayLabel]);
+
+
   const onSaveDraft = () => {
     if (!user) {
       navigate("/auth?redirect=/tout-colis/envoyer");
