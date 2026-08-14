@@ -5,6 +5,8 @@ export interface ParcelDraft {
   createdAt: string;
   updatedAt: string;
   step: number;
+  /** Brouillon rangé dans les archives (masqué de la liste active). */
+  archived?: boolean;
   /** Copie des champs du formulaire d'envoi. */
   form: Record<string, string>;
   /** Résumé de l'estimation au moment de la sauvegarde. */
@@ -16,6 +18,7 @@ export interface ParcelDraft {
     delayLabel: string;
   };
 }
+
 
 const key = (userId?: string | null) => `toutcolis:drafts:${userId ?? "anon"}`;
 
