@@ -61,8 +61,6 @@ const MyParcels = () => {
   const [drafts, setDrafts] = useState<ParcelDraft[]>([]);
   const [showArchivedDrafts, setShowArchivedDrafts] = useState(false);
 
-  const [showArchivedDrafts, setShowArchivedDrafts] = useState(false);
-
   useSEO({
     title: "Mes colis et trajets — TOUT COLIS",
     description: "Gérez vos colis publiés, vos trajets de transport et vos demandes de mise en relation.",
