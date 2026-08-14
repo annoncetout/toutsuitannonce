@@ -211,6 +211,58 @@ const SendParcel = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const quoteInput = useMemo(
+    () => ({
+      departure_country: form.departure_country,
+      departure_city: form.departure_city,
+      arrival_country: form.arrival_country,
+      arrival_city: form.arrival_city,
+      parcel_type: form.parcel_type,
+      weight: num(form.weight),
+      length: num(form.length),
+      width: num(form.width),
+      height: num(form.height),
+      declared_value: num(form.declared_value),
+      delivery_mode: form.delivery_mode,
+    }),
+    [form],
+  );
+
+  const quote = useMemo(() => estimateQuote(quoteInput), [quoteInput]);
+
+  const delayLabel = quote.ready
+    ? quote.daysMin === quote.daysMax
+      ? `${quote.daysMin} jour${quote.daysMin > 1 ? "s" : ""}`
+      : `${quote.daysMin} à ${quote.daysMax} jours`
+    : "À estimer";
+  const priceLabel = quote.ready
+    ? `${formatFcfa(quote.priceMin)} – ${formatFcfa(quote.priceMax)}`
+    : "À estimer";
+
+  const onSaveDraft = () => {
+    if (!user) {
+      navigate("/auth?redirect=/tout-colis/envoyer");
+      return;
+    }
+    const saved = saveDraft(user.id, {
+      id: draftId ?? undefined,
+      step,
+      form: { ...form },
+      summary: {
+        route: `${form.departure_city || "?"} (${form.departure_country}) → ${form.arrival_city || "?"} (${form.arrival_country})`,
+        parcelType: form.parcel_type || "Non précisé",
+        weight: form.weight ? `${form.weight} kg` : "—",
+        priceLabel,
+        delayLabel,
+      },
+    });
+    setDraftId(saved.id);
+    toast.success("Estimation sauvegardée en brouillon", {
+      description: "Retrouvez-la dans « Mes colis » pour finaliser plus tard.",
+    });
+  };
+
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) {
