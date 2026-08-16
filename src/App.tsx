@@ -70,6 +70,8 @@ const SendParcel = lazyWithRetry(() => import("./pages/toutcolis/SendParcel.tsx"
 const TransporterSpace = lazyWithRetry(() => import("./pages/toutcolis/TransporterSpace.tsx"));
 const ParcelsBrowse = lazyWithRetry(() => import("./pages/toutcolis/ParcelsBrowse.tsx"));
 const MyParcels = lazyWithRetry(() => import("./pages/toutcolis/MyParcels.tsx"));
+const ParcelTracking = lazyWithRetry(() => import("./pages/toutcolis/ParcelTracking.tsx"));
+
 const TransportersBrowse = lazyWithRetry(() => import("./pages/toutcolis/TransportersBrowse.tsx"));
 const RoutesBrowse = lazyWithRetry(() => import("./pages/toutcolis/RoutesBrowse.tsx"));
 
