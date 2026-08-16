@@ -127,6 +127,8 @@ const App = () => (
               <Route path="/tout-colis/envoyer" element={<PageTransition><SendParcel /></PageTransition>} />
               <Route path="/tout-colis/transporteur" element={<PageTransition><TransporterSpace /></PageTransition>} />
               <Route path="/tout-colis/mes-colis" element={<RequireAuth><MyParcels /></RequireAuth>} />
+              <Route path="/tout-colis/suivi" element={<RequireAuth><ParcelTracking /></RequireAuth>} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
