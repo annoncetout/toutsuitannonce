@@ -34,21 +34,31 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_URL, useSEO } from "@/lib/seo";
 import { estimateQuote, formatFcfa, PARCEL_TYPES } from "@/lib/toutcolis";
+import heroCourier from "@/assets/toutcolis-hero.jpg";
+import stepPublish from "@/assets/toutcolis-step-publish.jpg";
+import stepCompare from "@/assets/toutcolis-step-compare.jpg";
+import stepDeliver from "@/assets/toutcolis-step-deliver.jpg";
 
 
 const steps = [
   {
     icon: PackagePlus,
+    image: stepPublish,
+    alt: "Préparation et emballage d'un colis avant expédition",
     title: "Publiez votre colis",
     text: "Indiquez le contenu, le trajet et la date souhaitée. La publication prend moins de deux minutes.",
   },
   {
     icon: Users,
+    image: stepCompare,
+    alt: "Voyageur avec ses colis à l'aéroport consultant les offres de transport",
     title: "Comparez les offres",
     text: "Les transporteurs vérifiés vous proposent leur trajet et leur tarif. Vous choisissez librement.",
   },
   {
     icon: Truck,
+    image: stepDeliver,
+    alt: "Livreur remettant un colis à une cliente à domicile",
     title: "Suivez la livraison",
     text: "Échangez directement, confirmez le retrait puis la remise du colis à l'arrivée.",
   },
@@ -145,7 +155,8 @@ const ToutColisHome = () => {
             <div className="absolute inset-x-0 bottom-0 h-[2px] conveyor-line opacity-60" />
           </div>
 
-          <div className="container relative mx-auto px-4 py-16 md:py-24">
+          <div className="container relative mx-auto grid items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
             <span className="reveal-up inline-flex items-center gap-2 rounded-full border border-primary/30 bg-card/50 px-4 py-1.5 text-xs font-medium tracking-wide text-primary backdrop-blur-md">
               <Sparkles className="h-3.5 w-3.5 animate-sparkle" />
               Nouveau service TOUT SUITE ANNONCES
@@ -315,6 +326,36 @@ const ToutColisHome = () => {
                 </div>
               ))}
             </div>
+            </div>
+
+            {/* Visuel livraison 3D */}
+            <div className="card-3d-wrap reveal-up relative" style={{ animationDelay: "300ms" }}>
+              <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-radial-gold blur-2xl" />
+              <div className="card-3d relative overflow-hidden rounded-[2rem] border border-primary/25 shadow-gold-lg">
+                <img
+                  src={heroCourier}
+                  alt="Livreur professionnel remettant des colis devant son véhicule à Dakar"
+                  width={1280}
+                  height={1280}
+                  className="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent" />
+
+                <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/70 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-md animate-float">
+                  <ShieldCheck className="h-3.5 w-3.5" /> Transporteur vérifié
+                </div>
+
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-background/70 px-4 py-3 backdrop-blur-xl">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Truck className="h-4 w-4 text-primary" />
+                    Dakar → Thiès
+                  </div>
+                  <span className="bg-gradient-gold bg-clip-text text-sm font-bold text-transparent">
+                    Colis en route
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -331,20 +372,34 @@ const ToutColisHome = () => {
           <div className="relative mt-8 grid gap-4 md:grid-cols-3">
             <div className="pointer-events-none absolute left-0 right-0 top-8 hidden h-[2px] conveyor-line opacity-40 md:block" />
             {steps.map((s, i) => (
-              <Card
-                key={s.title}
-                className="card-3d reveal-up relative border-primary/15 bg-card/60 p-6 backdrop-blur-md"
-                style={{ animationDelay: `${i * 110}ms` }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-gold font-bold text-primary-foreground shadow-gold">
-                    {i + 1}
-                  </span>
-                  <s.icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-foreground">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
-              </Card>
+              <div key={s.title} className="card-3d-wrap">
+                <Card
+                  className="card-3d reveal-up group relative overflow-hidden border-primary/15 bg-card/60 backdrop-blur-md"
+                  style={{ animationDelay: `${i * 110}ms` }}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={s.image}
+                      alt={s.alt}
+                      loading="lazy"
+                      width={1024}
+                      height={768}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                    <span className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-gold font-bold text-primary-foreground shadow-gold">
+                      {i + 1}
+                    </span>
+                    <span className="absolute bottom-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-primary/25 bg-background/70 text-primary backdrop-blur-md">
+                      <s.icon className="h-4 w-4" />
+                    </span>
+                  </div>
+                  <div className="p-6 pt-4">
+                    <h3 className="text-base font-semibold text-foreground">{s.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
+                  </div>
+                </Card>
+              </div>
             ))}
           </div>
 
