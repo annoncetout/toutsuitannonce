@@ -134,9 +134,13 @@ const MyParcels = () => {
               <Link to="/tout-colis/envoyer"><Package className="h-4 w-4" /> Envoyer un colis</Link>
             </Button>
             <Button variant="outlineGold" className="rounded-full" asChild>
+              <Link to="/tout-colis/suivi"><Clock className="h-4 w-4" /> Suivi de mes colis</Link>
+            </Button>
+            <Button variant="outlineGold" className="rounded-full" asChild>
               <Link to="/tout-colis/transporteur"><Truck className="h-4 w-4" /> Espace transporteur</Link>
             </Button>
           </div>
+
         </div>
 
         {busy ? (
