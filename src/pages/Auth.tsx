@@ -191,6 +191,15 @@ const Auth = () => {
 
   const handleGoogle = async () => {
     setBusy(true);
+
+    // 1) Authentification Google gérée par le Worker Cloudflare (production).
+    if (cfAuth.available) {
+      const target = typeof redirectTo === "string" && redirectTo.startsWith("/") ? redirectTo : "/";
+      cfAuth.signInWithGoogle(target);
+      return;
+    }
+
+    // 2) Repli (aperçu Lovable / Worker non déployé) : flux OAuth existant, pour ne rien casser.
     const appRedirectUrl = getAuthCallbackUrl(redirectTo);
     console.info("Google OAuth provider callback URL:", GOOGLE_PROVIDER_CALLBACK_URL);
     console.info("Google OAuth app redirectTo URL:", appRedirectUrl);
