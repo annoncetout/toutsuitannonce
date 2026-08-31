@@ -25,10 +25,19 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user: supaUser, signOut } = useAuth();
+  const cfAuth = useCloudflareAuth();
   const { isAdmin } = useAdmin();
   const { count } = useCart();
   const { requireAuth } = useAuthPrompt();
+
+  // L'utilisateur est connecté via Cloudflare (Google) ou via le compte existant.
+  const cfUser = cfAuth.user;
+  const user = cfUser ?? supaUser;
+  const displayName =
+    cfUser?.full_name || cfUser?.given_name || cfUser?.email || (supaUser as { email?: string } | null)?.email || "";
+  const avatarUrl = cfUser?.avatar_url ?? null;
+  const isAdminUser = isAdmin || cfUser?.role === "admin";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -45,14 +54,21 @@ const Header = () => {
   };
 
   const goPublish = () => {
+    if (cfAuth.available && !cfUser) {
+      navigate("/connexion?redirect=%2Fpublier");
+      return;
+    }
     if (!requireAuth({ title: "Publier une annonce", message: "Connectez-vous pour publier votre annonce gratuitement." })) return;
     navigate("/publier");
   };
 
   const handleSignOut = async () => {
+    await cfAuth.signOut();
     await signOut();
     navigate("/");
   };
+
+
 
   return (
     <header
