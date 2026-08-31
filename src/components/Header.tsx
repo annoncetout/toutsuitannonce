@@ -4,6 +4,7 @@ import { LayoutDashboard, LogOut, Menu, ShoppingCart, Shield, Sparkles, User, X 
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useCloudflareAuth } from "@/hooks/useCloudflareAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useCart } from "@/hooks/useCart";
 import { useAuthPrompt } from "@/components/AuthPromptDialog";
