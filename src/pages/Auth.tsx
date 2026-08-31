@@ -4,6 +4,7 @@ import { z } from "zod";
 import { CheckCircle2, Mail, Lock, Loader2, Phone, RefreshCw, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useCloudflareAuth } from "@/hooks/useCloudflareAuth";
 import { getAuthCallbackUrl, sanitizeAuthRedirect } from "@/lib/authRedirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,7 @@ const Auth = () => {
     return () => { cancelled = true; };
   }, []);
   const [busy, setBusy] = useState(false);
+  const cfAuth = useCloudflareAuth();
   const [resendBusy, setResendBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
