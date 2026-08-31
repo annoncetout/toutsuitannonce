@@ -1,12 +1,41 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "toutsuitannonce",
+  "main": "worker/index.ts",
   "compatibility_date": "2025-01-01",
   "build": {
     "command": "bun run build"
   },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    // Production origin. Google callback = https://www.toutsuiteannonces.com/auth/google/callback
+    "APP_ORIGIN": "https://www.toutsuiteannonces.com"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "toutsuite-auth",
+      // Replace with the id returned by: wrangler d1 create toutsuite-auth
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "env": {
+    "development": {
+      "vars": {
+        // Local dev origin. Google callback = http://localhost:8787/auth/google/callback
+        "APP_ORIGIN": "http://localhost:8787"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "toutsuite-auth-dev",
+          "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+        }
+      ]
+    }
   }
 }
