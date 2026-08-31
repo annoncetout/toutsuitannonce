@@ -178,14 +178,23 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              variant="outlineGold"
-              onClick={() => navigate("/auth")}
-              className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
-            >
-              <User className="w-4 h-4" />
-              Se connecter
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/connexion")}
+                className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                Connexion
+              </Button>
+              <Button
+                variant="outlineGold"
+                onClick={() => navigate("/inscription")}
+                className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                <User className="w-4 h-4" />
+                Inscription
+              </Button>
+            </>
           )}
           <Button
             variant="gold"
