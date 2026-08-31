@@ -248,13 +248,28 @@ const Header = () => {
             <div className="flex flex-col gap-2 pt-3">
               {user ? (
                 <>
-                  <Button variant="outlineGold" onClick={() => { navigate("/dashboard"); setOpen(false); }}>Tableau de bord</Button>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={displayName ? `Photo de profil de ${displayName}` : "Photo de profil"}
+                        referrerPolicy="no-referrer"
+                        className="w-9 h-9 rounded-full object-cover ring-1 ring-primary/40"
+                      />
+                    ) : (
+                      <User className="w-5 h-5 text-primary" />
+                    )}
+                    <span className="text-sm font-medium truncate">{displayName}</span>
+                  </div>
+                  <Button variant="outlineGold" onClick={() => { navigate("/profil"); setOpen(false); }}>Mon compte</Button>
+                  <Button variant="outlineGold" onClick={() => { navigate("/dashboard"); setOpen(false); }}>Mes annonces</Button>
                   <Button variant="gold" onClick={() => { navigate("/publier"); setOpen(false); }}>Publier une annonce</Button>
                   <Button variant="ghost" onClick={handleSignOut}>Déconnexion</Button>
                 </>
               ) : (
                 <>
-                  <Button variant="outlineGold" onClick={() => { navigate("/auth"); setOpen(false); }}>Se connecter</Button>
+                  <Button variant="ghost" onClick={() => { navigate("/connexion"); setOpen(false); }}>Connexion</Button>
+                  <Button variant="outlineGold" onClick={() => { navigate("/inscription"); setOpen(false); }}>Inscription</Button>
                   <Button variant="gold" onClick={() => { setOpen(false); goPublish(); }}>Publier une annonce</Button>
                 </>
               )}
