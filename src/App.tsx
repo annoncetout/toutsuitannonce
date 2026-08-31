@@ -6,6 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { CloudflareAuthProvider } from "@/hooks/useCloudflareAuth";
 import { AuthPromptProvider } from "@/components/AuthPromptDialog";
 import { FavoritesProvider } from "@/hooks/useFavorites";
 import Index from "./pages/Index.tsx";
@@ -90,6 +91,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <CloudflareAuthProvider>
           <AuthPromptProvider>
           <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
@@ -98,6 +100,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<PageTransition><Index /></PageTransition>} />
               <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+              <Route path="/connexion" element={<PageTransition><Auth /></PageTransition>} />
+              <Route path="/inscription" element={<PageTransition><Auth /></PageTransition>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
               <Route path="/profil" element={<RequireAuth><Profile /></RequireAuth>} />
@@ -138,6 +142,7 @@ const App = () => (
           <PushPermissionBanner />
           </FavoritesProvider>
           </AuthPromptProvider>
+          </CloudflareAuthProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

@@ -4,6 +4,7 @@ import { LayoutDashboard, LogOut, Menu, ShoppingCart, Shield, Sparkles, User, X 
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useCloudflareAuth } from "@/hooks/useCloudflareAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useCart } from "@/hooks/useCart";
 import { useAuthPrompt } from "@/components/AuthPromptDialog";
@@ -24,10 +25,19 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user: supaUser, signOut } = useAuth();
+  const cfAuth = useCloudflareAuth();
   const { isAdmin } = useAdmin();
   const { count } = useCart();
   const { requireAuth } = useAuthPrompt();
+
+  // L'utilisateur est connecté via Cloudflare (Google) ou via le compte existant.
+  const cfUser = cfAuth.user;
+  const user = cfUser ?? supaUser;
+  const displayName =
+    cfUser?.full_name || cfUser?.given_name || cfUser?.email || (supaUser as { email?: string } | null)?.email || "";
+  const avatarUrl = cfUser?.avatar_url ?? null;
+  const isAdminUser = isAdmin || cfUser?.role === "admin";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -44,14 +54,21 @@ const Header = () => {
   };
 
   const goPublish = () => {
+    if (cfAuth.available && !cfUser) {
+      navigate("/connexion?redirect=%2Fpublier");
+      return;
+    }
     if (!requireAuth({ title: "Publier une annonce", message: "Connectez-vous pour publier votre annonce gratuitement." })) return;
     navigate("/publier");
   };
 
   const handleSignOut = async () => {
+    await cfAuth.signOut();
     await signOut();
     navigate("/");
   };
+
+
 
   return (
     <header
@@ -128,20 +145,29 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outlineGold"
-                  className="rounded-full transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-gold"
+                  className="rounded-full gap-2 pl-1.5 transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-gold"
                 >
-                  <User className="w-4 h-4" />
-                  Mon compte
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={displayName ? `Photo de profil de ${displayName}` : "Photo de profil"}
+                      referrerPolicy="no-referrer"
+                      className="w-6 h-6 rounded-full object-cover ring-1 ring-primary/40"
+                    />
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                  <span className="max-w-[140px] truncate">{displayName || "Mon compte"}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 border-primary/30 bg-card/95 backdrop-blur-xl">
-                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                  <LayoutDashboard className="w-4 h-4 mr-2" /> Tableau de bord
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56 border-primary/30 bg-card/95 backdrop-blur-xl">
                 <DropdownMenuItem onClick={() => navigate("/profil")}>
-                  <User className="w-4 h-4 mr-2" /> Mon profil
+                  <User className="w-4 h-4 mr-2" /> Mon compte
                 </DropdownMenuItem>
-                {isAdmin && (
+                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                  <LayoutDashboard className="w-4 h-4 mr-2" /> Mes annonces
+                </DropdownMenuItem>
+                {isAdminUser && (
                   <DropdownMenuItem onClick={() => navigate("/admin")}>
                     <Shield className="w-4 h-4 mr-2" /> Admin
                   </DropdownMenuItem>
@@ -152,14 +178,23 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              variant="outlineGold"
-              onClick={() => navigate("/auth")}
-              className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
-            >
-              <User className="w-4 h-4" />
-              Se connecter
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/connexion")}
+                className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                Connexion
+              </Button>
+              <Button
+                variant="outlineGold"
+                onClick={() => navigate("/inscription")}
+                className="rounded-full transition-transform duration-300 hover:-translate-y-0.5"
+              >
+                <User className="w-4 h-4" />
+                Inscription
+              </Button>
+            </>
           )}
           <Button
             variant="gold"
@@ -213,13 +248,28 @@ const Header = () => {
             <div className="flex flex-col gap-2 pt-3">
               {user ? (
                 <>
-                  <Button variant="outlineGold" onClick={() => { navigate("/dashboard"); setOpen(false); }}>Tableau de bord</Button>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={displayName ? `Photo de profil de ${displayName}` : "Photo de profil"}
+                        referrerPolicy="no-referrer"
+                        className="w-9 h-9 rounded-full object-cover ring-1 ring-primary/40"
+                      />
+                    ) : (
+                      <User className="w-5 h-5 text-primary" />
+                    )}
+                    <span className="text-sm font-medium truncate">{displayName}</span>
+                  </div>
+                  <Button variant="outlineGold" onClick={() => { navigate("/profil"); setOpen(false); }}>Mon compte</Button>
+                  <Button variant="outlineGold" onClick={() => { navigate("/dashboard"); setOpen(false); }}>Mes annonces</Button>
                   <Button variant="gold" onClick={() => { navigate("/publier"); setOpen(false); }}>Publier une annonce</Button>
                   <Button variant="ghost" onClick={handleSignOut}>Déconnexion</Button>
                 </>
               ) : (
                 <>
-                  <Button variant="outlineGold" onClick={() => { navigate("/auth"); setOpen(false); }}>Se connecter</Button>
+                  <Button variant="ghost" onClick={() => { navigate("/connexion"); setOpen(false); }}>Connexion</Button>
+                  <Button variant="outlineGold" onClick={() => { navigate("/inscription"); setOpen(false); }}>Inscription</Button>
                   <Button variant="gold" onClick={() => { setOpen(false); goPublish(); }}>Publier une annonce</Button>
                 </>
               )}
