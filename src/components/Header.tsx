@@ -145,20 +145,29 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outlineGold"
-                  className="rounded-full transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-gold"
+                  className="rounded-full gap-2 pl-1.5 transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-gold"
                 >
-                  <User className="w-4 h-4" />
-                  Mon compte
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={displayName ? `Photo de profil de ${displayName}` : "Photo de profil"}
+                      referrerPolicy="no-referrer"
+                      className="w-6 h-6 rounded-full object-cover ring-1 ring-primary/40"
+                    />
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                  <span className="max-w-[140px] truncate">{displayName || "Mon compte"}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 border-primary/30 bg-card/95 backdrop-blur-xl">
-                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                  <LayoutDashboard className="w-4 h-4 mr-2" /> Tableau de bord
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56 border-primary/30 bg-card/95 backdrop-blur-xl">
                 <DropdownMenuItem onClick={() => navigate("/profil")}>
-                  <User className="w-4 h-4 mr-2" /> Mon profil
+                  <User className="w-4 h-4 mr-2" /> Mon compte
                 </DropdownMenuItem>
-                {isAdmin && (
+                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                  <LayoutDashboard className="w-4 h-4 mr-2" /> Mes annonces
+                </DropdownMenuItem>
+                {isAdminUser && (
                   <DropdownMenuItem onClick={() => navigate("/admin")}>
                     <Shield className="w-4 h-4 mr-2" /> Admin
                   </DropdownMenuItem>
