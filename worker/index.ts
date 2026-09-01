@@ -379,6 +379,7 @@ export default {
       if (path === "/auth/google" && req.method === "GET") return await startGoogleOAuth(req, env);
       if (path === "/auth/google/callback" && req.method === "GET") return await handleGoogleCallback(req, env);
       if (path === "/api/auth/me" && req.method === "GET") return await handleMe(req, env);
+      if (path === "/api/auth/supabase-session" && req.method === "POST") return await handleDataSession(req, env);
       if (path === "/auth/logout" && req.method === "POST") return await handleLogout(req, env);
       if (path === "/auth/logout" || path === "/api/auth/me") {
         return json({ error: "method_not_allowed" }, 405);

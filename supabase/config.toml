@@ -19,3 +19,5 @@ project_id = "yyendbkedzfnsmjiclhg"
     verify_jwt = true
   [functions.listings-lifecycle-cron]
     verify_jwt = false
+  [functions.cloudflare-bridge-session]
+    verify_jwt = false
