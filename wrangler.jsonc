@@ -23,10 +23,32 @@
     }
   ],
   "env": {
+    "production": {
+      "vars": {
+        "APP_ORIGIN": "https://www.toutsuiteannonces.com"
+      },
+      "assets": {
+        "directory": "./dist",
+        "binding": "ASSETS",
+        "not_found_handling": "single-page-application"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "toutsuite-auth",
+          "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
+        }
+      ]
+    },
     "development": {
       "vars": {
         // Local dev origin. Google callback = http://localhost:8787/auth/google/callback
         "APP_ORIGIN": "http://localhost:8787"
+      },
+      "assets": {
+        "directory": "./dist",
+        "binding": "ASSETS",
+        "not_found_handling": "single-page-application"
       },
       "d1_databases": [
         {
