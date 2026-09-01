@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CloudflareAuthProvider } from "@/hooks/useCloudflareAuth";
+import { SupabaseBridge } from "@/hooks/useSupabaseBridge";
 import { AuthPromptProvider } from "@/components/AuthPromptDialog";
 import { FavoritesProvider } from "@/hooks/useFavorites";
 import Index from "./pages/Index.tsx";
@@ -95,6 +96,7 @@ const App = () => (
           <AuthPromptProvider>
           <FavoritesProvider>
           <Suspense fallback={<Fallback />}>
+            <SupabaseBridge />
             <PushOpenTracker />
             <RouteTracker />
             <Routes>
