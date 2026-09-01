@@ -58,3 +58,20 @@ Les données du site (annonces, favoris, paiements, notifications) restent sur l
 Lovable actuel, dont les règles de sécurité s'appuient sur l'identité de ce backend.
 L'authentification Cloudflare fonctionne donc **en parallèle** : aucun utilisateur existant
 n'est supprimé, et le site continue de fonctionner pendant la migration progressive.
+
+## Lien avec les données du site (annonces, favoris, colis)
+
+Le Worker expose `POST /api/auth/supabase-session` : il vérifie le cookie de
+session Cloudflare puis appelle la fonction `cloudflare-bridge-session` du
+backend, qui retrouve (ou crée) le compte correspondant à l'email Google et
+renvoie un jeton à usage unique. Le front l'échange automatiquement contre une
+session backend (`src/hooks/useSupabaseBridge.tsx`), donc les règles d'accès
+existantes continuent de fonctionner sans migration de données.
+
+Variables à définir côté Cloudflare :
+
+```bash
+wrangler secret put CF_BRIDGE_SECRET     # même valeur que côté backend
+wrangler secret put SUPABASE_URL
+wrangler secret put SUPABASE_ANON_KEY
+```
