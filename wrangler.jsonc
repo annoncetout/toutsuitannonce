@@ -19,8 +19,7 @@
     {
       "binding": "DB",
       "database_name": "toutsuite-auth",
-      // Replace with the id returned by: wrangler d1 create toutsuite-auth
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+      "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
     }
   ],
   "env": {
@@ -32,8 +31,8 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "toutsuite-auth-dev",
-          "database_id": "REPLACE_WITH_DEV_D1_DATABASE_ID"
+          "database_name": "toutsuite-auth",
+          "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
         }
       ]
     }
