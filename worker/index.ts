@@ -19,6 +19,10 @@ export interface Env {
   SESSION_SECRET: string;
   /** e.g. https://www.toutsuiteannonces.com — optional, defaults to the request origin */
   APP_ORIGIN?: string;
+  /** Data backend bridge (links the Google identity to the existing app data) */
+  SUPABASE_URL?: string;
+  SUPABASE_ANON_KEY?: string;
+  CF_BRIDGE_SECRET?: string;
 }
 
 const COOKIE_NAME = "tsa_session";
