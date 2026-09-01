@@ -335,6 +335,39 @@ async function handleLogout(req: Request, env: Env): Promise<Response> {
   return json({ success: true }, 200, { "Set-Cookie": sessionCookie("", 0, secure) });
 }
 
+/**
+ * Exchanges the Cloudflare session for a one-time token that the browser
+ * converts into a data-backend session, so existing app data (annonces,
+ * favoris, colis) is tied to the same Google identity.
+ */
+async function handleDataSession(req: Request, env: Env): Promise<Response> {
+  const user = await currentUser(req, env);
+  if (!user) return json({ error: "unauthenticated" }, 401);
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.CF_BRIDGE_SECRET) {
+    return json({ error: "bridge_not_configured" }, 503);
+  }
+
+  const res = await fetch(`${env.SUPABASE_URL.replace(/\/$/, "")}/functions/v1/cloudflare-bridge-session`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: env.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+      "x-bridge-secret": env.CF_BRIDGE_SECRET,
+    },
+    body: JSON.stringify({
+      email: user.email,
+      full_name: user.full_name,
+      avatar_url: user.avatar_url,
+    }),
+  });
+
+  if (!res.ok) return json({ error: "bridge_failed" }, 502);
+  const data = (await res.json()) as { email?: string; token_hash?: string };
+  if (!data.token_hash) return json({ error: "bridge_failed" }, 502);
+  return json({ email: data.email, token_hash: data.token_hash });
+}
+
 /* -------------------------------- router -------------------------------- */
 
 export default {
