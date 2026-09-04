@@ -375,6 +375,18 @@ export default {
     const url = new URL(req.url);
     const path = url.pathname.replace(/\/$/, "") || "/";
 
+    // Keep the whole OAuth round-trip on the canonical origin declared in Google Cloud Console,
+    // otherwise the cookie / redirect_uri would not match (apex vs www).
+    if (env.APP_ORIGIN && path.startsWith("/auth/")) {
+      const canonical = new URL(env.APP_ORIGIN);
+      if (canonical.host !== url.host && req.method === "GET") {
+        url.protocol = canonical.protocol;
+        url.host = canonical.host;
+        return Response.redirect(url.toString(), 302);
+      }
+    }
+
+
     try {
       if (path === "/auth/google" && req.method === "GET") return await startGoogleOAuth(req, env);
       if (path === "/auth/google/callback" && req.method === "GET") return await handleGoogleCallback(req, env);
