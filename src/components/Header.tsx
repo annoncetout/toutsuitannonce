@@ -263,6 +263,9 @@ const Header = () => {
                   </div>
                   <Button variant="outlineGold" onClick={() => { navigate("/profil"); setOpen(false); }}>Mon compte</Button>
                   <Button variant="outlineGold" onClick={() => { navigate("/dashboard"); setOpen(false); }}>Mes annonces</Button>
+                  {isAdminUser && (
+                    <Button variant="outlineGold" onClick={() => { navigate("/admin"); setOpen(false); }}>Admin</Button>
+                  )}
                   <Button variant="gold" onClick={() => { navigate("/publier"); setOpen(false); }}>Publier une annonce</Button>
                   <Button variant="ghost" onClick={handleSignOut}>Déconnexion</Button>
                 </>
