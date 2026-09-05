@@ -26,11 +26,11 @@ const Footer = () => {
     {
       title: "Aide",
       links: [
-        { label: "Centre d'aide", to: "#" },
-        { label: "Conditions", to: "#" },
-        { label: "Confidentialité", to: "#" },
+        { label: "Centre d'aide", to: "/qui-sommes-nous#aide" },
+        { label: "Conditions d'utilisation", to: "/conditions" },
+        { label: "Confidentialité", to: "/confidentialite" },
         { label: "Connecter un assistant IA", to: "/connect" },
-        { label: "Contact", to: "#" },
+        { label: "Contact", to: "mailto:contact@toutsuiteannonces.com" },
       ],
     },
   ];
