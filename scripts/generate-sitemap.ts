@@ -14,6 +14,8 @@ const staticEntries: Entry[] = [
   { loc: "/annonces", changefreq: "hourly", priority: "0.9" },
   { loc: "/annonces?sort=premium", changefreq: "daily", priority: "0.7" },
   { loc: "/tarifs", changefreq: "monthly", priority: "0.6" },
+  { loc: "/confidentialite", changefreq: "yearly", priority: "0.3" },
+  { loc: "/conditions", changefreq: "yearly", priority: "0.3" },
   { loc: "/auth", changefreq: "monthly", priority: "0.3" },
 ];
 
