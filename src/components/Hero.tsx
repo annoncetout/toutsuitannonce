@@ -65,7 +65,9 @@ const Hero = () => {
             </h1>
 
             <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
-              La plateforme numéro 1 pour vos annonces — simples, rapides et efficaces.
+              ToutSuiteAnnonces est une plateforme de petites annonces permettant aux utilisateurs de
+              découvrir, publier et consulter des produits et services — simples, rapides et
+              efficaces. La consultation est libre, sans compte.
             </p>
 
             <div className="flex flex-wrap gap-5 sm:gap-8">

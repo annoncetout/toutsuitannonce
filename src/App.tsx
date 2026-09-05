@@ -76,6 +76,8 @@ const ParcelTracking = lazyWithRetry(() => import("./pages/toutcolis/ParcelTrack
 
 const TransportersBrowse = lazyWithRetry(() => import("./pages/toutcolis/TransportersBrowse.tsx"));
 const RoutesBrowse = lazyWithRetry(() => import("./pages/toutcolis/RoutesBrowse.tsx"));
+const PrivacyPolicy = lazyWithRetry(() => import("./pages/PrivacyPolicy.tsx"));
+const Terms = lazyWithRetry(() => import("./pages/Terms.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -125,6 +127,8 @@ const App = () => (
               <Route path="/qui-sommes-nous" element={<PageTransition><About /></PageTransition>} />
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
               <Route path="/top-vendeurs" element={<PageTransition><TopSellers /></PageTransition>} />
+              <Route path="/confidentialite" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+              <Route path="/conditions" element={<PageTransition><Terms /></PageTransition>} />
               <Route path="/analytics-status" element={<AnalyticsStatus />} />
               <Route path="/connect" element={<Connect />} />
               <Route path="/vendeur/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
