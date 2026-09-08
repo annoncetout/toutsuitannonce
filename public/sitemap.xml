@@ -21,6 +21,16 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.toutsuiteannonces.com/confidentialite</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.toutsuiteannonces.com/conditions</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://www.toutsuiteannonces.com/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -76,6 +86,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.toutsuiteannonces.com/annonce/gant-expholiant/d27c5a1a-7bcd-4423-a3e9-2018db6f6617</loc>
+    <lastmod>2026-09-05T16:13:09.047Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.toutsuiteannonces.com/annonce/hachoir-manuel-poisson-viande/4ac60c82-08fe-42c0-8299-96947c8243ea</loc>
+    <lastmod>2026-09-05T16:02:09.610Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.toutsuiteannonces.com/annonce/hachoir-manuel/e831dca1-f50c-41c0-af23-811f7b175dae</loc>
+    <lastmod>2026-09-05T15:59:03.472Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.toutsuiteannonces.com/annonce/hachoir-electrique-6-litres/d3599806-bf72-43dc-99ad-9023ab0f8d4d</loc>
+    <lastmod>2026-09-05T15:56:05.667Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.toutsuiteannonces.com/annonce/air-fryer-6-litres/ae48b446-6335-44fc-b80c-a2a54881bc93</loc>
+    <lastmod>2026-09-05T13:02:43.097Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.toutsuiteannonces.com/annonce/terrain-a-vendre-malika-plage/1bfa6284-ff54-414e-bd38-b6dfb88ae8c6</loc>
     <lastmod>2026-07-15T21:08:35.335Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -107,13 +147,13 @@
   </url>
   <url>
     <loc>https://www.toutsuiteannonces.com/annonce/dakar-clean-pro-services-de-nettoyage-professionnels/bd880d09-987f-487a-9a89-455b40a04478</loc>
-    <lastmod>2026-09-05T02:30:00.103Z</lastmod>
+    <lastmod>2026-09-08T01:00:00.087Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.toutsuiteannonces.com/annonce/immeuble-r-3/f54d0c21-52b8-41e5-bf02-d6acaa27bc06</loc>
-    <lastmod>2026-09-05T02:30:00.103Z</lastmod>
+    <lastmod>2026-09-08T01:00:00.087Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
