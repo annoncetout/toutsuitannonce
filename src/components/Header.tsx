@@ -255,7 +255,7 @@ const Header = () => {
                       : "text-foreground/85 hover:bg-card/60"
                   }`}
                 >
-                  {item.accent && <Sparkles className="w-4 h-4" />}
+                  <item.Icon className="w-4 h-4" />
                   {item.label}
                 </Link>
               );
