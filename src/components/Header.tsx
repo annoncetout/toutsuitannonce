@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, LogOut, Menu, ShoppingCart, Shield, Sparkles, User, X } from "lucide-react";
+import { Home, LayoutDashboard, LogOut, Mail, Menu, Package, ShoppingCart, Shield, Sparkles, Tag, User, Wallet, X } from "lucide-react";
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,12 +12,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import NotificationsBell from "./NotificationsBell";
 
 const navItems = [
-  { label: "Accueil", to: "/" },
-  { label: "Annonces", to: "/annonces" },
-  { label: "Premium", to: "/annonces?sort=premium", accent: true },
-  { label: "Tout Colis", to: "/tout-colis" },
-  { label: "Tarifs", to: "/tarifs" },
-  { label: "Contact", to: "/#contact" },
+  { label: "Accueil", to: "/", Icon: Home },
+  { label: "Annonces", to: "/annonces", Icon: Tag },
+  { label: "Premium", to: "/annonces?sort=premium", accent: true, Icon: Sparkles },
+  { label: "Tout Colis", to: "/tout-colis", Icon: Package },
+  { label: "Tarifs", to: "/tarifs", Icon: Wallet },
+  { label: "Contact", to: "/#contact", Icon: Mail },
 ];
 
 const Header = () => {
