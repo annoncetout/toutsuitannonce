@@ -107,27 +107,42 @@ const Header = () => {
         </div>
 
         {/* Nav with 3D pill hover */}
-        <nav className="hidden lg:flex items-center gap-1 rounded-full border border-primary/15 bg-card/40 backdrop-blur-md px-2 py-1.5 shadow-[inset_0_1px_0_hsl(45_95%_65%/0.12),0_8px_30px_-15px_hsl(0_0%_0%/0.8)]">
+        <nav className="hidden lg:flex items-center gap-1 rounded-full border border-primary/15 bg-card/40 backdrop-blur-md px-2 py-1.5 shadow-[inset_0_1px_0_hsl(45_95%_65%/0.12),0_8px_30px_-15px_hsl(0_0%_0%/0.8)] [perspective:900px]">
           {navItems.map((item) => {
             const active = isActive(item.to);
+            const Icon = item.Icon;
             return (
               <Link
                 key={item.label}
                 to={item.to}
-                className={`relative group px-4 py-2 rounded-full text-[13px] font-medium tracking-wide transition-all duration-300 ${
-                  active
-                    ? "text-primary-foreground"
-                    : "text-foreground/80 hover:text-primary"
+                aria-current={active ? "page" : undefined}
+                className={`relative group px-3.5 py-2 rounded-full text-[13px] font-medium tracking-wide transition-all duration-500 [transform-style:preserve-3d] hover:[transform:translateZ(14px)_translateY(-2px)_rotateX(10deg)] ${
+                  active ? "text-primary-foreground" : "text-foreground/80 hover:text-primary"
                 }`}
               >
+                {/* Pill active : dégradé doré + reflet verre */}
                 {active && (
+                  <>
+                    <span className="absolute inset-0 rounded-full bg-gradient-gold shadow-gold" aria-hidden />
+                    <span
+                      className="absolute inset-x-1 top-0.5 h-1/2 rounded-full bg-white/25 blur-[2px]"
+                      aria-hidden
+                    />
+                  </>
+                )}
+                {/* Socle 3D au survol */}
+                {!active && (
                   <span
-                    className="absolute inset-0 rounded-full bg-gradient-gold shadow-gold"
                     aria-hidden
+                    className="absolute inset-0 rounded-full border border-primary/0 bg-primary/0 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:border-primary/30 group-hover:bg-primary/10 group-hover:shadow-[0_10px_24px_-12px_hsl(43_74%_56%/0.7),inset_0_1px_0_hsl(45_95%_65%/0.25)]"
                   />
                 )}
-                <span className="relative flex items-center gap-1.5">
-                  {item.accent && <Sparkles className="w-3.5 h-3.5" />}
+                <span className="relative flex items-center gap-1.5 [transform:translateZ(12px)]">
+                  <Icon
+                    className={`w-3.5 h-3.5 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${
+                      item.accent && !active ? "text-primary animate-sparkle" : ""
+                    }`}
+                  />
                   {item.label}
                 </span>
                 {!active && (
