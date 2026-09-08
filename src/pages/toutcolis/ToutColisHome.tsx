@@ -166,7 +166,7 @@ const ToutColisHome = () => {
               className="reveal-up mt-5 max-w-3xl text-4xl font-bold leading-[1.1] text-foreground md:text-6xl"
               style={{ animationDelay: "80ms" }}
             >
-              Envoyer vos colis partout au Senegal et dans le Monde
+              Envoyer vos colis partout au <span className="text-gold-shine">Senegal</span> et dans le <span className="text-gold-shine">Monde</span>
             </h1>
 
             <p
@@ -319,7 +319,7 @@ const ToutColisHome = () => {
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-xl border border-primary/15 bg-card/50 px-4 py-3 backdrop-blur-md transition-transform duration-300 hover:-translate-y-1"
+                  className="stat-chip rounded-xl px-4 py-3 backdrop-blur-md"
                 >
                   <p className="bg-gradient-gold bg-clip-text text-lg font-bold text-transparent">{s.value}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{s.label}</p>
@@ -331,6 +331,7 @@ const ToutColisHome = () => {
             {/* Visuel livraison 3D */}
             <div className="card-3d-wrap reveal-up relative" style={{ animationDelay: "300ms" }}>
               <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-radial-gold blur-2xl" />
+              <div className="hero-ring pointer-events-none absolute -inset-10 rounded-full opacity-70" />
               <div className="card-3d relative overflow-hidden rounded-[2rem] border border-primary/25 shadow-gold-lg">
                 <img
                   src={heroCourier}
@@ -341,11 +342,15 @@ const ToutColisHome = () => {
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent" />
 
-                <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/70 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-md animate-float">
+                <div className="badge-3d absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/70 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-md animate-float">
                   <ShieldCheck className="h-3.5 w-3.5" /> Transporteur vérifié
                 </div>
 
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-background/70 px-4 py-3 backdrop-blur-xl">
+                <div className="badge-3d absolute right-4 top-16 hidden items-center gap-2 rounded-full border border-emerald-400/30 bg-background/70 px-3 py-1.5 text-xs font-medium text-emerald-400 backdrop-blur-md animate-float-delayed sm:inline-flex">
+                  <Clock3 className="h-3.5 w-3.5" /> Livraison 24–72 h
+                </div>
+
+                <div className="badge-3d absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-background/70 px-4 py-3 backdrop-blur-xl">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Truck className="h-4 w-4 text-primary" />
                     Dakar → Thiès

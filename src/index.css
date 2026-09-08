@@ -277,6 +277,65 @@
     animation: conveyor 1.6s linear infinite;
   }
 
+  /* ---------- Hero premium extras (Tout Colis) ---------- */
+
+  /* Rotating conic halo ring behind the hero visual */
+  @keyframes ring-spin {
+    to { transform: rotate(360deg); }
+  }
+  .hero-ring {
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      hsl(45 95% 65% / 0.55) 60deg,
+      transparent 130deg,
+      transparent 200deg,
+      hsl(152 60% 45% / 0.4) 260deg,
+      transparent 320deg
+    );
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+    animation: ring-spin 10s linear infinite;
+  }
+
+  /* Gold gradient headline with a slow shine sweep */
+  .text-gold-shine {
+    background: linear-gradient(
+      100deg,
+      hsl(43 74% 56%) 20%,
+      hsl(45 100% 75%) 40%,
+      hsl(43 74% 56%) 60%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 5s linear infinite;
+  }
+
+  /* Floating badge with real depth */
+  .badge-3d {
+    transform: translateZ(46px);
+    box-shadow:
+      0 14px 30px -12px hsl(0 0% 0% / 0.65),
+      0 8px 22px -10px hsl(43 74% 56% / 0.5);
+  }
+  .animate-float-delayed { animation: float 5s ease-in-out 1.2s infinite; }
+
+  /* Stat chip with gradient border reveal on hover */
+  .stat-chip {
+    position: relative;
+    background:
+      linear-gradient(hsl(var(--card) / 0.6), hsl(var(--card) / 0.6)) padding-box,
+      linear-gradient(140deg, hsl(43 74% 56% / 0.4), transparent 45%, transparent 60%, hsl(152 60% 45% / 0.3)) border-box;
+    border: 1px solid transparent;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  }
+  .stat-chip:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 34px -16px hsl(43 74% 56% / 0.55);
+  }
+
   /* GPU hints for animated layers */
   .animate-orb-drift, .animate-gradient-shift, .animate-premium-glow, .animate-sparkle, .animate-float, .skeleton-3d {
     will-change: transform, opacity;
