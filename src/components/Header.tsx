@@ -97,7 +97,7 @@ const Header = () => {
         <div className="absolute -top-16 right-10 w-[300px] h-[180px] rounded-full bg-primary-glow/10 blur-3xl" />
       </div>
 
-      <div className="container relative mx-auto flex items-center justify-between gap-4 py-3 md:py-4 px-4">
+      <div className="container relative mx-auto flex items-center justify-between gap-3 py-2.5 md:py-4 px-4">
         {/* Logo with 3D lift */}
         <div className="relative group [perspective:800px]">
           <div className="absolute -inset-3 rounded-2xl bg-gradient-radial-gold opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
@@ -233,7 +233,7 @@ const Header = () => {
         <button
           aria-label="Menu"
           onClick={() => setOpen(!open)}
-          className="lg:hidden relative text-foreground p-2 rounded-full border border-primary/20 bg-card/40 backdrop-blur-md transition-transform duration-300 active:scale-90"
+          className="lg:hidden relative text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full border border-primary/20 bg-card/40 backdrop-blur-md transition-transform duration-300 active:scale-90"
         >
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -241,7 +241,7 @@ const Header = () => {
 
       {open && (
         <div className="lg:hidden border-t border-primary/15 bg-background/95 backdrop-blur-xl animate-fade-in">
-          <div className="container mx-auto py-4 flex flex-col gap-1 px-4">
+          <div className="container mx-auto max-h-[calc(100dvh-4.5rem)] overflow-y-auto py-3 flex flex-col gap-1 px-4 safe-bottom">
             {navItems.map((item) => {
               const active = isActive(item.to);
               return (

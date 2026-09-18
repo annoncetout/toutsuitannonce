@@ -361,3 +361,19 @@
   html { scroll-behavior: auto; }
 }
 
+/* Mobile: preserve depth while avoiding costly or accidental touch transforms. */
+@media (max-width: 767px) {
+  .card-3d:hover,
+  .card-3d.card-3d-active {
+    transform: translateY(-2px);
+  }
+
+  .animate-orb-drift {
+    animation-duration: 22s;
+  }
+
+  .page-enter {
+    animation-duration: 0.35s;
+  }
+}
+

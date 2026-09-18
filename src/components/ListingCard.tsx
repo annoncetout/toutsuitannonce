@@ -65,7 +65,7 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      className={`card-3d group relative rounded-2xl overflow-hidden bg-card border cursor-pointer ${tilt ? "card-3d-active" : ""} ${
+      className={`card-3d group relative h-full rounded-xl sm:rounded-2xl overflow-hidden bg-card border cursor-pointer ${tilt ? "card-3d-active" : ""} ${
         listing.is_premium
           ? "border-primary/40 shadow-[0_0_0_1px_hsl(43_74%_56%/0.25),0_20px_50px_-20px_hsl(43_74%_56%/0.4)]"
           : "border-border/50 hover:border-primary/50"
@@ -129,13 +129,13 @@ const ListingCard = ({ listing }: { listing: ListingCardData }) => {
           <Flag className="w-4 h-4" />
         </button>
       </div>
-      <div className="p-4 space-y-1">
-        <h3 className="font-semibold text-foreground line-clamp-1">{listing.title}</h3>
+      <div className="p-3 sm:p-4 space-y-1">
+        <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-2 min-h-[2.5rem] sm:min-h-0">{listing.title}</h3>
         {listing.location && <p className="text-xs text-muted-foreground">{listing.location}</p>}
         {listing.published_at && (
           <p className="text-[11px] text-muted-foreground/80">{formatPublished(listing.published_at)}</p>
         )}
-        <p className="pt-2 font-bold text-primary text-lg">{price}</p>
+        <p className="pt-1.5 sm:pt-2 font-bold text-primary text-base sm:text-lg break-words">{price}</p>
       </div>
       <ReportListingDialog listingId={listing.id} open={reportOpen} onOpenChange={setReportOpen} />
     </article>

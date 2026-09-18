@@ -5,8 +5,8 @@ import { trackEvent } from "@/lib/analytics";
 const WhatsAppBar = () => {
   return (
     <section className="border-y border-primary/20 bg-card/40">
-      <div className="container mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4 text-center sm:text-left">
+      <div className="container mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 text-left">
           <div className="w-11 h-11 rounded-full bg-gradient-gold flex items-center justify-center shadow-gold shrink-0">
             <MessageCircle className="w-5 h-5 text-primary-foreground" />
           </div>
