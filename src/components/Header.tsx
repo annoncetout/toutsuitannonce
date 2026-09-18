@@ -233,7 +233,7 @@ const Header = () => {
         <button
           aria-label="Menu"
           onClick={() => setOpen(!open)}
-          className="lg:hidden relative text-foreground min-w-11 min-h-11 flex items-center justify-center rounded-full border border-primary/20 bg-card/40 backdrop-blur-md transition-transform duration-300 active:scale-90"
+          className="lg:hidden relative text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full border border-primary/20 bg-card/40 backdrop-blur-md transition-transform duration-300 active:scale-90"
         >
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
