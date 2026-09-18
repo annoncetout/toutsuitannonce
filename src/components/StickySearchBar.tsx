@@ -37,11 +37,11 @@ const StickySearchBar = () => {
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 -translate-y-4 pointer-events-none"
       }`}
-      style={{ top: "calc(env(safe-area-inset-top) + 64px)" }}
+      style={{ top: "calc(env(safe-area-inset-top) + 60px)" }}
     >
       <div className="container mx-auto">
         <div
-          className={`bg-background/85 backdrop-blur-xl border border-primary/25 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-300 ${
+          className={`bg-background/90 backdrop-blur-xl border border-primary/25 rounded-xl sm:rounded-2xl shadow-card transition-all duration-300 ${
             condensed ? "p-1.5 sm:p-2" : "p-2 sm:p-3"
           }`}
         >
@@ -53,7 +53,7 @@ const StickySearchBar = () => {
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") onSearch(); }}
                 placeholder="Que recherchez-vous ?"
-                className={`pl-11 bg-transparent border-0 focus-visible:ring-0 text-base text-white placeholder:text-white/70 transition-all duration-300 ${
+                className={`pl-11 bg-transparent border-0 focus-visible:ring-0 text-base text-foreground placeholder:text-muted-foreground transition-all duration-300 ${
                   condensed ? "h-10 sm:h-11" : "h-12 sm:h-12"
                 }`}
               />

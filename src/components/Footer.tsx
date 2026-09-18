@@ -37,16 +37,16 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-border bg-card/40">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div>
+      <div className="container mx-auto px-4 py-9 sm:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-8">
+          <div className="col-span-2 md:col-span-1">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
               La plateforme numéro 1 pour toutes vos annonces — simples, rapides et efficaces.
             </p>
           </div>
           {cols.map((c) => (
-            <div key={c.title}>
+            <div key={c.title} className={c.title === "Aide" ? "col-span-2 sm:col-span-1" : ""}>
               <h3 className="font-semibold text-foreground mb-4">{c.title}</h3>
               <ul className="space-y-2">
                 {c.links.map((l) => (
@@ -66,8 +66,8 @@ const Footer = () => {
             </div>
           ))}
         </div>
-        <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} TOUT DE SUITE Annonces. Tous droits réservés.</span>
+        <div className="mt-9 sm:mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-muted-foreground safe-bottom">
+          <span>© {new Date().getFullYear()} TOUT DE SUITE Annonces.<br className="sm:hidden" /> Tous droits réservés.</span>
           <Link
             to="/admin/login"
             aria-label="Administration"

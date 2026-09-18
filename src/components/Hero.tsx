@@ -46,17 +46,17 @@ const Hero = () => {
         }}
       />
 
-      <div className="container relative mx-auto px-4 py-12 sm:py-16 md:py-24 lg:py-28">
+      <div className="container relative mx-auto px-4 py-9 sm:py-16 md:py-24 lg:py-28">
         {/* Premium tag */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 backdrop-blur mb-5">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/5 backdrop-blur mb-4 sm:mb-5">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-[11px] tracking-[0.2em] font-semibold text-primary uppercase">Plateforme Premium</span>
         </div>
 
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-12 items-center">
           {/* Left content */}
-          <div className="space-y-6 md:space-y-8">
-            <h1 className="font-display text-[2.25rem] leading-[1.05] sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight">
+          <div className="space-y-5 sm:space-y-6 md:space-y-8">
+            <h1 className="font-display text-[clamp(1.95rem,9.2vw,2.45rem)] leading-[1.06] sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-normal">
               ACHETEZ, VENDEZ,
               <br />
               TROUVEZ TOUT,
@@ -64,28 +64,28 @@ const Hero = () => {
               <span className="text-gradient-gold">TOUT DE SUITE !</span>
             </h1>
 
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
+            <p className="text-[15px] sm:text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
               ToutSuiteAnnonces est une plateforme de petites annonces permettant aux utilisateurs de
               découvrir, publier et consulter des produits et services — simples, rapides et
               efficaces. La consultation est libre, sans compte.
             </p>
 
-            <div className="flex flex-wrap gap-5 sm:gap-8">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary">
+            <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-8">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary">
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground text-sm sm:text-base">Annonces vérifiées</div>
+                  <div className="font-semibold text-foreground text-xs min-[380px]:text-sm sm:text-base leading-tight">Annonces vérifiées</div>
                   <div className="text-xs text-muted-foreground">Sécurité et confiance</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary">
                   <Rocket className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground text-sm sm:text-base">Résultats rapides</div>
+                  <div className="font-semibold text-foreground text-xs min-[380px]:text-sm sm:text-base leading-tight">Résultats rapides</div>
                   <div className="text-xs text-muted-foreground">Vendez ou trouvez vite</div>
                 </div>
               </div>
@@ -120,8 +120,8 @@ const Hero = () => {
         </div>
 
         {/* Search bar - mobile-first stacked */}
-        <div className="mt-10 md:mt-14 lg:mt-16">
-          <div className="bg-card/80 backdrop-blur-xl border border-primary/20 rounded-2xl p-2 sm:p-3 shadow-card">
+        <div className="mt-7 sm:mt-10 md:mt-14 lg:mt-16">
+          <div className="bg-card/80 backdrop-blur-xl border border-primary/20 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-card">
             <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr_1fr_auto] gap-2">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -131,18 +131,18 @@ const Hero = () => {
                   onKeyDown={(e) => { if (e.key === "Enter") onSearch(); }}
                   placeholder="Que recherchez-vous ?"
                   aria-label="Rechercher des annonces"
-                  className="pl-11 h-12 sm:h-14 bg-transparent border-0 focus-visible:ring-0 text-base text-white placeholder:text-white/70"
+                  className="pl-11 h-11 sm:h-14 bg-transparent border-0 focus-visible:ring-0 text-base text-foreground placeholder:text-muted-foreground"
                 />
               </div>
-              <button onClick={() => navigate("/annonces")} className="flex items-center gap-2 px-4 h-12 sm:h-14 rounded-lg bg-secondary/60 hover:bg-secondary text-left text-sm transition-colors">
+              <button onClick={() => navigate("/annonces")} className="flex items-center gap-2 px-4 h-11 sm:h-14 rounded-lg bg-secondary/60 hover:bg-secondary text-left text-sm transition-colors">
                 <span className="flex-1 text-muted-foreground">Toutes catégories</span>
                 <span className="text-primary">▾</span>
               </button>
-              <button onClick={() => navigate("/annonces")} className="flex items-center gap-2 px-4 h-12 sm:h-14 rounded-lg bg-secondary/60 hover:bg-secondary text-left text-sm transition-colors">
+              <button onClick={() => navigate("/annonces")} className="flex items-center gap-2 px-4 h-11 sm:h-14 rounded-lg bg-secondary/60 hover:bg-secondary text-left text-sm transition-colors">
                 <MapPin className="w-4 h-4 text-primary" />
                 <span className="flex-1 text-muted-foreground">Toutes les localités</span>
               </button>
-              <Button variant="gold" onClick={onSearch} className="h-12 sm:h-14 px-6 sm:px-8 text-base">
+              <Button variant="gold" onClick={onSearch} className="h-11 sm:h-14 px-6 sm:px-8 text-base">
                 <Search className="w-5 h-5" />
                 Rechercher
               </Button>
