@@ -11,9 +11,22 @@
  * Secrets live only in Cloudflare: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SESSION_SECRET.
  */
 
+import {
+  handleUpload,
+  handleMediaGet,
+  handleMediaDelete,
+  handleListImages,
+  handleUpdateImages,
+  handleDeleteImage,
+  handleDeleteAnnouncementMedia,
+  type R2BucketLike,
+} from "./media";
+
 export interface Env {
   ASSETS: { fetch: (req: Request) => Promise<Response> };
   DB: D1Database;
+  /** R2 bucket toutsuiteannonces-media */
+  R2_BUCKET: R2BucketLike;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   SESSION_SECRET: string;
@@ -385,8 +398,6 @@ export default {
         return Response.redirect(url.toString(), 302);
       }
     }
-
-
     try {
       if (path === "/auth/google" && req.method === "GET") return await startGoogleOAuth(req, env);
       if (path === "/auth/google/callback" && req.method === "GET") return await handleGoogleCallback(req, env);
@@ -394,6 +405,26 @@ export default {
       if (path === "/api/auth/supabase-session" && req.method === "POST") return await handleDataSession(req, env);
       if (path === "/auth/logout" && req.method === "POST") return await handleLogout(req, env);
       if (path === "/auth/logout" || path === "/api/auth/me") {
+        return json({ error: "method_not_allowed" }, 405);
+      }
+
+      /* ---------------------------- R2 media ---------------------------- */
+      if (path === "/api/upload" && req.method === "POST") {
+        return await handleUpload(req, env.R2_BUCKET, env.DB, await currentUser(req, env), appOrigin(req, env));
+      }
+      if (path.startsWith("/api/media/")) {
+        const key = decodeURIComponent(path.slice("/api/media/".length));
+        if (req.method === "GET" || req.method === "HEAD") return await handleMediaGet(req, env.R2_BUCKET, key);
+        if (req.method === "DELETE") return await handleMediaDelete(env.R2_BUCKET, env.DB, await currentUser(req, env), key);
+        return json({ error: "method_not_allowed" }, 405);
+      }
+      const imgMatch = path.match(/^\/api\/announcements\/([A-Za-z0-9_-]{1,64})\/images(?:\/([A-Za-z0-9_-]{1,64}))?$/);
+      if (imgMatch) {
+        const [, annId, imageId] = imgMatch;
+        if (!imageId && req.method === "GET") return await handleListImages(env.DB, annId);
+        if (!imageId && req.method === "PATCH") return await handleUpdateImages(req, env.DB, await currentUser(req, env), annId);
+        if (!imageId && req.method === "DELETE") return await handleDeleteAnnouncementMedia(env.R2_BUCKET, env.DB, await currentUser(req, env), annId);
+        if (imageId && req.method === "DELETE") return await handleDeleteImage(env.R2_BUCKET, env.DB, await currentUser(req, env), annId, imageId);
         return json({ error: "method_not_allowed" }, 405);
       }
     } catch (err) {
