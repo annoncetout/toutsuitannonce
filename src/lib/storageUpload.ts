@@ -154,7 +154,82 @@ async function uploadOnce(
   return { url: data.publicUrl, key };
 }
 
-/** Upload a single file to Supabase Storage with retries + timeout. */
+/* ------------------------- Cloudflare R2 (Worker) ------------------------- */
+
+let workerAvailable: Promise<boolean> | null = null;
+/** True when the Cloudflare Worker (prod) is reachable and the Google session is active. */
+function hasWorkerSession(): Promise<boolean> {
+  if (!workerAvailable) {
+    workerAvailable = fetch("/api/auth/me", { credentials: "include" })
+      .then(async (r) => {
+        if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) return false;
+        const j = await r.json();
+        return !!j?.authenticated;
+      })
+      .catch(() => false);
+  }
+  return workerAvailable;
+}
+
+const R2_FOLDER: Record<string, string> = {
+  annonces: "announcements",
+  avatars: "avatars",
+  premium: "shops",
+  documents: "documents",
+  ads: "ads",
+};
+
+function uploadToWorker(f: File, opts: UploadOptions): Promise<{ url: string; key: string }> {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("file", f);
+    form.append("folder", R2_FOLDER[opts.folder ?? "annonces"] ?? "announcements");
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload", true);
+    xhr.withCredentials = true;
+    xhr.timeout = opts.timeoutMs ?? 60_000;
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) opts.onProgress?.(Math.min(99, Math.round((e.loaded / e.total) * 95)));
+    };
+    xhr.onload = () => {
+      let body: any = null;
+      try { body = JSON.parse(xhr.responseText); } catch { /* ignore */ }
+      if (xhr.status >= 200 && xhr.status < 300 && body?.url) {
+        opts.onProgress?.(100);
+        // Same-origin path so the image works on www and apex.
+        resolve({ url: `/api/media/${body.key}`, key: body.key });
+        return;
+      }
+      const map: Record<string, string> = {
+        unauthenticated: "Session expirée — reconnectez-vous",
+        file_too_large: "Image trop lourde",
+        unsupported_file_type: "Format non supporté (jpg/png/webp/avif)",
+        forbidden: "Action non autorisée",
+      };
+      reject(new Error(map[body?.error] || `Upload refusé (${xhr.status})`));
+    };
+    xhr.onerror = () => reject(new Error("Connexion impossible. Réessayez."));
+    xhr.ontimeout = () => reject(new Error("Délai d'envoi dépassé (réessayez)"));
+    opts.signal?.addEventListener("abort", () => { xhr.abort(); reject(new DOMException("Aborted", "AbortError")); }, { once: true });
+    xhr.send(form);
+  });
+}
+
+function r2KeyFromUrl(url: string): string | null {
+  const i = url.indexOf("/api/media/");
+  return i === -1 ? null : decodeURIComponent(url.slice(i + "/api/media/".length));
+}
+
+async function deleteFromWorker(key: string) {
+  try {
+    await fetch(`/api/media/${key.split("/").map(encodeURIComponent).join("/")}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  } catch { /* best effort */ }
+}
+
+/** Upload a single file (Cloudflare R2 via Worker when available, else legacy storage). */
 export async function uploadToStorage(
   file: File,
   opts: UploadOptions = {},
@@ -165,11 +240,12 @@ export async function uploadToStorage(
   if (f.size > MAX_BYTES) throw new Error("Image trop lourde (max 5 Mo)");
   if (!ALLOWED.includes(f.type)) throw new Error("Format non supporté (jpg/png/webp uniquement)");
 
+  const useWorker = await hasWorkerSession();
   const attempts = Math.max(1, opts.retries ?? 3);
   let lastErr: unknown;
   for (let i = 0; i < attempts; i++) {
     try {
-      return await uploadOnce(f, opts);
+      return useWorker ? await uploadToWorker(f, opts) : await uploadOnce(f, opts);
     } catch (e) {
       lastErr = e;
       if (e instanceof DOMException && e.name === "AbortError") throw e;
@@ -195,6 +271,8 @@ function keyFromUrl(url: string): string | null {
 export async function deleteFromStorage(
   ref: { url?: string; key?: string },
 ): Promise<void> {
+  const r2 = ref.url ? r2KeyFromUrl(ref.url) : null;
+  if (r2) return deleteFromWorker(r2);
   const key = ref.key ?? (ref.url ? keyFromUrl(ref.url) : null);
   if (!key) return;
   try {
@@ -213,6 +291,8 @@ export async function deleteFromStorageMany(
   for (const k of keys) if (typeof k === "string" && k) all.add(k);
   for (const u of urls) {
     if (typeof u !== "string" || !u) continue;
+    const r2 = r2KeyFromUrl(u);
+    if (r2) { await deleteFromWorker(r2); continue; }
     const k = keyFromUrl(u);
     if (k) all.add(k);
   }
