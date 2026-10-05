@@ -18,10 +18,13 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "toutsuite-auth",
+      "database_name": "toutesuite",
       "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
     }
   ],
+      "r2_buckets": [
+        { "binding": "R2_BUCKET", "bucket_name": "toutsuiteannonces-media" }
+      ],
   "env": {
     "production": {
       "vars": {
@@ -35,9 +38,12 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "toutsuite-auth",
+          "database_name": "toutesuite",
           "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
         }
+      ],
+      "r2_buckets": [
+        { "binding": "R2_BUCKET", "bucket_name": "toutsuiteannonces-media" }
       ]
     },
     "development": {
@@ -53,9 +59,12 @@
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "toutsuite-auth",
+          "database_name": "toutesuite",
           "database_id": "5ba2faa1-0119-4262-95bb-1feae0c7ccd0"
         }
+      ],
+      "r2_buckets": [
+        { "binding": "R2_BUCKET", "bucket_name": "toutsuiteannonces-media" }
       ]
     }
   }
